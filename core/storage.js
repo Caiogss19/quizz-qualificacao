@@ -60,6 +60,10 @@ function getQuizzes() {
 
 function saveQuizzes(quizzes) {
   localStorage.setItem(QUIZ_DB_KEY, JSON.stringify(quizzes));
+  
+  if (typeof saveQuizToSupabase !== 'undefined') {
+    quizzes.forEach(q => saveQuizToSupabase(q));
+  }
 }
 
 function getQuizById(id) {

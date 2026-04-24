@@ -148,6 +148,9 @@ function saveFlow() {
   
   try {
     localStorage.setItem('sparkmaxx_quizzes', JSON.stringify(quizzes));
+    if (typeof saveQuizToSupabase !== 'undefined') {
+      saveQuizToSupabase(quizzes[targetIndex]);
+    }
     showToast('✅ Fluxo salvo com sucesso no banco!');
   } catch(e) {
     showToast('❌ Erro ao salvar fluxo.');

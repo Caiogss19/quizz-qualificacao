@@ -306,16 +306,31 @@ async function testWebhook(id) {
   }
   
   const testData = {
-    evento: "teste_integracao",
-    data_hora: new Date().toISOString(),
+    event: "teste_integracao",
     quiz_id: quiz.id,
-    nome: "Lead Teste da Silva",
-    email: "teste@inlead.digital",
-    celular: "(11) 99999-9999",
-    empresa: "Empresa Fictícia",
-    perfil: "Empresa / Marca",
-    resultado_id: "result",
-    origem: "Painel Admin (Teste)"
+    quiz_name: quiz.name,
+    completed_at: new Date().toISOString(),
+    lead: {
+      nome: "Lead Teste da Silva",
+      email: "teste@inlead.digital",
+      celular: "(11) 99999-9999",
+      empresa: "Empresa Fictícia"
+    },
+    answers: {
+      "perfil": "Empresa / Marca",
+      "q2": "Medir resultados e comprovar ROI das campanhas"
+    },
+    result_id: "result",
+    result_title: "Resultado de Teste",
+    utms: {
+      source: "painel_admin",
+      medium: "teste_webhook",
+      campaign: "",
+      content: "",
+      term: ""
+    },
+    user_agent: navigator.userAgent,
+    url_origem: window.location.href
   };
   
   try {

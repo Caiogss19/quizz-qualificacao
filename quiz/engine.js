@@ -22,6 +22,16 @@ function initQuiz() {
   
   document.title = activeQuiz.name;
   resetState();
+  
+  // Coletar UTMs e referências
+  state.utms = {
+    source: urlParams.get('utm_source') || '',
+    medium: urlParams.get('utm_medium') || '',
+    campaign: urlParams.get('utm_campaign') || '',
+    content: urlParams.get('utm_content') || '',
+    term: urlParams.get('utm_term') || ''
+  };
+
   renderNode(state.currentNodeId);
 }
 
@@ -54,22 +64,35 @@ function renderNode(nodeId) {
   } else if (node.type === 'result') {
     if (!state.resultadoId) {
       state.completedAt = Date.now();
-      state.resultadoId = node.id; // O ID do resultado agora é o próprio nó final
+      state.resultadoId = node.id;
       
       const responseData = {
-        ...state.lead,
-        ...getAnswers(),
-        resultado_id: state.resultadoId,
+        // Metadados
+        event: "quiz_completed",
+        quiz_id: activeQuiz.id,
+        quiz_name: activeQuiz.name,
+        completed_at: new Date().toISOString(),
+        
+        // Dados do Lead
+        lead: state.lead,
+        
+        // Respostas (Mapeadas)
+        answers: getAnswers(),
+        
+        // Resultado Final
+        result_id: state.resultadoId,
+        result_title: node.title,
+        
+        // Rastreadores (Analytics)
+        utms: state.utms,
         user_agent: navigator.userAgent,
-        url_origem: window.location.href,
-        quiz_id: activeQuiz.id
+        url_origem: window.location.href
       };
 
       // Auto-save the response
       saveResponse(responseData);
       sendWebhook(responseData);
     }
-
     stepEl.appendChild(renderResult(node));
   }
 
