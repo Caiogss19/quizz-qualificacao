@@ -164,8 +164,12 @@ function updateInspector() {
       html += `
         <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
           <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <div style="font-size:11px;color:var(--text-muted);">Campo: ${escHtml(field.id)}</div>
+            <div style="font-size:11px;color:var(--text-muted);">Configuração do Campo</div>
             <button class="btn-remove-field" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
+          </div>
+          <div class="form-group" style="margin-bottom:8px; background:rgba(16,185,129,0.05); padding:6px; border-radius:4px;">
+            <label style="color:#10B981; font-size:10px;">ID da Variável (Data Key)</label>
+            <input type="text" id="propFieldId_${i}" value="${escHtml(field.id || '')}" style="font-size:11px; background:transparent;" placeholder="ex: nome, cargo, celular..." />
           </div>
           <div style="display:flex; gap:8px;">
             <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
@@ -247,6 +251,7 @@ function updateInspector() {
 
   if (node.type === 'lead_form' && node.fields) {
     node.fields.forEach((field, i) => {
+      bindInput(`propFieldId_${i}`, val => { field.id = val; refresh(node.id); });
       bindInput(`propFieldLabel_${i}`, val => { field.label = val; refresh(node.id); });
       bindInput(`propFieldType_${i}`, val => { field.type = val; refresh(node.id); });
       bindInput(`propFieldPlaceholder_${i}`, val => { field.placeholder = val; refresh(node.id); });

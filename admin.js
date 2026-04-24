@@ -229,7 +229,9 @@ async function loadAdminPanel() {
     createQuiz("Diagnóstico Spark MAXX");
   }
 
-  switchTab(currentTab);
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetTab = urlParams.get('tab') || currentTab;
+  switchTab(targetTab);
   loadBranding();
 }
 
@@ -324,7 +326,7 @@ function renderQuizzes() {
 }
 
 function editQuiz(id) {
-  window.open(`builder.html?id=${id}`, '_blank');
+  window.location.href = `builder.html?id=${id}`;
 }
 
 function copyQuizLink(id) {
