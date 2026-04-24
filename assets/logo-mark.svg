@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  
+  <g stroke="currentColor" stroke-width="10" stroke-linecap="square" fill="none">
+    <line x1="60" y1="8" x2="60" y2="112"></line>
+    <line x1="14" y1="34" x2="106" y2="86"></line>
+    <line x1="14" y1="86" x2="106" y2="34"></line>
+  </g>
+  <circle cx="60" cy="60" r="6" fill="currentColor"></circle>
+</svg>
