@@ -201,16 +201,56 @@ function renderQuizzes() {
     card.style.cursor = 'pointer';
     card.style.transition = 'var(--transition)';
     card.innerHTML = `
-      <h3 style="font-size: 16px; margin-bottom: 8px;">${q.nome || 'Quiz sem nome'}</h3>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+        <h3 style="font-size: 16px; margin: 0; padding-right: 10px;">${q.nome || 'Quiz sem nome'}</h3>
+        <button class="btn-del-row" onclick="event.stopPropagation(); deleteQuiz('${id}')" title="Excluir">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
       <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">ID: ${id}</p>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; margin-top: auto;">
         <span style="font-size: 11px; background: var(--bg-hover); padding: 4px 8px; border-radius: 4px;">${q.config?.perguntas?.length || 0} perguntas</span>
-        <button class="btn-detail" onclick="editQuiz('${id}')">Editar →</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-detail" onclick="event.stopPropagation(); copyQuizLink('${id}')" title="Copiar Link">🔗 Link</button>
+          <button class="btn-detail" onclick="event.stopPropagation(); duplicateQuiz('${id}')" title="Duplicar">Copiar</button>
+          <button class="btn-detail" onclick="event.stopPropagation(); editQuiz('${id}')">Editar →</button>
+        </div>
       </div>
     `;
     card.addEventListener('click', () => editQuiz(id));
     container.appendChild(card);
   });
+}
+
+window.copyQuizLink = function(id) {
+  const url = window.location.origin + window.location.pathname.replace('admin.html', '') + '?quiz=' + id;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('🔗 Link copiado para a área de transferência!');
+  });
+}
+
+window.deleteQuiz = function(id) {
+  if (confirm('Tem certeza que deseja EXCLUIR este quiz permanentemente?')) {
+    const quizzes = getQuizzes();
+    delete quizzes[id];
+    saveQuizzes(quizzes);
+    showToast('🗑️ Quiz excluído com sucesso!');
+    renderQuizzes();
+  }
+}
+
+window.duplicateQuiz = function(id) {
+  const quizzes = getQuizzes();
+  const q = quizzes[id];
+  if (!q) return;
+  
+  const newId = 'quiz_' + Date.now();
+  quizzes[newId] = JSON.parse(JSON.stringify(q)); // clone profundo
+  quizzes[newId].nome = q.nome + ' (Cópia)';
+  
+  saveQuizzes(quizzes);
+  showToast('📋 Quiz duplicado com sucesso!');
+  renderQuizzes();
 }
 
 window.editQuiz = function(id) {
