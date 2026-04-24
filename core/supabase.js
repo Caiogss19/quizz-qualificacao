@@ -3,7 +3,7 @@
 // ===========================
 
 const SUPABASE_URL = "https://xkdpbhzkhzxivwtcfulm.supabase.co";
-const SUPABASE_KEY = ""; // ⚠️ Coloque sua Anon Key aqui para ativar a sincronização na nuvem
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrZHBiaHpraHp4aXZ3dGNmdWxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzczMzUsImV4cCI6MjA4OTM1MzMzNX0.frsj-BuDJFq32q6q9oFJQSLgHqqgjn-VD6lEqcHLp94";
 
 const SUPABASE_HEADERS = {
   "apikey": SUPABASE_KEY,
