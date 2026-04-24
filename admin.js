@@ -159,58 +159,108 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById(`nav-${tab}`).classList.add('active');
   document.getElementById(`tab-${tab}`).classList.add('active');
-  const titles = { overview: 'Visão Geral', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados', editor: 'Construtor de Quiz', ia: 'Gerador com IA' };
+  const titles = { overview: 'Visão Geral', quizzes: 'Meus Quizzes', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados', editor: 'Construtor de Quiz', ia: 'Gerador com IA' };
   document.getElementById('headerTitle').textContent = titles[tab] || '';
   if (tab === 'overview') renderOverview();
   if (tab === 'responses') renderResponses();
   if (tab === 'analytics') renderAnalytics();
   if (tab === 'export') renderExport();
-  if (tab === 'editor') initEditorTab();
+  if (tab === 'quizzes') renderQuizzes();
 }
 
 // ===========================
-// NOVO: EDITOR & IA LOGIC
+// NOVO: QUIZZES & EDITOR LOGIC
 // ===========================
-function initEditorTab() {
-  const el = document.getElementById('jsonEditor');
-  if (el && !el.value) {
-    // Carrega um modelo padrão se estiver vazio
-    const defaultConfig = {
-      nome_quiz: "Meu Quiz Dinâmico",
-      campos_lead: ["nome", "email", "celular"],
-      perguntas: [
-        {
-          titulo: "Qual perfil descreve melhor você?",
-          opcoes: [
-            { texto: "Empresa", icone: "🏢", peso_resultado: "B2B" },
-            { texto: "Creator", icone: "🎥", peso_resultado: "B2C" }
-          ]
-        }
-      ],
-      resultados: [
-        { id: "B2B", titulo: "Foco em Empresas", descricao: "Sua solução é..." },
-        { id: "B2C", titulo: "Foco em Conteúdo", descricao: "Sua solução é..." }
-      ]
-    };
-    // Tenta pegar do localStorage primeiro
-    const saved = localStorage.getItem('quiz_dynamic_config');
-    if (saved) {
-      el.value = JSON.stringify(JSON.parse(saved), null, 2);
-    } else {
-      el.value = JSON.stringify(defaultConfig, null, 2);
-    }
+
+function getQuizzes() {
+  const q = localStorage.getItem('quizzes_list');
+  return q ? JSON.parse(q) : {};
+}
+
+function saveQuizzes(quizzes) {
+  localStorage.setItem('quizzes_list', JSON.stringify(quizzes));
+}
+
+let currentEditingQuizId = null;
+
+function renderQuizzes() {
+  const quizzes = getQuizzes();
+  const container = document.getElementById('quizzesList');
+  container.innerHTML = '';
+  
+  const ids = Object.keys(quizzes);
+  if (ids.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">Você ainda não criou nenhum quiz. Clique em "Criar Novo Quiz" para começar.</div>`;
+    return;
   }
+  
+  ids.forEach(id => {
+    const q = quizzes[id];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.cursor = 'pointer';
+    card.style.transition = 'var(--transition)';
+    card.innerHTML = `
+      <h3 style="font-size: 16px; margin-bottom: 8px;">${q.nome || 'Quiz sem nome'}</h3>
+      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">ID: ${id}</p>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 11px; background: var(--bg-hover); padding: 4px 8px; border-radius: 4px;">${q.config?.perguntas?.length || 0} perguntas</span>
+        <button class="btn-detail" onclick="editQuiz('${id}')">Editar →</button>
+      </div>
+    `;
+    card.addEventListener('click', () => editQuiz(id));
+    container.appendChild(card);
+  });
+}
+
+window.editQuiz = function(id) {
+  currentEditingQuizId = id;
+  const quizzes = getQuizzes();
+  const q = quizzes[id];
+  
+  document.getElementById('editorQuizName').value = q.nome || '';
+  document.getElementById('editorWebhookUrl').value = q.webhook || '';
+  document.getElementById('jsonEditor').value = JSON.stringify(q.config || {}, null, 2);
+  
+  switchTab('editor');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const btnCreateNewQuiz = document.getElementById('btnCreateNewQuiz');
+  if (btnCreateNewQuiz) {
+    btnCreateNewQuiz.addEventListener('click', () => {
+      const id = 'quiz_' + Date.now();
+      const quizzes = getQuizzes();
+      quizzes[id] = {
+        nome: "Novo Quiz",
+        webhook: "",
+        config: {
+          campos_lead: ["nome", "email", "celular"],
+          perguntas: [],
+          resultados: []
+        }
+      };
+      saveQuizzes(quizzes);
+      editQuiz(id);
+    });
+  }
+
   const btnSaveConfig = document.getElementById('btnSaveConfig');
   if (btnSaveConfig) {
     btnSaveConfig.addEventListener('click', () => {
+      if (!currentEditingQuizId) return;
       try {
         const jsonStr = document.getElementById('jsonEditor').value;
-        JSON.parse(jsonStr); // valida o json
-        localStorage.setItem('quiz_dynamic_config', jsonStr);
-        showToast('✅ Configurações salvas com sucesso!');
+        const config = JSON.parse(jsonStr);
+        const nome = document.getElementById('editorQuizName').value || 'Quiz sem nome';
+        const webhook = document.getElementById('editorWebhookUrl').value;
+        
+        const quizzes = getQuizzes();
+        quizzes[currentEditingQuizId] = { nome, webhook, config };
+        saveQuizzes(quizzes);
+        
+        showToast('✅ Quiz salvo com sucesso!');
+        setTimeout(() => switchTab('quizzes'), 1000);
       } catch (e) {
         alert('Erro: O JSON inserido é inválido. Verifique a formatação.');
       }
@@ -227,36 +277,32 @@ document.addEventListener('DOMContentLoaded', () => {
       status.style.display = 'inline-block';
       btnGenerateIA.disabled = true;
       
-      // Simulação da chamada de API da IA
       setTimeout(() => {
         status.style.display = 'none';
         btnGenerateIA.disabled = false;
         
         const iaGeneratedConfig = {
-          nome_quiz: "Quiz Gerado por IA",
-          prompt_original: prompt,
           campos_lead: ["nome", "email", "telefone"],
           perguntas: [
-            {
-              titulo: "Qual o seu principal desafio hoje?",
-              opcoes: [
-                { texto: "Atrair clientes", icone: "🧲", peso_resultado: "MKT" },
-                { texto: "Reter clientes", icone: "🤝", peso_resultado: "CX" }
-              ]
-            }
+            { titulo: "Qual o seu principal desafio hoje?", opcoes: [{ texto: "Atrair clientes", icone: "🧲", peso_resultado: "MKT" }, { texto: "Reter clientes", icone: "🤝", peso_resultado: "CX" }] }
           ],
           resultados: [
-            { id: "MKT", titulo: "Estratégia de Aquisição", descricao: "Você precisa de tráfego e conversão..." },
-            { id: "CX", titulo: "Estratégia de Retenção", descricao: "Foque na experiência e no pós-venda..." }
+            { id: "MKT", titulo: "Estratégia de Aquisição", descricao: "Você precisa de tráfego..." },
+            { id: "CX", titulo: "Estratégia de Retenção", descricao: "Foque na experiência..." }
           ]
         };
         
-        localStorage.setItem('quiz_dynamic_config', JSON.stringify(iaGeneratedConfig));
-        document.getElementById('jsonEditor').value = JSON.stringify(iaGeneratedConfig, null, 2);
+        const id = 'quiz_' + Date.now();
+        const quizzes = getQuizzes();
+        quizzes[id] = {
+          nome: "Quiz Gerado por IA",
+          webhook: "",
+          config: iaGeneratedConfig
+        };
+        saveQuizzes(quizzes);
         
         showToast('✨ Quiz criado com sucesso pela IA!');
-        switchTab('editor'); // Vai para a aba do editor para ver o resultado
-        
+        editQuiz(id);
       }, 3000);
     });
   }

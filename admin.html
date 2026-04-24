@@ -39,6 +39,10 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Visão geral
       </a>
+      <a href="#" class="nav-item" id="nav-quizzes" data-tab="quizzes">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Meus Quizzes
+      </a>
       <a href="#" class="nav-item" id="nav-responses" data-tab="responses">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         Respostas
@@ -270,20 +274,45 @@
       </div>
     </section>
 
+    <!-- QUIZZES TAB -->
+    <section class="tab-content" id="tab-quizzes">
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <h1>Meus Quizzes</h1>
+          <p class="page-desc">Gerencie seus múltiplos quizzes, crie novos ou edite os existentes.</p>
+        </div>
+        <button class="btn-primary" id="btnCreateNewQuiz">
+          + Criar Novo Quiz
+        </button>
+      </div>
+      <div class="kpi-grid" id="quizzesList" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        <!-- Quizzes serão renderizados aqui -->
+      </div>
+    </section>
+
     <!-- EDITOR TAB -->
     <section class="tab-content" id="tab-editor">
       <div class="page-header">
-        <h1>Construtor de Quiz</h1>
-        <p class="page-desc">Customize as perguntas, opções e configurações gerais do quiz (JSON dinâmico).</p>
+        <h1 id="editorTitle">Construtor de Quiz</h1>
+        <p class="page-desc">Edite as configurações, webhook e as perguntas (JSON dinâmico).</p>
       </div>
       
       <div class="card">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-          <h2 class="card-title" style="margin: 0;">Configuração Atual</h2>
-          <button class="btn-primary" id="btnSaveConfig" style="padding: 8px 16px;">Salvar Configurações</button>
+        <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+          <div style="flex: 1;">
+            <label style="display:block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Nome do Quiz</label>
+            <input type="text" id="editorQuizName" class="filter-search" style="width: 100%;" placeholder="Ex: Diagnóstico B2B" />
+          </div>
+          <div style="flex: 2;">
+            <label style="display:block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">URL do Webhook (Zapier/Make/etc)</label>
+            <input type="url" id="editorWebhookUrl" class="filter-search" style="width: 100%;" placeholder="https://hook.make.com/..." />
+          </div>
         </div>
-        <textarea id="jsonEditor" style="width: 100%; height: 400px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); font-family: monospace; padding: 16px; border-radius: var(--radius-sm); resize: vertical;"></textarea>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">O editor visual por blocos será implementado em breve. Por enquanto, você pode alterar diretamente a estrutura JSON.</p>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <h2 class="card-title" style="margin: 0;">Estrutura de Perguntas e Resultados</h2>
+          <button class="btn-primary" id="btnSaveConfig" style="padding: 8px 16px;">Salvar Quiz</button>
+        </div>
+        <textarea id="jsonEditor" style="width: 100%; height: 350px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); font-family: monospace; padding: 16px; border-radius: var(--radius-sm); resize: vertical;"></textarea>
       </div>
     </section>
 
