@@ -5,13 +5,28 @@ const DOM = {
   progressBar: document.getElementById('progressBar')
 };
 
+let activeQuiz = null;
+
 function initQuiz() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const quizId = urlParams.get('id');
+  
+  let quizzes = [];
+  try { quizzes = JSON.parse(localStorage.getItem('sparkmaxx_quizzes') || '[]'); } catch(e) {}
+  
+  activeQuiz = quizzes.find(q => q.id === quizId);
+  if (!activeQuiz) {
+    if (quizzes.length > 0) activeQuiz = quizzes[0];
+    else activeQuiz = { id: quizJSON.id, name: quizJSON.title, webhookUrl: '', nodes: quizJSON.nodes, results: quizJSON.results };
+  }
+  
+  document.title = activeQuiz.name;
   resetState();
   renderNode(state.currentNodeId);
 }
 
 function renderNode(nodeId) {
-  const node = quizJSON.nodes[nodeId];
+  const node = activeQuiz.nodes[nodeId];
   if (!node) return console.error('Node not found:', nodeId);
   
   state.currentNodeId = nodeId;
@@ -42,7 +57,8 @@ function renderNode(nodeId) {
         ...getAnswers(),
         resultado_id: state.resultadoId,
         user_agent: navigator.userAgent,
-        url_origem: window.location.href
+        url_origem: window.location.href,
+        quiz_id: activeQuiz.id
       };
 
       // Auto-save the response

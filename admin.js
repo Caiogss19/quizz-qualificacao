@@ -197,6 +197,7 @@ function switchTab(tab) {
   const titles = { overview: 'Visão Geral', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados' };
   document.getElementById('headerTitle').textContent = titles[tab] || '';
   if (tab === 'overview') renderOverview();
+  if (tab === 'quizzes') renderQuizzes();
   if (tab === 'responses') renderResponses();
   if (tab === 'analytics') renderAnalytics();
   if (tab === 'export') renderExport();
@@ -208,7 +209,94 @@ function switchTab(tab) {
 function loadAdminPanel() {
   allData = getAllResponses().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   filteredData = [...allData];
+  
+  // Guarantee there is at least one default quiz if empty
+  if (getQuizzes().length === 0) {
+    createQuiz("Diagnóstico Spark MAXX");
+  }
+
   switchTab(currentTab);
+}
+
+// ===========================
+// MEUS QUIZZES (NOVO)
+// ===========================
+document.getElementById('btnCreateQuiz').addEventListener('click', () => {
+  const name = prompt('Nome do novo quiz:', 'Novo Quiz');
+  if (name) {
+    createQuiz(name);
+    renderQuizzes();
+    showToast('✅ Quiz criado com sucesso!');
+  }
+});
+
+function renderQuizzes() {
+  const grid = document.getElementById('quizzesGrid');
+  const quizzes = getQuizzes();
+  
+  if (quizzes.length === 0) {
+    grid.innerHTML = '<p class="empty-state">Nenhum quiz encontrado.</p>';
+    return;
+  }
+
+  grid.innerHTML = quizzes.map(q => `
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <h3 style="font-size:16px;color:var(--text-main);margin:0;">${q.name}</h3>
+      <div style="font-size:12px;color:var(--text-muted);">
+        <p style="margin:2px 0;">ID: <code>${q.id}</code></p>
+        <p style="margin:2px 0;">Respostas: ${allData.filter(r => r.quiz_id === q.id).length}</p>
+        <p style="margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${q.webhookUrl || 'Não configurado'}">Webhook: ${q.webhookUrl || 'Não configurado'}</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:auto;flex-wrap:wrap;">
+        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="editQuiz('${q.id}')">Editar Fluxo</button>
+        <button class="btn-secondary" style="flex:1;padding:8px;font-size:12px;" onclick="copyQuizLink('${q.id}')">Copiar Link</button>
+        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="configWebhook('${q.id}')" title="Configurar Webhook">🔗</button>
+        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="actionDuplicateQuiz('${q.id}')" title="Duplicar">📑</button>
+        <button class="btn-danger" style="padding:8px;font-size:12px;" onclick="actionDeleteQuiz('${q.id}')" title="Excluir">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editQuiz(id) {
+  window.open(`builder.html?id=${id}`, '_blank');
+}
+
+function copyQuizLink(id) {
+  const url = window.location.href.replace('admin.html', `index.html?id=${id}`);
+  navigator.clipboard.writeText(url);
+  showToast('✅ Link copiado!');
+}
+
+function configWebhook(id) {
+  const quiz = getQuizById(id);
+  const url = prompt('URL do Webhook (para envio de leads):', quiz.webhookUrl || '');
+  if (url !== null) {
+    const quizzes = getQuizzes();
+    const target = quizzes.find(q => q.id === id);
+    if (target) {
+      target.webhookUrl = url.trim();
+      saveQuizzes(quizzes);
+      renderQuizzes();
+      showToast('✅ Webhook configurado!');
+    }
+  }
+}
+
+function actionDuplicateQuiz(id) {
+  if (confirm('Deseja duplicar este quiz?')) {
+    duplicateQuiz(id);
+    renderQuizzes();
+    showToast('✅ Quiz duplicado!');
+  }
+}
+
+function actionDeleteQuiz(id) {
+  if (confirm('Tem certeza que deseja excluir este quiz? Isso não apaga as respostas já coletadas.')) {
+    deleteQuiz(id);
+    renderQuizzes();
+    showToast('🗑️ Quiz excluído.');
+  }
 }
 
 // ===========================

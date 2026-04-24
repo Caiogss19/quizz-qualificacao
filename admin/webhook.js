@@ -1,20 +1,25 @@
 async function sendWebhook(data, retries = 3, backoff = 1000) {
-  const webhookUrl = localStorage.getItem('sparkmaxx_webhook_url'); // The admin will set this
+  let webhookUrl = '';
+  if (typeof activeQuiz !== 'undefined' && activeQuiz && activeQuiz.webhookUrl) {
+    webhookUrl = activeQuiz.webhookUrl;
+  } else {
+    webhookUrl = localStorage.getItem('sparkmaxx_webhook_url');
+  }
+
   if (!webhookUrl) return;
 
   try {
-    const response = await fetch(webhookUrl, {
+    await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (!response.ok) throw new Error(`HTTP erro ${response.status}`);
-  } catch (error) {
+  } catch (err) {
     if (retries > 0) {
-      console.warn(`Webhook falhou. Tentando novamente em ${backoff}ms...`, error);
+      console.warn(`Webhook failed. Retrying in ${backoff}ms...`);
       setTimeout(() => sendWebhook(data, retries - 1, backoff * 2), backoff);
     } else {
-      console.error('Webhook falhou após várias tentativas:', error);
+      console.error('Webhook failed permanently after retries.');
     }
   }
 }

@@ -7,9 +7,31 @@ var builderState = {
   pendingConnectionFrom: null // { nodeId, optionIdx } - for drag-to-connect
 };
 
+let currentQuizId = null;
+
 function initBuilder() {
-  // Deep clone to avoid mutating the original config
-  builderState.nodes = JSON.parse(JSON.stringify(quizJSON.nodes));
+  const urlParams = new URLSearchParams(window.location.search);
+  currentQuizId = urlParams.get('id');
+  
+  let quizzes = [];
+  try { quizzes = JSON.parse(localStorage.getItem('sparkmaxx_quizzes') || '[]'); } catch(e) {}
+  
+  let targetQuiz = quizzes.find(q => q.id === currentQuizId);
+  
+  if (!targetQuiz) {
+    if (quizzes.length > 0) targetQuiz = quizzes[0];
+    else {
+      alert("Nenhum quiz encontrado! Crie um no painel Admin primeiro.");
+      window.location.href = 'admin.html';
+      return;
+    }
+  }
+
+  currentQuizId = targetQuiz.id;
+  document.title = `Editando: ${targetQuiz.name} - Builder`;
+
+  // Deep clone to avoid mutating the original until saved
+  builderState.nodes = targetQuiz.nodes || JSON.parse(JSON.stringify(quizJSON.nodes));
 
   // Assign default positions if missing (auto-layout)
   const layout = autoLayout(builderState.nodes);
@@ -105,13 +127,21 @@ function autoLayout(nodes) {
 }
 
 function saveFlow() {
-  // Update the quiz config with builder state (in production, this would persist to backend)
-  const exportData = JSON.stringify(builderState.nodes, null, 2);
+  let quizzes = [];
+  try { quizzes = JSON.parse(localStorage.getItem('sparkmaxx_quizzes') || '[]'); } catch(e) {}
   
-  // Save to localStorage for now
+  const targetIndex = quizzes.findIndex(q => q.id === currentQuizId);
+  if (targetIndex === -1) {
+    showToast('❌ Erro: Quiz não encontrado.');
+    return;
+  }
+
+  // Update the nodes of the targeted quiz
+  quizzes[targetIndex].nodes = JSON.parse(JSON.stringify(builderState.nodes));
+  
   try {
-    localStorage.setItem('sparkmaxx_flow_draft', exportData);
-    showToast('✅ Fluxo salvo com sucesso!');
+    localStorage.setItem('sparkmaxx_quizzes', JSON.stringify(quizzes));
+    showToast('✅ Fluxo salvo com sucesso no banco!');
   } catch(e) {
     showToast('❌ Erro ao salvar fluxo.');
   }

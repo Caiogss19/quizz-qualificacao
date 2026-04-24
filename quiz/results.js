@@ -28,5 +28,8 @@ function calculateResult() {
 }
 
 function getResultData(resultId) {
+  if (typeof activeQuiz !== 'undefined' && activeQuiz && activeQuiz.results) {
+    return activeQuiz.results[resultId] || activeQuiz.results['community_discovery'];
+  }
   return quizJSON.results[resultId] || quizJSON.results['community_discovery'];
 }

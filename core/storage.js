@@ -49,3 +49,54 @@ function getAllResponses() {
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
 }
+
+// --- Multi-Quiz Management ---
+const QUIZ_DB_KEY = 'sparkmaxx_quizzes';
+
+function getQuizzes() {
+  try { return JSON.parse(localStorage.getItem(QUIZ_DB_KEY) || '[]'); } 
+  catch { return []; }
+}
+
+function saveQuizzes(quizzes) {
+  localStorage.setItem(QUIZ_DB_KEY, JSON.stringify(quizzes));
+}
+
+function getQuizById(id) {
+  return getQuizzes().find(q => q.id === id);
+}
+
+function createQuiz(name = 'Novo Quiz') {
+  const quizzes = getQuizzes();
+  // Usa o quizJSON default como template base
+  const newQuiz = {
+    id: generateId(),
+    name: name,
+    webhookUrl: '',
+    nodes: JSON.parse(JSON.stringify(quizJSON.nodes)),
+    results: JSON.parse(JSON.stringify(quizJSON.results)),
+    createdAt: new Date().toISOString()
+  };
+  quizzes.push(newQuiz);
+  saveQuizzes(quizzes);
+  return newQuiz;
+}
+
+function deleteQuiz(id) {
+  let quizzes = getQuizzes();
+  quizzes = quizzes.filter(q => q.id !== id);
+  saveQuizzes(quizzes);
+}
+
+function duplicateQuiz(id) {
+  const quizzes = getQuizzes();
+  const source = quizzes.find(q => q.id === id);
+  if (!source) return null;
+  const newQuiz = JSON.parse(JSON.stringify(source));
+  newQuiz.id = generateId();
+  newQuiz.name = newQuiz.name + ' (Cópia)';
+  newQuiz.createdAt = new Date().toISOString();
+  quizzes.push(newQuiz);
+  saveQuizzes(quizzes);
+  return newQuiz;
+}
