@@ -31,6 +31,7 @@ function updateInspector() {
     `;
   }
   
+  if (node.tag !== undefined) {
     html += `
       <div class="form-group">
         <label>Tag (ex: Passo 1)</label>
