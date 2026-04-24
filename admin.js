@@ -247,6 +247,7 @@ function renderQuizzes() {
         <button class="btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="editQuiz('${q.id}')">Editar Fluxo</button>
         <button class="btn-secondary" style="flex:1;padding:8px;font-size:12px;" onclick="copyQuizLink('${q.id}')">Copiar Link</button>
         <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="configWebhook('${q.id}')" title="Configurar Webhook">🔗</button>
+        ${q.webhookUrl ? `<button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="testWebhook('${q.id}')" title="Testar Webhook">⚡ Testar</button>` : ''}
         <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="actionDuplicateQuiz('${q.id}')" title="Duplicar">📑</button>
         <button class="btn-danger" style="padding:8px;font-size:12px;" onclick="actionDeleteQuiz('${q.id}')" title="Excluir">✕</button>
       </div>
@@ -292,6 +293,59 @@ function actionDuplicateQuiz(id) {
     duplicateQuiz(id);
     renderQuizzes();
     showToast('✅ Quiz duplicado!');
+  }
+}
+
+async function testWebhook(id) {
+  const quiz = getQuizById(id);
+  if (!quiz || !quiz.webhookUrl) return;
+  
+  const testData = {
+    evento: "teste_integracao",
+    data_hora: new Date().toISOString(),
+    quiz_id: quiz.id,
+    nome: "Lead Teste da Silva",
+    email: "teste@inlead.digital",
+    celular: "(11) 99999-9999",
+    empresa: "Empresa Fictícia",
+    perfil: "Empresa / Marca",
+    resultado_id: "result",
+    origem: "Painel Admin (Teste)"
+  };
+  
+  try {
+    const btn = event.currentTarget;
+    const oldText = btn.innerHTML;
+    btn.innerHTML = 'Enviando...';
+    btn.disabled = true;
+
+    // Usando text/plain para evitar bloqueio de CORS de preflight no Make/n8n/Zapier caso não suportem OPTIONS bem. 
+    // Grande parte dos webhooks entende JSON vindo de text/plain. Se precisar de application/json, tentamos 1o.
+    let response = await fetch(quiz.webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testData)
+    }).catch(async (e) => {
+      // Falhou com application/json (geralmente CORS Preflight Blocked). 
+      // Tentar com text/plain que envia direto (Simple Request).
+      console.warn("Falha no preflight CORS, tentando modo text/plain (fire and forget)...");
+      return fetch(quiz.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(testData)
+      });
+    });
+
+    btn.innerHTML = oldText;
+    btn.disabled = false;
+
+    if (response && response.ok) {
+      showToast('✅ Webhook enviado com sucesso! Verifique a ferramenta destino.');
+    } else {
+      alert(`⚠️ Atenção: A requisição foi feita, mas a ferramenta destino não retornou OK. (Status: ${response ? response.status : 'Desconhecido'}). O webhook ainda pode ter chegado, verifique lá.`);
+    }
+  } catch (err) {
+    alert(`Erro ao enviar webhook: A URL pode estar incorreta ou a ferramenta está bloqueando. Detalhe: ${err.message}`);
   }
 }
 

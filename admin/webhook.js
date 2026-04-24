@@ -13,6 +13,13 @@ async function sendWebhook(data, retries = 3, backoff = 1000) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
+    }).catch(async (e) => {
+      console.warn("CORS/Fetch falhou, tentando fallback text/plain...");
+      return fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(data)
+      });
     });
   } catch (err) {
     if (retries > 0) {
