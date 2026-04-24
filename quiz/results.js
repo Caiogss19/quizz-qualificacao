@@ -1,7 +1,7 @@
-import { state } from '../core/state.js';
-import { quizJSON } from './config.js';
+// import state removed
+// import quizJSON removed
 
-export function calculateResult() {
+function calculateResult() {
   const hints = state.hints;
   const profileAnswer = state.answers['perfil'];
 
@@ -27,6 +27,6 @@ export function calculateResult() {
   return 'community_discovery';
 }
 
-export function getResultData(resultId) {
+function getResultData(resultId) {
   return quizJSON.results[resultId] || quizJSON.results['community_discovery'];
 }

@@ -1,8 +1,3 @@
-import { builderState } from './builder-main.js';
-import { renderConnections } from './renderer.js';
-import { updateInspector } from '../editor/inspector.js';
-import { addConnection } from './conditions.js';
-
 let draggedNode = null;
 let dragStartX, dragStartY;
 
@@ -10,7 +5,7 @@ let dragStartX, dragStartY;
 let connectingFrom = null; // { nodeId, optionIdx }
 let tempLine = null;
 
-export function renderAllNodes() {
+function renderAllNodes() {
   const container = document.getElementById('canvasNodes');
   container.innerHTML = '';
 

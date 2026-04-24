@@ -1,16 +1,11 @@
-import { state, setLeadData, saveAnswer, getAnswers, pushHistory, popHistory, resetState } from '../core/state.js';
-import { saveResponse, getAllResponses } from '../core/storage.js';
-import { validateLeadForm } from './validation.js';
-import { calculateResult, getResultData } from './results.js';
-import { quizJSON } from './config.js';
-import { sendWebhook } from '../admin/webhook.js';
+// Dependencies loaded globally via index.html scripts
 
 const DOM = {
   quizCard: document.getElementById('quizCard'),
   progressBar: document.getElementById('progressBar')
 };
 
-export function initQuiz() {
+function initQuiz() {
   resetState();
   renderNode(state.currentNodeId);
 }

@@ -1,10 +1,7 @@
-import { builderState } from './builder-main.js';
-import { renderConnections } from './renderer.js';
-
 let isDragging = false;
 let startX, startY;
 
-export function initCanvas() {
+function initCanvas() {
   const wrapper = document.getElementById('canvasWrapper');
   const panZoom = document.getElementById('canvasPanZoom');
 

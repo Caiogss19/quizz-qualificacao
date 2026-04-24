@@ -1,12 +1,8 @@
-import { builderState } from '../flow/builder-main.js';
-import { renderAllNodes } from '../flow/nodes.js';
-import { renderConnections } from '../flow/renderer.js';
-
-export function initInspector() {
+function initInspector() {
   // init placeholder
 }
 
-export function updateInspector() {
+function updateInspector() {
   const container = document.getElementById('inspectorBody');
   const nodeId = builderState.selectedNodeId;
   const node = builderState.nodes[nodeId];

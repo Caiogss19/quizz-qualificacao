@@ -39,8 +39,13 @@
     <footer class="quiz-footer">
       <p>© 2026 Spark MAXX — <a href="admin.html" target="_blank">Admin</a></p>
     </footer>
-  </div>
-
-  <script type="module" src="quiz/engine.js"></script>
+  <!-- App Scripts (Sem módulos para rodar offline direto) -->
+  <script src="quiz/config.js"></script>
+  <script src="core/state.js"></script>
+  <script src="core/storage.js"></script>
+  <script src="quiz/validation.js"></script>
+  <script src="quiz/results.js"></script>
+  <script src="admin/webhook.js"></script>
+  <script src="quiz/engine.js"></script>
 </body>
 </html>

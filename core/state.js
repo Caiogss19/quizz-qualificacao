@@ -1,4 +1,4 @@
-export const state = {
+const state = {
   currentNodeId: 'start',
   lead: {},
   answers: {}, // stores key-value, where key is node id and value is selected text/value
@@ -9,31 +9,31 @@ export const state = {
   history: [] // array of node ids visited to allow 'back'
 };
 
-export function setLeadData(data) {
+function setLeadData(data) {
   state.lead = { ...state.lead, ...data };
   if (!state.startTime) state.startTime = Date.now();
 }
 
-export function saveAnswer(nodeId, value, hint) {
+function saveAnswer(nodeId, optionValue, optionTag) {
   state.answers[nodeId] = value;
   if (hint) {
     state.hints.push(hint);
   }
 }
 
-export function getAnswers() {
+function getAnswers() {
   return state.answers;
 }
 
-export function pushHistory(nodeId) {
+function pushHistory(nodeId) {
   state.history.push(nodeId);
 }
 
-export function popHistory() {
+function popHistory() {
   return state.history.pop();
 }
 
-export function resetState() {
+function resetState() {
   state.currentNodeId = 'start';
   state.lead = {};
   state.answers = {};

@@ -1,12 +1,5 @@
-import { quizJSON } from '../quiz/config.js';
-import { initCanvas } from './flow-canvas.js';
-import { renderAllNodes } from './nodes.js';
-import { renderConnections } from './renderer.js';
-import { initInspector } from '../editor/inspector.js';
-import { addNewNode } from './conditions.js';
-
 // Global builder state - accessible by all modules
-export const builderState = {
+const builderState = {
   nodes: {},
   connections: [],
   selectedNodeId: null,

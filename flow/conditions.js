@@ -1,14 +1,10 @@
-import { builderState } from './builder-main.js';
-import { renderAllNodes } from './nodes.js';
-import { renderConnections } from './renderer.js';
-
 /**
  * Conditions module:
  * Handles the logic for conditional connections.
  * Types: "always" | "if_answer" | "if_score"
  */
 
-export const CONDITION_TYPES = {
+const CONDITION_TYPES = {
   ALWAYS: 'always',
   IF_ANSWER: 'if_answer',
   IF_SCORE: 'if_score'
@@ -21,7 +17,7 @@ export const CONDITION_TYPES = {
  * @param {number|null} fromOption - Option index (null for node-level connection)
  * @param {object} condition - { type, value } 
  */
-export function addConnection(fromNodeId, toNodeId, fromOption = null, condition = { type: CONDITION_TYPES.ALWAYS }) {
+function addConnection(fromNodeId, toNodeId, fromOption = null, condition = { type: CONDITION_TYPES.ALWAYS }) {
   // Remove existing connection from same source
   builderState.connections = builderState.connections.filter(c => {
     if (fromOption !== null) {
@@ -51,7 +47,7 @@ export function addConnection(fromNodeId, toNodeId, fromOption = null, condition
 /**
  * Remove a connection.
  */
-export function removeConnection(fromNodeId, fromOption = null) {
+function removeConnection(fromNodeId, fromOption = null) {
   builderState.connections = builderState.connections.filter(c => {
     if (fromOption !== null) {
       return !(c.from === fromNodeId && c.fromOption === fromOption);
@@ -65,7 +61,7 @@ export function removeConnection(fromNodeId, fromOption = null) {
  * Add a new empty node to the builder canvas.
  * @param {string} type - Node type (question|lead_form|loading|result)
  */
-export function addNewNode(type = 'question') {
+function addNewNode(type = 'question') {
   const id = `node_${Date.now()}`;
   const newNode = {
     id,

@@ -1,6 +1,4 @@
-import { builderState } from './builder-main.js';
-
-export function renderConnections() {
+function renderConnections() {
   const svg = document.getElementById('canvasConnections');
   if (!svg) return;
   svg.innerHTML = ''; // Clear existing lines

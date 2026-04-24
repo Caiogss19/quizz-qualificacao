@@ -1,4 +1,4 @@
-export function validateLeadForm(fieldsConfig) {
+function validateLeadForm(fieldsConfig) {
   let valid = true;
   fieldsConfig.forEach(f => {
     const input = document.getElementById(f.id);

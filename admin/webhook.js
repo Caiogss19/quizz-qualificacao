@@ -1,4 +1,4 @@
-export async function sendWebhook(data, retries = 3, backoff = 1000) {
+async function sendWebhook(data, retries = 3, backoff = 1000) {
   const webhookUrl = localStorage.getItem('sparkmaxx_webhook_url'); // The admin will set this
   if (!webhookUrl) return;
 

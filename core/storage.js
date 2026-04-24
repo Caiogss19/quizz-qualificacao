@@ -1,8 +1,8 @@
-import { state } from './state.js';
+// Removed import state
 
 const DB_KEY = 'quiz_diagnostico_responses';
 
-export function checkStorageQuota() {
+function checkStorageQuota() {
   try {
     let total = 0;
     for (let x in localStorage) {
@@ -17,7 +17,7 @@ export function checkStorageQuota() {
   } catch(e) {}
 }
 
-export function saveResponse(data) {
+function saveResponse(data) {
   const existing = getAllResponses();
   const entry = {
     id: generateId(),
@@ -38,7 +38,7 @@ export function saveResponse(data) {
   return entry;
 }
 
-export function getAllResponses() {
+function getAllResponses() {
   try { 
     return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); 
   } catch { 
@@ -46,6 +46,6 @@ export function getAllResponses() {
   }
 }
 
-export function generateId() {
+function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
 }

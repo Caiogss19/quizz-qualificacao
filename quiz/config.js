@@ -1,4 +1,4 @@
-export const quizJSON = {
+const quizJSON = {
   id: "sparkmaxx_diagnostico",
   title: "Diagnóstico Spark MAXX",
   nodes: {
