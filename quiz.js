@@ -233,9 +233,31 @@ function generateId() {
 // DOM HELPERS
 // ===========================
 function showStep(step) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(`step-${step}`);
-  if (el) el.classList.add('active');
+  const current = document.querySelector('.step.active');
+  if (current) {
+    const currentNum = parseInt(current.dataset.step);
+    if (step > currentNum) {
+      current.classList.add('exit-left');
+      setTimeout(() => current.classList.remove('exit-left', 'active'), 300);
+    } else {
+      current.classList.remove('active');
+    }
+  }
+
+  setTimeout(() => {
+    const el = document.getElementById(`step-${step}`);
+    if (el) {
+      if (document.querySelector('.step.active')) {
+        document.querySelector('.step.active').classList.remove('active');
+      }
+      el.classList.add('active');
+      if (current && step < parseInt(current.dataset.step)) {
+        el.classList.add('from-back');
+        setTimeout(() => el.classList.remove('from-back'), 400);
+      }
+    }
+  }, current ? 300 : 0);
+
   state.currentStep = step;
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -244,6 +266,35 @@ function showStep(step) {
 function updateProgress() {
   const pct = (state.currentStep / state.totalSteps) * 100;
   document.getElementById('progressBar').style.width = pct + '%';
+  
+  // Update Stepper
+  document.querySelectorAll('.stepper-step').forEach((el, index) => {
+    if (index < state.currentStep) {
+      el.classList.add('done');
+      el.classList.remove('active');
+    } else if (index === state.currentStep) {
+      el.classList.add('active');
+      el.classList.remove('done');
+    } else {
+      el.classList.remove('done', 'active');
+    }
+  });
+  
+  document.querySelectorAll('.stepper-line').forEach((el, index) => {
+    if (index < state.currentStep) {
+      el.classList.add('done');
+    } else {
+      el.classList.remove('done');
+    }
+  });
+}
+
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
 }
 
 function setNextEnabled(id, enabled) {
@@ -288,9 +339,16 @@ function validateLeadForm() {
   ].forEach(f => {
     const input = document.getElementById(f.id);
     const errEl = document.getElementById(f.errorId);
+    const checkEl = document.getElementById(`check-${f.id}`);
+    
     let ok = input.value.trim().length > 0;
     if (f.id === 'email' && ok) ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+    
     input.classList.toggle('error', !ok);
+    input.classList.toggle('valid', ok);
+    
+    if (checkEl) checkEl.classList.toggle('visible', ok);
+    
     errEl.textContent = ok ? '' : f.msg;
     errEl.classList.toggle('visible', !ok);
     if (!ok) valid = false;
@@ -346,6 +404,9 @@ function buildDynamicStep(stepNum) {
       <span class="option-letter">${'ABCDE'[i]}</span>
       <span class="option-icon">${opt.icon}</span>
       <span class="option-text">${opt.text}</span>
+      <span class="option-check-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
     `;
     btn.addEventListener('click', function() {
       container.querySelectorAll('.option-card').forEach(o => o.classList.remove('selected'));
@@ -401,7 +462,53 @@ function runAnalysis() {
     referrer: document.referrer || 'direto',
     url_origem: window.location.href
   });
-  setTimeout(() => { buildResult(); showStep(5); }, 2400);
+  
+  const msgs = [
+    "Analisando seu perfil...",
+    "Cruzando dados das respostas...",
+    "Buscando a melhor solução...",
+    "Preparando seu diagnóstico..."
+  ];
+  let msgIdx = 0;
+  const titleEl = document.getElementById('analyzingTitle');
+  
+  const msgInterval = setInterval(() => {
+    msgIdx++;
+    if (msgIdx < msgs.length && titleEl) {
+      titleEl.style.opacity = 0;
+      setTimeout(() => {
+        titleEl.textContent = msgs[msgIdx];
+        titleEl.style.opacity = 1;
+      }, 400);
+    }
+  }, 1200);
+
+  setTimeout(() => {
+    clearInterval(msgInterval);
+    buildResult(); 
+    showStep(5);
+    showToast("✅ Diagnóstico salvo com sucesso!");
+    
+    // Animate match bar
+    setTimeout(() => {
+      const pct = Math.floor(Math.random() * (98 - 85 + 1)) + 85;
+      const fill = document.getElementById('matchBarFill');
+      const text = document.getElementById('matchPct');
+      if (fill && text) {
+        fill.style.width = pct + '%';
+        
+        let currentPct = 0;
+        const iv = setInterval(() => {
+          currentPct += 2;
+          if (currentPct >= pct) {
+            currentPct = pct;
+            clearInterval(iv);
+          }
+          text.textContent = currentPct + '%';
+        }, 30);
+      }
+    }, 800);
+  }, 4800);
 }
 
 // ===========================
@@ -414,6 +521,16 @@ function buildResult() {
   document.getElementById('resultBadge').textContent = result.badge;
   document.getElementById('resultTitle').textContent = result.title;
   document.getElementById('resultDescription').textContent = result.description;
+  
+  const iconMap = {
+    'community_discovery': '🔍',
+    'sprout_social': '📊',
+    'monitoring_insights': '👁️',
+    'cultural_influencer': '🎨',
+    'professional_creator': '🚀'
+  };
+  const avatar = document.getElementById('resultAvatar');
+  if (avatar) avatar.textContent = iconMap[state.resultadoId] || '✨';
 
   const container = document.getElementById('resultSolutions');
   container.innerHTML = result.solutions.map(s => `
@@ -425,6 +542,12 @@ function buildResult() {
 
   document.getElementById('btnCTA').textContent = result.cta;
   document.getElementById('btnCTA').href = 'https://inlead.digital';
+  
+  const btnWpp = document.getElementById('btnWhatsApp');
+  if (btnWpp) {
+    const text = encodeURIComponent(`Acabei de fazer meu diagnóstico! Meu perfil é *${result.title}*.\nFaça o seu também: ${window.location.origin}`);
+    btnWpp.href = `https://api.whatsapp.com/send?text=${text}`;
+  }
 }
 
 function initStep5() {
@@ -437,8 +560,14 @@ function initStep5() {
     state.lead = {};
     document.getElementById('leadForm').reset();
     document.querySelectorAll('.option-card').forEach(o => o.classList.remove('selected'));
-    document.querySelectorAll('.field-error').forEach(e => { e.textContent = ''; e.classList.remove('visible'); });
-    document.querySelectorAll('input').forEach(i => i.classList.remove('error'));
+    document.querySelectorAll('.input-check').forEach(e => e.classList.remove('visible'));
+    document.querySelectorAll('input').forEach(i => i.classList.remove('error', 'valid'));
+    
+    const fill = document.getElementById('matchBarFill');
+    const text = document.getElementById('matchPct');
+    if (fill) fill.style.width = '0%';
+    if (text) text.textContent = '0%';
+    
     setNextEnabled('next-1', false);
     setNextEnabled('next-2', false);
     setNextEnabled('next-3', false);
