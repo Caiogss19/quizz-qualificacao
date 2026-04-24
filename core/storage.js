@@ -2,6 +2,21 @@ import { state } from './state.js';
 
 const DB_KEY = 'quiz_diagnostico_responses';
 
+export function checkStorageQuota() {
+  try {
+    let total = 0;
+    for (let x in localStorage) {
+      if (localStorage.hasOwnProperty(x)) {
+        total += ((localStorage[x].length + x.length) * 2);
+      }
+    }
+    const limit = 4 * 1024 * 1024; // 4MB
+    if (total > limit) {
+      console.warn(`⚠️ Aviso de Quota do Storage: já foram usados ${(total / 1024 / 1024).toFixed(2)} MB. Próximo do limite de 5MB.`);
+    }
+  } catch(e) {}
+}
+
 export function saveResponse(data) {
   const existing = getAllResponses();
   const entry = {
@@ -12,9 +27,13 @@ export function saveResponse(data) {
   };
   existing.push(entry);
   try { 
+    checkStorageQuota();
     localStorage.setItem(DB_KEY, JSON.stringify(existing)); 
   } catch(e) { 
     console.error('Storage error:', e); 
+    if (e.name === 'QuotaExceededError') {
+      alert("O limite de armazenamento do seu navegador foi atingido.");
+    }
   }
   return entry;
 }

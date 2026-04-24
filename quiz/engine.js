@@ -1,8 +1,9 @@
 import { state, setLeadData, saveAnswer, getAnswers, pushHistory, popHistory, resetState } from '../core/state.js';
-import { saveResponse } from '../core/storage.js';
+import { saveResponse, getAllResponses } from '../core/storage.js';
 import { validateLeadForm } from './validation.js';
 import { calculateResult, getResultData } from './results.js';
 import { quizJSON } from './config.js';
+import { sendWebhook } from '../admin/webhook.js';
 
 const DOM = {
   quizCard: document.getElementById('quizCard'),
@@ -37,17 +38,22 @@ function renderNode(nodeId) {
       goToNode(node.next);
     }, node.duration || 2400);
   } else if (node.type === 'result') {
-    state.completedAt = Date.now();
-    state.resultadoId = calculateResult();
-    
-    // Auto-save the response
-    saveResponse({
-      ...state.lead,
-      ...getAnswers(),
-      resultado_id: state.resultadoId,
-      user_agent: navigator.userAgent,
-      url_origem: window.location.href
-    });
+    if (!state.resultadoId) {
+      state.completedAt = Date.now();
+      state.resultadoId = calculateResult();
+      
+      const responseData = {
+        ...state.lead,
+        ...getAnswers(),
+        resultado_id: state.resultadoId,
+        user_agent: navigator.userAgent,
+        url_origem: window.location.href
+      };
+
+      // Auto-save the response
+      saveResponse(responseData);
+      sendWebhook(responseData);
+    }
 
     stepEl.appendChild(renderResult(node));
   }
@@ -115,11 +121,38 @@ function renderLeadForm(node) {
     
     if (celularInput) {
       celularInput.addEventListener('input', function() {
-        let v = this.value.replace(/\\D/g, '').substr(0, 11);
-        if (v.length > 6) v = \`(\${v.substr(0,2)}) \${v.substr(2,5)}-\${v.substr(7)}\`;
-        else if (v.length > 2) v = \`(\${v.substr(0,2)}) \${v.substr(2)}\`;
-        else if (v.length > 0) v = \`(\${v}\`;
+        let v = this.value.replace(/\D/g, '').substr(0, 11);
+        if (v.length > 6) v = `(${v.substr(0,2)}) ${v.substr(2,5)}-${v.substr(7)}`;
+        else if (v.length > 2) v = `(${v.substr(0,2)}) ${v.substr(2)}`;
+        else if (v.length > 0) v = `(${v}`;
         this.value = v;
+      });
+    }
+
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+      emailInput.addEventListener('blur', () => {
+        const val = emailInput.value.trim();
+        if (!val) return;
+        const responses = getAllResponses();
+        const found = responses.find(r => r.email === val);
+        if (found) {
+          let btn = document.getElementById('btnPreviousResult');
+          if (!btn) {
+            btn = document.createElement('button');
+            btn.id = 'btnPreviousResult';
+            btn.className = 'btn-secondary';
+            btn.style.marginTop = '10px';
+            btn.style.width = '100%';
+            btn.textContent = 'E-mail já cadastrado. Ver resultado anterior';
+            btn.type = 'button';
+            btn.onclick = () => {
+              state.resultadoId = found.resultado_id;
+              goToNode('result');
+            };
+            form.appendChild(btn);
+          }
+        }
       });
     }
 

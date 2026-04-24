@@ -5,10 +5,17 @@ export function validateLeadForm(fieldsConfig) {
     const errEl = document.getElementById(`${f.id}-error`);
     if (!input || !errEl) return;
     
-    let ok = input.value.trim().length > 0;
-    if (f.id === 'email' && ok) {
-      ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+    const value = input.value.trim();
+    let ok = value.length > 0;
+    
+    if (ok) {
+      if (f.id === 'email') {
+        ok = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+      } else if (f.id === 'celular') {
+        ok = /^\(\d{2}\)\s\d{5}-\d{4}$/.test(value);
+      }
     }
+    
     input.classList.toggle('error', !ok);
     errEl.textContent = ok ? '' : f.errorMsg;
     errEl.classList.toggle('visible', !ok);

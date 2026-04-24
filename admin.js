@@ -102,18 +102,53 @@ function profileCounts(data) {
 // ===========================
 // LOGIN
 // ===========================
+async function hashPassword(pass) {
+  const msgUint8 = new TextEncoder().encode(pass);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkPassword(input) {
+  const expectedHash = await hashPassword(ADMIN_PASS);
+  const inputHash = await hashPassword(input);
+  return expectedHash === inputHash;
+}
+
+const LOCKOUT_KEY = 'admin_lockout';
+const ATTEMPTS_KEY = 'admin_attempts';
+
 function initLogin() {
-  document.getElementById('loginForm').addEventListener('submit', e => {
+  document.getElementById('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
     const pass = document.getElementById('adminPassword').value;
     const errEl = document.getElementById('loginError');
-    if (pass === ADMIN_PASS) {
+    
+    // Check lockout
+    const lockoutUntil = localStorage.getItem(LOCKOUT_KEY);
+    if (lockoutUntil && Date.now() < parseInt(lockoutUntil)) {
+      const remaining = Math.ceil((parseInt(lockoutUntil) - Date.now()) / 60000);
+      errEl.textContent = `Muitas tentativas. Bloqueado por ${remaining} min.`;
+      errEl.classList.add('visible');
+      return;
+    }
+
+    if (await checkPassword(pass)) {
+      localStorage.removeItem(ATTEMPTS_KEY);
+      localStorage.removeItem(LOCKOUT_KEY);
       sessionStorage.setItem('quiz_admin_auth', '1');
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       loadAdminPanel();
     } else {
-      errEl.textContent = 'Senha incorreta.';
+      let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0') + 1;
+      localStorage.setItem(ATTEMPTS_KEY, attempts.toString());
+      if (attempts >= 5) {
+        localStorage.setItem(LOCKOUT_KEY, (Date.now() + 15 * 60 * 1000).toString());
+        errEl.textContent = 'Muitas tentativas. Bloqueado por 15 min.';
+      } else {
+        errEl.textContent = `Senha incorreta. Tentativas restantes: ${5 - attempts}`;
+      }
       errEl.classList.add('visible');
       document.getElementById('adminPassword').value = '';
     }
