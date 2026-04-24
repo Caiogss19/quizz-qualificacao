@@ -159,13 +159,108 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById(`nav-${tab}`).classList.add('active');
   document.getElementById(`tab-${tab}`).classList.add('active');
-  const titles = { overview: 'Visão Geral', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados' };
+  const titles = { overview: 'Visão Geral', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados', editor: 'Construtor de Quiz', ia: 'Gerador com IA' };
   document.getElementById('headerTitle').textContent = titles[tab] || '';
   if (tab === 'overview') renderOverview();
   if (tab === 'responses') renderResponses();
   if (tab === 'analytics') renderAnalytics();
   if (tab === 'export') renderExport();
+  if (tab === 'editor') initEditorTab();
 }
+
+// ===========================
+// NOVO: EDITOR & IA LOGIC
+// ===========================
+function initEditorTab() {
+  const el = document.getElementById('jsonEditor');
+  if (el && !el.value) {
+    // Carrega um modelo padrão se estiver vazio
+    const defaultConfig = {
+      nome_quiz: "Meu Quiz Dinâmico",
+      campos_lead: ["nome", "email", "celular"],
+      perguntas: [
+        {
+          titulo: "Qual perfil descreve melhor você?",
+          opcoes: [
+            { texto: "Empresa", icone: "🏢", peso_resultado: "B2B" },
+            { texto: "Creator", icone: "🎥", peso_resultado: "B2C" }
+          ]
+        }
+      ],
+      resultados: [
+        { id: "B2B", titulo: "Foco em Empresas", descricao: "Sua solução é..." },
+        { id: "B2C", titulo: "Foco em Conteúdo", descricao: "Sua solução é..." }
+      ]
+    };
+    // Tenta pegar do localStorage primeiro
+    const saved = localStorage.getItem('quiz_dynamic_config');
+    if (saved) {
+      el.value = JSON.stringify(JSON.parse(saved), null, 2);
+    } else {
+      el.value = JSON.stringify(defaultConfig, null, 2);
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnSaveConfig = document.getElementById('btnSaveConfig');
+  if (btnSaveConfig) {
+    btnSaveConfig.addEventListener('click', () => {
+      try {
+        const jsonStr = document.getElementById('jsonEditor').value;
+        JSON.parse(jsonStr); // valida o json
+        localStorage.setItem('quiz_dynamic_config', jsonStr);
+        showToast('✅ Configurações salvas com sucesso!');
+      } catch (e) {
+        alert('Erro: O JSON inserido é inválido. Verifique a formatação.');
+      }
+    });
+  }
+
+  const btnGenerateIA = document.getElementById('btnGenerateIA');
+  if (btnGenerateIA) {
+    btnGenerateIA.addEventListener('click', () => {
+      const prompt = document.getElementById('iaPrompt').value;
+      if (!prompt.trim()) return alert('Digite uma ideia no prompt!');
+      
+      const status = document.getElementById('iaStatus');
+      status.style.display = 'inline-block';
+      btnGenerateIA.disabled = true;
+      
+      // Simulação da chamada de API da IA
+      setTimeout(() => {
+        status.style.display = 'none';
+        btnGenerateIA.disabled = false;
+        
+        const iaGeneratedConfig = {
+          nome_quiz: "Quiz Gerado por IA",
+          prompt_original: prompt,
+          campos_lead: ["nome", "email", "telefone"],
+          perguntas: [
+            {
+              titulo: "Qual o seu principal desafio hoje?",
+              opcoes: [
+                { texto: "Atrair clientes", icone: "🧲", peso_resultado: "MKT" },
+                { texto: "Reter clientes", icone: "🤝", peso_resultado: "CX" }
+              ]
+            }
+          ],
+          resultados: [
+            { id: "MKT", titulo: "Estratégia de Aquisição", descricao: "Você precisa de tráfego e conversão..." },
+            { id: "CX", titulo: "Estratégia de Retenção", descricao: "Foque na experiência e no pós-venda..." }
+          ]
+        };
+        
+        localStorage.setItem('quiz_dynamic_config', JSON.stringify(iaGeneratedConfig));
+        document.getElementById('jsonEditor').value = JSON.stringify(iaGeneratedConfig, null, 2);
+        
+        showToast('✨ Quiz criado com sucesso pela IA!');
+        switchTab('editor'); // Vai para a aba do editor para ver o resultado
+        
+      }, 3000);
+    });
+  }
+});
 
 // ===========================
 // LOAD

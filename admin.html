@@ -51,6 +51,15 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar
       </a>
+      <div style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+      <a href="#" class="nav-item" id="nav-editor" data-tab="editor">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Editor de Quiz
+      </a>
+      <a href="#" class="nav-item" id="nav-ia" data-tab="ia">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Gerador com IA
+      </a>
     </nav>
     <div class="sidebar-footer">
       <a href="index.html" target="_blank" class="sidebar-link">Ver quiz →</a>
@@ -258,6 +267,46 @@
         <h3>⚠️ Zona de perigo</h3>
         <p>Apagar todos os dados é irreversível. Faça um export antes de continuar.</p>
         <button class="btn-danger" id="btnClearAll">Apagar todos os dados</button>
+      </div>
+    </section>
+
+    <!-- EDITOR TAB -->
+    <section class="tab-content" id="tab-editor">
+      <div class="page-header">
+        <h1>Construtor de Quiz</h1>
+        <p class="page-desc">Customize as perguntas, opções e configurações gerais do quiz (JSON dinâmico).</p>
+      </div>
+      
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+          <h2 class="card-title" style="margin: 0;">Configuração Atual</h2>
+          <button class="btn-primary" id="btnSaveConfig" style="padding: 8px 16px;">Salvar Configurações</button>
+        </div>
+        <textarea id="jsonEditor" style="width: 100%; height: 400px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); font-family: monospace; padding: 16px; border-radius: var(--radius-sm); resize: vertical;"></textarea>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">O editor visual por blocos será implementado em breve. Por enquanto, você pode alterar diretamente a estrutura JSON.</p>
+      </div>
+    </section>
+
+    <!-- IA GENERATOR TAB -->
+    <section class="tab-content" id="tab-ia">
+      <div class="page-header">
+        <h1>Gerador de Quiz com IA</h1>
+        <p class="page-desc">Descreva a sua ideia de quiz e a inteligência artificial criará a estrutura completa para você.</p>
+      </div>
+      
+      <div class="card">
+        <h2 class="card-title">Prompt Criativo</h2>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <textarea id="iaPrompt" placeholder="Ex: Crie um quiz para uma clínica de estética com o objetivo de vender pacotes de Botox. O público são mulheres de 30 a 50 anos." style="width: 100%; height: 120px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); font-family: var(--font); font-size: 14px; padding: 16px; border-radius: var(--radius-sm); resize: vertical; outline: none;"></textarea>
+          
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <button class="btn-primary" id="btnGenerateIA" style="padding: 12px 24px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              Gerar Novo Quiz
+            </button>
+            <span id="iaStatus" style="font-size: 13px; color: var(--accent); font-weight: 500; display: none;">⏳ A IA está pensando e construindo o quiz... (Isso pode levar alguns segundos)</span>
+          </div>
+        </div>
       </div>
     </section>
 

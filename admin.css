@@ -4,29 +4,31 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:           #0d1520;
-  --bg-sidebar:   #1F2C41;
-  --bg-card:      #192638;
-  --bg-hover:     rgba(39, 53, 81, 0.8);
-  --bg-input:     rgba(39, 53, 81, 0.4);
-  --border:       rgba(95, 125, 158, 0.15);
-  --border-light: rgba(95, 125, 158, 0.28);
-  --text-primary: #DFE8F2;
-  --text-secondary: #7A9BB8;
-  --text-muted:   #4a6580;
-  --accent:       #B3C5D8;
-  --accent-dim:   rgba(95, 125, 158, 0.12);
-  --success: #4ade80;
+  --bg:           #0a0a0f;
+  --bg-sidebar:   #0f0f1a;
+  --bg-card:      #13131f;
+  --bg-hover:     #1a1a2e;
+  --bg-input:     #0a0a0f;
+  --border:       #1e1e30;
+  --border-light: #3a3a5c;
+  --text-primary: #ffffff;
+  --text-secondary: #9090b0;
+  --text-muted:   #505070;
+  --accent:       #7c3aed;
+  --accent-2:     #4f46e5;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #06b6d4 100%);
+  --accent-dim:   rgba(124, 58, 237, 0.12);
+  --success: #34d399;
   --warning: #fbbf24;
   --danger:  #f87171;
-  --info:    #60a5fa;
-  --font: 'Space Grotesk', 'Inter', sans-serif;
-  --sidebar-w: 220px;
-  --header-h: 60px;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.4);
-  --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  --info:    #06b6d4;
+  --font: 'Inter', sans-serif;
+  --sidebar-w: 240px;
+  --header-h: 68px;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.6);
+  --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
 html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
@@ -59,7 +61,14 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
   margin-bottom: 4px;
 }
 
-.login-logo span { font-weight: 900; text-transform: uppercase; }
+.login-logo span { 
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900; 
+  text-transform: uppercase; 
+}
 
 .login-sub {
   font-size: 13px;
@@ -110,8 +119,8 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
 .login-btn {
   width: 100%;
   padding: 13px;
-  background: var(--accent);
-  color: #121C2B;
+  background: var(--text-primary);
+  color: #0a0a0f;
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font);
@@ -156,7 +165,14 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
   margin-bottom: 32px;
 }
 
-.sidebar-logo span { font-weight: 900; text-transform: uppercase; }
+.sidebar-logo span { 
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900; 
+  text-transform: uppercase; 
+}
 
 .sidebar-nav {
   display: flex;
@@ -408,9 +424,10 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
 
 .profile-bar-fill {
   height: 100%;
-  background: var(--accent);
+  background: var(--accent-gradient);
   border-radius: 100px;
   transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 0 12px rgba(124,58,237,0.5);
 }
 
 .profile-bar-pct {
@@ -672,9 +689,10 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
 
 .bar-fill {
   height: 100%;
-  background: var(--accent);
+  background: var(--accent-gradient);
   border-radius: 100px;
   transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 0 10px rgba(124,58,237,0.4);
 }
 
 .bar-count { font-size: 11px; font-weight: 700; color: var(--text-muted); min-width: 20px; text-align: right; }
