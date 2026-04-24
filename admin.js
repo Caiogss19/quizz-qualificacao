@@ -2,7 +2,6 @@
 // ADMIN PANEL JAVASCRIPT
 // ===========================
 
-const DB_KEY = 'quiz_diagnostico_responses';
 const ADMIN_PASS = 'admin@2026';
 const ROWS_PER_PAGE = 15;
 
@@ -14,9 +13,6 @@ let currentTab = 'overview';
 // ===========================
 // UTILS
 // ===========================
-function getAllResponses() {
-  try { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); } catch { return []; }
-}
 
 function formatDate(iso) {
   if (!iso) return '—';
