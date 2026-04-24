@@ -13,7 +13,9 @@ function updateInspector() {
   }
 
   let html = `
-    <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:var(--text-main);">🔧 Nó: <code style="background:var(--bg-dark);padding:2px 6px;border-radius:3px;font-size:11px;">${node.id}</code></div>
+    <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:var(--text-main); display:flex; justify-content:space-between; align-items:center;">
+      <span>🔧 Nó: <code style="background:var(--bg-dark);padding:2px 6px;border-radius:3px;font-size:11px;">${node.id}</code></span>
+    </div>
     <div class="form-group">
       <label>Título</label>
       <input type="text" id="propTitle" value="${escHtml(node.title || '')}" placeholder="Título do nó" />
@@ -25,6 +27,15 @@ function updateInspector() {
       <div class="form-group">
         <label>Subtítulo</label>
         <input type="text" id="propSubtitle" value="${escHtml(node.subtitle || '')}" placeholder="Subtítulo" />
+      </div>
+    `;
+  }
+  
+  if (node.tag !== undefined) {
+    html += `
+      <div class="form-group">
+        <label>Tag (ex: Passo 1)</label>
+        <input type="text" id="propTag" value="${escHtml(node.tag || '')}" placeholder="Tag" />
       </div>
     `;
   }
@@ -55,19 +66,30 @@ function updateInspector() {
     `;
     node.options.forEach((opt, i) => {
       html += `
-        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);">
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Opção ${String.fromCharCode(65 + i)}</div>
-          <div class="form-group" style="margin-bottom:6px;">
-            <label>Texto</label>
-            <input type="text" id="propOptText_${i}" value="${escHtml(opt.text || '')}" />
+        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <div style="font-size:11px;color:var(--text-muted);">Opção ${String.fromCharCode(65 + i)}</div>
+            <button class="btn-remove-opt" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
           </div>
-          <div class="form-group" style="margin-bottom:6px;">
-            <label>Tag / Hint</label>
-            <input type="text" id="propOptHint_${i}" value="${escHtml(opt.hint || '')}" placeholder="ex: discovery, roi, monitoring..." />
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="margin-bottom:6px; width:50px; flex-shrink:0;">
+              <label>Ícone</label>
+              <input type="text" id="propOptIcon_${i}" value="${escHtml(opt.icon || '')}" placeholder="Emoji" />
+            </div>
+            <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
+              <label>Texto</label>
+              <input type="text" id="propOptText_${i}" value="${escHtml(opt.text || '')}" />
+            </div>
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label>Pontuação (peso)</label>
-            <input type="number" id="propOptScore_${i}" value="${opt.score || 0}" min="0" max="100" />
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="margin-bottom:0; flex-grow:1;">
+              <label>Tag / Hint</label>
+              <input type="text" id="propOptHint_${i}" value="${escHtml(opt.hint || '')}" placeholder="ex: discovery, roi..." />
+            </div>
+            <div class="form-group" style="margin-bottom:0; width:60px; flex-shrink:0;">
+              <label>Valor</label>
+              <input type="number" id="propOptScore_${i}" value="${opt.score || 0}" min="0" max="100" />
+            </div>
           </div>
         </div>
       `;
@@ -76,17 +98,27 @@ function updateInspector() {
     html += `<button id="btnAddOption" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Opção</button>`;
   }
 
+  // Delete node button
+  if (nodeId !== 'start') {
+    html += `
+      <hr style="border:0;border-top:1px solid var(--border);margin:24px 0 16px;" />
+      <button id="btnDeleteNode" style="width:100%;padding:10px;background:rgba(255,0,0,0.1);border:1px solid rgba(255,0,0,0.2);color:#ff4444;border-radius:6px;font-size:13px;cursor:pointer;font-weight:600;">Excluir Nó</button>
+    `;
+  }
+
   container.innerHTML = html;
 
   // --- Listeners ---
 
   bindInput('propTitle', val => { node.title = val; refresh(node.id); });
   bindInput('propSubtitle', val => { node.subtitle = val; refresh(node.id); });
-  bindInput('propBtn', val => { node.buttonText = val; });
-  bindInput('propDuration', val => { node.duration = parseInt(val); });
+  bindInput('propTag', val => { node.tag = val; refresh(node.id); });
+  bindInput('propBtn', val => { node.buttonText = val; refresh(node.id); });
+  bindInput('propDuration', val => { node.duration = parseInt(val); refresh(node.id); });
 
   if (node.options) {
     node.options.forEach((opt, i) => {
+      bindInput(`propOptIcon_${i}`, val => { opt.icon = val; refresh(node.id); });
       bindInput(`propOptText_${i}`, val => { opt.text = val; refresh(node.id); });
       bindInput(`propOptHint_${i}`, val => { opt.hint = val; refresh(node.id); });
       bindInput(`propOptScore_${i}`, val => { opt.score = parseInt(val) || 0; });
@@ -96,11 +128,48 @@ function updateInspector() {
     if (addOptBtn) {
       addOptBtn.addEventListener('click', () => {
         const idx = node.options.length;
-        node.options.push({ text: `Opção ${String.fromCharCode(65 + idx)}`, hint: '', score: 0, next: null });
+        node.options.push({ text: `Nova Opção`, hint: '', score: 0, next: null, icon: '✨' });
         updateInspector();
-        renderAllNodes();
+        refresh(node.id);
       });
     }
+
+    document.querySelectorAll('.btn-remove-opt').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.target.dataset.idx);
+        // Remove connections from this option
+        builderState.connections = builderState.connections.filter(c => !(c.from === nodeId && c.fromOption === idx));
+        // Shift remaining connection option indexes
+        builderState.connections.forEach(c => {
+          if (c.from === nodeId && c.fromOption > idx) {
+            c.fromOption--;
+          }
+        });
+        node.options.splice(idx, 1);
+        updateInspector();
+        refresh(node.id);
+      });
+    });
+  }
+
+  const btnDeleteNode = document.getElementById('btnDeleteNode');
+  if (btnDeleteNode) {
+    btnDeleteNode.addEventListener('click', () => {
+      if(confirm('Excluir este nó?')) {
+        delete builderState.nodes[nodeId];
+        // Remove all connections from/to this node
+        builderState.connections = builderState.connections.filter(c => c.from !== nodeId && c.to !== nodeId);
+        // Also remove references in other nodes
+        Object.values(builderState.nodes).forEach(n => {
+          if (n.next === nodeId) n.next = null;
+          if (n.options) n.options.forEach(o => { if (o.next === nodeId) o.next = null; });
+        });
+        builderState.selectedNodeId = null;
+        updateInspector();
+        renderAllNodes();
+        renderConnections();
+      }
+    });
   }
 }
 
@@ -112,7 +181,6 @@ function bindInput(id, onChange) {
 function refresh(nodeId) {
   renderAllNodes();
   renderConnections();
-  // Keep selection
   const el = document.getElementById(`node-${nodeId}`);
   if (el) el.classList.add('selected');
 }

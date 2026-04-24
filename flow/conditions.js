@@ -68,6 +68,7 @@ function addNewNode(type = 'question') {
     type,
     title: 'Novo Nó',
     subtitle: 'Clique para editar',
+    tag: 'Novo',
     editor: {
       x: Math.random() * 400 + 200,
       y: Math.random() * 300 + 100
@@ -76,8 +77,8 @@ function addNewNode(type = 'question') {
 
   if (type === 'question') {
     newNode.options = [
-      { text: 'Opção A', hint: '', next: null },
-      { text: 'Opção B', hint: '', next: null }
+      { text: 'Opção A', hint: '', icon: '🌟', next: null },
+      { text: 'Opção B', hint: '', icon: '🚀', next: null }
     ];
   }
 
