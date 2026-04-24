@@ -346,11 +346,10 @@ async function testWebhook(id) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(testData)
     }).catch(async (e) => {
-      // Falhou com application/json (geralmente CORS Preflight Blocked). 
-      // Tentar com text/plain que envia direto (Simple Request).
-      console.warn("Falha no preflight CORS, tentando modo text/plain (fire and forget)...");
+      console.warn("Falha no preflight CORS, enviando com mode: 'no-cors'...");
       return fetch(quiz.webhookUrl, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(testData)
       });
@@ -359,13 +358,13 @@ async function testWebhook(id) {
     btn.innerHTML = oldText;
     btn.disabled = false;
 
-    if (response && response.ok) {
-      showToast('✅ Webhook enviado com sucesso! Verifique a ferramenta destino.');
+    if (response && (response.ok || response.type === 'opaque')) {
+      showToast('✅ Webhook disparado! Vá na sua automação (n8n/Make) e veja se os dados chegaram.');
     } else {
-      alert(`⚠️ Atenção: A requisição foi feita, mas a ferramenta destino não retornou OK. (Status: ${response ? response.status : 'Desconhecido'}). O webhook ainda pode ter chegado, verifique lá.`);
+      alert(`⚠️ Atenção: Status da resposta foi ${response ? response.status : 'Desconhecido'}. O webhook pode ter chegado ou não.`);
     }
   } catch (err) {
-    alert(`Erro ao enviar webhook: A URL pode estar incorreta ou a ferramenta está bloqueando. Detalhe: ${err.message}`);
+    alert(`Erro crítico ao disparar webhook: ${err.message}. Tente verificar se a URL é válida e se está em HTTPS.`);
   }
 }
 

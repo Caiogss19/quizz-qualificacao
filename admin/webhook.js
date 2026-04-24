@@ -14,9 +14,10 @@ async function sendWebhook(data, retries = 3, backoff = 1000) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).catch(async (e) => {
-      console.warn("CORS/Fetch falhou, tentando fallback text/plain...");
+      console.warn("CORS/Fetch falhou, enviando com mode: 'no-cors'...");
       return fetch(webhookUrl, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(data)
       });
