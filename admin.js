@@ -165,7 +165,7 @@ function initLogin() {
 // NAVIGATION
 // ===========================
 function initNavigation() {
-  document.querySelectorAll('.nav-item').forEach(item => {
+  document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
     item.addEventListener('click', e => {
       e.preventDefault();
       switchTab(item.dataset.tab);
