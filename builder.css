@@ -91,6 +91,8 @@ button {
   display: flex;
   flex: 1;
   position: relative;
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* Inspector */
@@ -101,6 +103,7 @@ button {
   display: flex;
   flex-direction: column;
   z-index: 5;
+  min-height: 0;
 }
 
 .inspector-header {
@@ -113,6 +116,21 @@ button {
   padding: 16px;
   flex: 1;
   overflow-y: auto;
+}
+
+/* Custom Scrollbar for Inspector */
+.inspector-body::-webkit-scrollbar {
+  width: 6px;
+}
+.inspector-body::-webkit-scrollbar-track {
+  background: var(--bg-panel);
+}
+.inspector-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+.inspector-body::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .empty-state {
