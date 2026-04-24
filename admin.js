@@ -259,7 +259,15 @@ function editQuiz(id) {
 }
 
 function copyQuizLink(id) {
-  const url = window.location.href.replace('index.html', `quiz.html?id=${id}`).split('#')[0];
+  let basePath = window.location.origin + window.location.pathname;
+  if (basePath.endsWith('index.html')) {
+    basePath = basePath.replace('index.html', 'quiz.html');
+  } else if (basePath.endsWith('/')) {
+    basePath += 'quiz.html';
+  } else {
+    basePath += '/quiz.html';
+  }
+  const url = basePath + `?id=${id}`;
   navigator.clipboard.writeText(url);
   showToast('✅ Link copiado!');
 }
