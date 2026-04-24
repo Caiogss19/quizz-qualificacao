@@ -247,7 +247,7 @@ function renderQuizzes() {
         <button class="btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="editQuiz('${q.id}')">Editar Fluxo</button>
         <button class="btn-secondary" style="flex:1;padding:8px;font-size:12px;" onclick="copyQuizLink('${q.id}')">Copiar Link</button>
         <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="configWebhook('${q.id}')" title="Configurar Webhook">🔗</button>
-        ${q.webhookUrl ? `<button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="testWebhook('${q.id}')" title="Testar Webhook">⚡ Testar</button>` : ''}
+        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="testWebhook('${q.id}')" title="Testar Webhook">⚡ Testar</button>
         <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="actionDuplicateQuiz('${q.id}')" title="Duplicar">📑</button>
         <button class="btn-danger" style="padding:8px;font-size:12px;" onclick="actionDeleteQuiz('${q.id}')" title="Excluir">✕</button>
       </div>
@@ -298,7 +298,12 @@ function actionDuplicateQuiz(id) {
 
 async function testWebhook(id) {
   const quiz = getQuizById(id);
-  if (!quiz || !quiz.webhookUrl) return;
+  if (!quiz) return;
+  
+  if (!quiz.webhookUrl) {
+    alert('Nenhum webhook configurado para este quiz. Por favor, clique no botão de 🔗 (Link) para adicionar a URL primeiro.');
+    return;
+  }
   
   const testData = {
     evento: "teste_integracao",
