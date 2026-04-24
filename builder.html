@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flow Builder — Spark MAXX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="builder.css" />
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="builder-header">
+    <div class="header-logo">✦ spark<span>MAXX</span> <span>Builder</span></div>
+    <div class="header-actions">
+      <button class="btn-secondary" id="btnAddNode">+ Adicionar Nó</button>
+      <button class="btn-primary" id="btnSaveFlow">Salvar Fluxo</button>
+      <a href="admin.html" class="btn-link">Voltar ao Admin</a>
+    </div>
+  </header>
+
+  <!-- Flow Area -->
+  <main class="builder-main">
+    
+    <!-- Inspector Sidebar (Fase 4, mas já deixamos o esqueleto) -->
+    <aside class="inspector" id="inspector">
+      <div class="inspector-header">Propriedades do Nó</div>
+      <div class="inspector-body" id="inspectorBody">
+        <p class="empty-state">Selecione um nó para editar</p>
+      </div>
+    </aside>
+
+    <!-- Canvas Container -->
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <div class="canvas-pan-zoom" id="canvasPanZoom">
+        <svg class="canvas-connections" id="canvasConnections"></svg>
+        <div class="canvas-nodes" id="canvasNodes"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module" src="flow/builder-main.js"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+:root {
+  --bg-dark: #0f1115;
+  --bg-panel: #1a1d24;
+  --bg-card: #252a33;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --font-main: 'Space Grotesk', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Header */
+.builder-header {
+  height: 60px;
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.header-logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.header-logo span { color: var(--primary); }
+.header-logo span:last-child { color: var(--text-muted); font-weight: 400; margin-left: 8px; }
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+button {
+  font-family: var(--font-main);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+}
+.btn-primary:hover { background: var(--primary-hover); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+}
+.btn-secondary:hover { background: var(--bg-card); }
+
+.btn-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+.btn-link:hover { color: var(--text-main); }
+
+/* Main Area */
+.builder-main {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* Inspector */
+.inspector {
+  width: 320px;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+}
+
+.inspector-header {
+  padding: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.inspector-body {
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Canvas Wrapper */
+.canvas-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  cursor: grab;
+}
+
+.canvas-wrapper:active { cursor: grabbing; }
+
+.canvas-pan-zoom {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  transform-origin: 0 0;
+}
+
+/* SVG Connections */
+.canvas-connections {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.connection-path {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 2px;
+}
+
+/* Nodes */
+.canvas-nodes {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; /* Let drag events pass through to canvas when clicking empty space */
+}
+
+.flow-node {
+  position: absolute;
+  width: 280px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: 8px;
+  padding: 14px;
+  pointer-events: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  user-select: none;
+  transition: box-shadow 0.2s;
+}
+
+.flow-node:hover {
+  box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+}
+
+.flow-node.selected {
+  box-shadow: 0 0 0 2px var(--primary), 0 6px 30px rgba(99,102,241,0.3);
+}
+
+.node-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.node-type-badge {
+  display: inline-block;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.node-icon {
+  font-size: 16px;
+}
+
+.node-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--text-main);
+}
+
+.node-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.node-delete {
+  position: absolute;
+  top: 8px;
+  right: 36px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.flow-node:hover .node-delete {
+  opacity: 1;
+}
+
+.node-delete:hover {
+  color: #ef4444;
+  background: #ef444420;
+}
+
+/* Handles */
+.handle {
+  width: 14px;
+  height: 14px;
+  background: var(--bg-dark);
+  border: 2px solid #475569;
+  border-radius: 50%;
+  position: absolute;
+  cursor: crosshair;
+  transition: all 0.15s;
+  z-index: 10;
+}
+
+.handle:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-50%) scale(1.3);
+  box-shadow: 0 0 8px var(--primary);
+}
+
+.handle-in {
+  top: 50%;
+  left: -7px;
+  transform: translateY(-50%);
+}
+
+.handle-out {
+  top: 50%;
+  right: -7px;
+  transform: translateY(-50%);
+}
+
+/* Options */
+.node-options {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.node-option {
+  background: #1e2330;
+  border: 1px solid var(--border);
+  padding: 5px 24px 5px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.node-option:hover {
+  border-color: #475569;
+}
+
+.opt-text {
+  flex: 1;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.opt-tag {
+  font-size: 10px;
+  background: #6366f122;
+  color: #818cf8;
+  border: 1px solid #6366f144;
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+
+.node-option .opt-handle {
+  position: absolute;
+  right: -7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+}
+
+.node-option .opt-handle:hover {
+  transform: translateY(-50%) scale(1.3);
+}
+
+/* Form Groups in Inspector */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.form-group input, .form-group select {
+  width: 100%;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 8px;
+  border-radius: 4px;
+  font-family: var(--font-main);
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
