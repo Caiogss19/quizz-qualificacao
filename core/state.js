@@ -14,7 +14,7 @@ function setLeadData(data) {
   if (!state.startTime) state.startTime = Date.now();
 }
 
-function saveAnswer(nodeId, optionValue, optionTag) {
+function saveAnswer(nodeId, value, hint) {
   state.answers[nodeId] = value;
   if (hint) {
     state.hints.push(hint);
