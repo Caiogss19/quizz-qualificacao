@@ -15,7 +15,12 @@
   <header class="builder-header">
     <div class="header-logo">✦ spark<span>MAXX</span> <span>Builder</span></div>
     <div class="header-actions">
-      <button class="btn-secondary" id="btnAddNode">+ Adicionar Nó</button>
+      <select class="btn-secondary" id="btnAddNode" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 8px; border-radius: 6px; cursor: pointer;">
+        <option value="" disabled selected>+ Adicionar Nó</option>
+        <option value="question">Pergunta</option>
+        <option value="loading">Análise (Loading)</option>
+        <option value="result">Resultado Final</option>
+      </select>
       <button class="btn-primary" id="btnSaveFlow">Salvar Fluxo</button>
       <a href="index.html" class="btn-link">Voltar ao Admin</a>
     </div>

@@ -58,6 +58,19 @@ function updateInspector() {
     `;
   }
 
+  if (node.type === 'result') {
+    html += `
+      <div class="form-group">
+        <label>Texto do Botão (CTA)</label>
+        <input type="text" id="propCta" value="${escHtml(node.cta || '')}" placeholder="Ex: Conhecer Solução" />
+      </div>
+      <div class="form-group">
+        <label>URL do Botão</label>
+        <input type="text" id="propUrl" value="${escHtml(node.url || '')}" placeholder="https://..." />
+      </div>
+    `;
+  }
+
   // Options section
   if (node.options && node.options.length > 0) {
     html += `
@@ -98,6 +111,39 @@ function updateInspector() {
     html += `<button id="btnAddOption" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Opção</button>`;
   }
 
+  // Solutions section for Result node
+  if (node.type === 'result' && node.solutions) {
+    html += `
+      <hr style="border:0;border-top:1px solid var(--border);margin:16px 0;" />
+      <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Soluções / Benefícios</div>
+    `;
+    node.solutions.forEach((sol, i) => {
+      html += `
+        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <div style="font-size:11px;color:var(--text-muted);">Solução ${i+1}</div>
+            <button class="btn-remove-sol" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="margin-bottom:6px; width:50px; flex-shrink:0;">
+              <label>Ícone</label>
+              <input type="text" id="propSolIcon_${i}" value="${escHtml(sol.icon || '')}" placeholder="Emoji" />
+            </div>
+            <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
+              <label>Título</label>
+              <input type="text" id="propSolName_${i}" value="${escHtml(sol.name || '')}" placeholder="Nome da solução" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Descrição</label>
+            <input type="text" id="propSolDesc_${i}" value="${escHtml(sol.desc || '')}" placeholder="Breve descrição" />
+          </div>
+        </div>
+      `;
+    });
+    html += `<button id="btnAddSolution" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Solução</button>`;
+  }
+
   // Delete node button
   if (nodeId !== 'start') {
     html += `
@@ -115,6 +161,37 @@ function updateInspector() {
   bindInput('propTag', val => { node.tag = val; refresh(node.id); });
   bindInput('propBtn', val => { node.buttonText = val; refresh(node.id); });
   bindInput('propDuration', val => { node.duration = parseInt(val); refresh(node.id); });
+
+  if (node.type === 'result') {
+    bindInput('propCta', val => { node.cta = val; refresh(node.id); });
+    bindInput('propUrl', val => { node.url = val; refresh(node.id); });
+    
+    if (node.solutions) {
+      node.solutions.forEach((sol, i) => {
+        bindInput(`propSolIcon_${i}`, val => { sol.icon = val; refresh(node.id); });
+        bindInput(`propSolName_${i}`, val => { sol.name = val; refresh(node.id); });
+        bindInput(`propSolDesc_${i}`, val => { sol.desc = val; refresh(node.id); });
+      });
+
+      const addSolBtn = document.getElementById('btnAddSolution');
+      if (addSolBtn) {
+        addSolBtn.addEventListener('click', () => {
+          node.solutions.push({ icon: '✅', name: 'Nova Solução', desc: 'Descrição' });
+          updateInspector();
+          refresh(node.id);
+        });
+      }
+
+      document.querySelectorAll('.btn-remove-sol').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.dataset.idx);
+          node.solutions.splice(idx, 1);
+          updateInspector();
+          refresh(node.id);
+        });
+      });
+    }
+  }
 
   if (node.options) {
     node.options.forEach((opt, i) => {

@@ -80,6 +80,19 @@ function addNewNode(type = 'question') {
       { text: 'Opção A', hint: '', icon: '🌟', next: null },
       { text: 'Opção B', hint: '', icon: '🚀', next: null }
     ];
+  } else if (type === 'result') {
+    newNode.title = 'Seu Perfil: Resultado Final';
+    newNode.badge = '🚀 Resultado';
+    newNode.description = 'Você chegou ao fim do diagnóstico.';
+    newNode.solutions = [
+      { icon: '🌟', name: 'Solução 1', desc: 'Descrição da solução' }
+    ];
+    newNode.cta = 'Conhecer Mais';
+    newNode.url = 'https://...';
+  } else if (type === 'loading') {
+    newNode.title = 'Analisando suas respostas...';
+    newNode.subtitle = 'Isso pode levar alguns segundos.';
+    newNode.duration = 2400;
   }
 
   builderState.nodes[id] = newNode;

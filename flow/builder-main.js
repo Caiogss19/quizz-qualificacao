@@ -50,14 +50,21 @@ function initBuilder() {
   renderConnections();
 
   // Toolbar buttons
-  document.getElementById('btnAddNode').addEventListener('click', () => {
-    const id = addNewNode('question');
-    renderAllNodes();
-    renderConnections();
-    // Scroll/highlight the new node
-    const el = document.getElementById(`node-${id}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+  const btnAddNode = document.getElementById('btnAddNode');
+  if (btnAddNode) {
+    btnAddNode.addEventListener('change', (e) => {
+      const type = e.target.value;
+      if (type) {
+        const id = addNewNode(type);
+        renderAllNodes();
+        renderConnections();
+        // Scroll/highlight the new node
+        const el = document.getElementById(`node-${id}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        e.target.value = ''; // Reset select
+      }
+    });
+  }
 
   document.getElementById('btnSaveFlow').addEventListener('click', saveFlow);
 }

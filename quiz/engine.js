@@ -50,7 +50,7 @@ function renderNode(nodeId) {
   } else if (node.type === 'result') {
     if (!state.resultadoId) {
       state.completedAt = Date.now();
-      state.resultadoId = calculateResult();
+      state.resultadoId = node.id; // O ID do resultado agora é o próprio nó final
       
       const responseData = {
         ...state.lead,
@@ -261,26 +261,26 @@ function renderLoading(node) {
 
 function renderResult(node) {
   const container = document.createElement('div');
-  const resultData = getResultData(state.resultadoId);
+  const resultData = node;
   
   if (!resultData) return container;
 
   container.innerHTML = `
     <div class="result-container">
-      <div class="result-badge">${resultData.badge}</div>
-      <h2 class="result-title">${resultData.title}</h2>
-      <p class="result-description">${resultData.description}</p>
+      <div class="result-badge">${resultData.badge || '🎉 Seu resultado'}</div>
+      <h2 class="result-title">${resultData.title || 'Resultado'}</h2>
+      <p class="result-description">${resultData.description || 'Baseado nas suas respostas, este é o seu perfil.'}</p>
       <div class="result-solutions">
-        ${resultData.solutions.map(s => `
+        ${(resultData.solutions || []).map(s => `
           <div class="solution-card">
-            <div class="solution-icon">${s.icon}</div>
-            <div class="solution-info"><h3>${s.name}</h3><p>${s.desc}</p></div>
+            <div class="solution-icon">${s.icon || '✅'}</div>
+            <div class="solution-info"><h3>${s.name || ''}</h3><p>${s.desc || ''}</p></div>
           </div>
         `).join('')}
       </div>
       <div class="result-cta">
-        <a href="${resultData.url}" class="btn-cta" target="_blank" rel="noopener">
-          ${resultData.cta}
+        <a href="${resultData.url || '#'}" class="btn-cta" target="_blank" rel="noopener">
+          ${resultData.cta || 'Conhecer Solução'}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <button class="btn-restart" id="btnRestart">Refazer diagnóstico</button>
