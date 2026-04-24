@@ -1,4 +1,4 @@
-const quizJSON = {
+var quizJSON = {
   id: "sparkmaxx_diagnostico",
   title: "Diagnóstico Spark MAXX",
   nodes: {

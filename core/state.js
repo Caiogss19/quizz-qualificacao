@@ -1,4 +1,4 @@
-const state = {
+var state = {
   currentNodeId: 'start',
   lead: {},
   answers: {}, // stores key-value, where key is node id and value is selected text/value

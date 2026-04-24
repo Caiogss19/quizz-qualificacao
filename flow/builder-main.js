@@ -1,5 +1,5 @@
 // Global builder state - accessible by all modules
-const builderState = {
+var builderState = {
   nodes: {},
   connections: [],
   selectedNodeId: null,
