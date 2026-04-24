@@ -14,6 +14,14 @@ let currentTab = 'quizzes';
 // UTILS
 // ===========================
 
+function getVal(r, key) {
+  if (!r) return '—';
+  if (r[key] !== undefined) return r[key];
+  if (r.lead && r.lead[key] !== undefined) return r.lead[key];
+  if (r.answers && r.answers[key] !== undefined) return r.answers[key];
+  return '—';
+}
+
 function formatDate(iso) {
   if (!iso) return '—';
   const d = new Date(iso);
@@ -212,7 +220,41 @@ function loadAdminPanel() {
   }
 
   switchTab(currentTab);
+  loadBranding();
 }
+
+// ===========================
+// BRANDING (White-label)
+// ===========================
+const BRANDING_KEY = 'sparkmaxx_branding';
+
+function loadBranding() {
+  const branding = JSON.parse(localStorage.getItem(BRANDING_KEY) || '{}');
+  document.getElementById('brandingLogo').value = branding.logo || '';
+  document.getElementById('brandingColorPicker').value = branding.primaryColor || '#10B981';
+  document.getElementById('brandingColorHex').value = branding.primaryColor || '#10B981';
+  document.getElementById('brandingFavicon').value = branding.favicon || '';
+}
+
+document.getElementById('brandingColorPicker').addEventListener('input', (e) => {
+  document.getElementById('brandingColorHex').value = e.target.value.toUpperCase();
+});
+
+document.getElementById('brandingColorHex').addEventListener('input', (e) => {
+  if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+    document.getElementById('brandingColorPicker').value = e.target.value;
+  }
+});
+
+document.getElementById('btnSaveBranding').addEventListener('click', () => {
+  const branding = {
+    logo: document.getElementById('brandingLogo').value,
+    primaryColor: document.getElementById('brandingColorHex').value,
+    favicon: document.getElementById('brandingFavicon').value
+  };
+  localStorage.setItem(BRANDING_KEY, JSON.stringify(branding));
+  showToast('🎨 Identidade visual salva!');
+});
 
 // ===========================
 // MEUS QUIZZES (NOVO)
@@ -489,15 +531,12 @@ function renderResponses() {
   tbody.innerHTML = pageData.map((r, i) => `
     <tr>
       <td>${start + i + 1}</td>
-      <td class="cell-name">${truncate(r.nome, 20)}</td>
-      <td>${truncate(r.email, 24)}</td>
-      <td>${r.celular || '—'}</td>
-      <td>${truncate(r.empresa, 18)}</td>
-      <td><span class="profile-pill">${shortProfile(r.perfil)}</span></td>
-      <td title="${r.q2_resposta || ''}">${truncate(r.q2_resposta, 28)}</td>
-      <td title="${r.q3_resposta || ''}">${truncate(r.q3_resposta, 28)}</td>
-      <td><span class="profile-pill">${shortResult(r.resultado_id)}</span></td>
-      <td>${formatDuration(r.duration_seconds)}</td>
+      <td class="cell-name">${truncate(getVal(r, 'nome'), 20)}</td>
+      <td>${truncate(getVal(r, 'email'), 24)}</td>
+      <td>${truncate(getVal(r, 'empresa'), 18)}</td>
+      <td><span style="font-size:11px;color:var(--text-muted);">${truncate(r.quiz_name || 'Legacy', 15)}</span></td>
+      <td><span class="profile-pill">${shortResult(r.result_id || r.resultado_id)}</span></td>
+      <td><span style="color:#10B981;font-weight:600;">${r.total_score || 0}</span></td>
       <td>${formatDate(r.timestamp)}</td>
       <td>
         <button class="btn-detail" onclick="openDetail('${r.id}')">Ver</button>
@@ -530,22 +569,33 @@ function openDetail(id) {
   const fields = [
     { label: 'ID', value: r.id },
     { label: 'Data/hora', value: formatDate(r.timestamp) },
-    { label: 'Nome', value: r.nome },
-    { label: 'E-mail', value: r.email },
-    { label: 'Celular', value: r.celular },
-    { label: 'Empresa', value: r.empresa },
-    { label: 'Perfil', value: r.perfil },
-    { label: 'Resposta Q2', value: r.q2_resposta },
-    { label: 'Foco Q2', value: r.q2_hint },
-    { label: 'Resposta Q3', value: r.q3_resposta },
-    { label: 'Foco Q3', value: r.q3_hint },
-    { label: 'Resultado', value: r.resultado_nome || shortResult(r.resultado_id) },
+    { label: 'Quiz', value: r.quiz_name },
+    { label: 'Score Total', value: r.total_score || 0 },
+    { label: 'Resultado', value: r.result_title || shortResult(r.result_id || r.resultado_id) },
     { label: 'Duração', value: formatDuration(r.duration_seconds) },
-    { label: 'Origem', value: r.referrer },
+    { label: 'Origem', value: r.url_origem || r.referrer },
   ];
 
+  // Dados do Lead
+  if (r.lead) {
+    Object.entries(r.lead).forEach(([k, v]) => {
+      fields.push({ label: `Lead: ${k}`, value: v });
+    });
+  } else {
+    ['nome', 'email', 'celular', 'empresa'].forEach(k => {
+      if (r[k]) fields.push({ label: k.charAt(0).toUpperCase() + k.slice(1), value: r[k] });
+    });
+  }
+
+  // Respostas
+  if (r.answers) {
+    Object.entries(r.answers).forEach(([k, v]) => {
+      fields.push({ label: `Resp: ${k}`, value: v });
+    });
+  }
+
   document.getElementById('modalBody').innerHTML = fields
-    .filter(f => f.value && f.value !== '—')
+    .filter(f => f.value !== undefined && f.value !== null && f.value !== '—')
     .map(f => `
       <div class="modal-row">
         <span class="modal-row-label">${f.label}</span>

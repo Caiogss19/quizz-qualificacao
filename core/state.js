@@ -6,7 +6,8 @@ var state = {
   startTime: null,
   completedAt: null,
   resultadoId: null,
-  history: [] // array of node ids visited to allow 'back'
+  history: [], // array of node ids visited to allow 'back'
+  totalScore: 0
 };
 
 function setLeadData(data) {
@@ -14,8 +15,9 @@ function setLeadData(data) {
   if (!state.startTime) state.startTime = Date.now();
 }
 
-function saveAnswer(nodeId, value, hint) {
+function saveAnswer(nodeId, value, hint, score = 0) {
   state.answers[nodeId] = value;
+  state.totalScore += (parseInt(score) || 0);
   if (hint) {
     state.hints.push(hint);
   }
@@ -42,4 +44,5 @@ function resetState() {
   state.completedAt = null;
   state.resultadoId = null;
   state.history = [];
+  state.totalScore = 0;
 }

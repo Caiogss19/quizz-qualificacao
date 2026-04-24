@@ -5,9 +5,33 @@ const DOM = {
   progressBar: document.getElementById('progressBar')
 };
 
+function applyBranding() {
+  const branding = JSON.parse(localStorage.getItem('sparkmaxx_branding') || '{}');
+  
+  if (branding.primaryColor) {
+    document.documentElement.style.setProperty('--primary-color', branding.primaryColor);
+  }
+
+  const headerLogo = document.querySelector('.quiz-header .logo');
+  if (headerLogo && branding.logo) {
+    headerLogo.innerHTML = `<img src="${branding.logo}" alt="Logo" style="max-height: 40px; width: auto;" />`;
+  }
+
+  if (branding.favicon) {
+    let link = document.querySelector("link[rel*='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'shortcut icon';
+      document.head.appendChild(link);
+    }
+    link.href = branding.favicon;
+  }
+}
+
 let activeQuiz = null;
 
 function initQuiz() {
+  applyBranding();
   const urlParams = new URLSearchParams(window.location.search);
   const quizId = urlParams.get('id');
   
@@ -82,6 +106,7 @@ function renderNode(nodeId) {
         
         // Respostas (Mapeadas)
         answers: getAnswers(),
+        total_score: state.totalScore,
         
         // Resultado Final
         result_id: state.resultadoId,
@@ -270,7 +295,8 @@ function renderQuestion(node) {
 
     nextBtn.addEventListener('click', () => {
       if (!selectedValue) return;
-      saveAnswer(node.varName || node.id, selectedValue, selectedHint);
+      const dataOpt = node.options.find(o => (o.value || o.text) === selectedValue);
+      saveAnswer(node.varName || node.id, selectedValue, selectedHint, dataOpt ? dataOpt.score : 0);
       goToNode(selectedNext);
     });
 
