@@ -8,7 +8,7 @@ const ROWS_PER_PAGE = 15;
 let allData = [];
 let filteredData = [];
 let currentPage = 1;
-let currentTab = 'overview';
+let currentTab = 'quizzes';
 
 // ===========================
 // UTILS
@@ -259,7 +259,7 @@ function editQuiz(id) {
 }
 
 function copyQuizLink(id) {
-  const url = window.location.href.replace('admin.html', `index.html?id=${id}`);
+  const url = window.location.href.replace('index.html', `quiz.html?id=${id}`).split('#')[0];
   navigator.clipboard.writeText(url);
   showToast('✅ Link copiado!');
 }

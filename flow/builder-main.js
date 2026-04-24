@@ -22,7 +22,7 @@ function initBuilder() {
     if (quizzes.length > 0) targetQuiz = quizzes[0];
     else {
       alert("Nenhum quiz encontrado! Crie um no painel Admin primeiro.");
-      window.location.href = 'admin.html';
+      window.location.href = 'index.html';
       return;
     }
   }

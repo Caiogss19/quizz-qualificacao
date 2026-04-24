@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico Spark MAXX | inlead.digital</title>
+  <meta name="description" content="Faça o diagnóstico e descubra a solução ideal para sua estratégia de influência digital." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Logo -->
+    <header class="quiz-header">
+      <div class="logo">
+        <span class="logo-icon">✦</span>
+        <div class="logo-text">
+          <span class="logo-spark">spark</span>
+          <span class="logo-maxx">MAXX</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quiz Container -->
+    <main class="quiz-main">
+      <div class="quiz-card" id="quizCard">
+        <!-- O motor do quiz em quiz/engine.js irá injetar os passos dinamicamente aqui -->
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="quiz-footer">
+      <p>© 2026 Spark MAXX — <a href="index.html" target="_blank">Admin</a></p>
+    </footer>
+  <!-- App Scripts (Sem módulos para rodar offline direto) -->
+  <script src="quiz/config.js"></script>
+  <script src="core/state.js"></script>
+  <script src="core/storage.js"></script>
+  <script src="quiz/validation.js"></script>
+  <script src="quiz/results.js"></script>
+  <script src="admin/webhook.js"></script>
+  <script src="quiz/engine.js"></script>
+</body>
+</html>
