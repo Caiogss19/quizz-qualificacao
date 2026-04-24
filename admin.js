@@ -238,10 +238,26 @@ function renderQuizzes() {
   grid.innerHTML = quizzes.map(q => `
     <div class="card" style="display:flex;flex-direction:column;gap:12px;">
       <h3 style="font-size:16px;color:var(--text-main);margin:0;">${q.name}</h3>
-      <div style="font-size:12px;color:var(--text-muted);">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">
         <p style="margin:2px 0;">ID: <code>${q.id}</code></p>
-        <p style="margin:2px 0;">Respostas: ${allData.filter(r => r.quiz_id === q.id).length}</p>
         <p style="margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${q.webhookUrl || 'Não configurado'}">Webhook: ${q.webhookUrl || 'Não configurado'}</p>
+      </div>
+      
+      <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="text-align:center;">
+          <div style="color:var(--text-muted);">👀 Views</div>
+          <div style="font-weight:600;font-size:14px;color:var(--primary-color);">${typeof getAnalytics === 'function' ? getAnalytics(q.id).views : 0}</div>
+        </div>
+        <div style="color:var(--border-color);">➔</div>
+        <div style="text-align:center;">
+          <div style="color:var(--text-muted);">📩 Leads</div>
+          <div style="font-weight:600;font-size:14px;color:var(--secondary-color);">${typeof getAnalytics === 'function' ? getAnalytics(q.id).leads : 0}</div>
+        </div>
+        <div style="color:var(--border-color);">➔</div>
+        <div style="text-align:center;">
+          <div style="color:var(--text-muted);">🎯 Finalizados</div>
+          <div style="font-weight:600;font-size:14px;color:#10B981;">${allData.filter(r => r.quiz_id === q.id).length}</div>
+        </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:auto;flex-wrap:wrap;">
         <button class="btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="editQuiz('${q.id}')">Editar Fluxo</button>

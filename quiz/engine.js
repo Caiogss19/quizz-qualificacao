@@ -32,6 +32,10 @@ function initQuiz() {
     term: urlParams.get('utm_term') || ''
   };
 
+  if (typeof incrementAnalytics === 'function' && activeQuiz) {
+    incrementAnalytics(activeQuiz.id, 'views');
+  }
+
   renderNode(state.currentNodeId);
 }
 
@@ -92,6 +96,9 @@ function renderNode(nodeId) {
       // Auto-save the response
       saveResponse(responseData);
       sendWebhook(responseData);
+      if (typeof incrementAnalytics === 'function' && activeQuiz) {
+        incrementAnalytics(activeQuiz.id, 'completions');
+      }
     }
     stepEl.appendChild(renderResult(node));
   }
@@ -207,6 +214,11 @@ function renderLeadForm(node) {
           data[f.id] = document.getElementById(f.id).value.trim();
         });
         setLeadData(data);
+        
+        if (typeof incrementAnalytics === 'function' && activeQuiz) {
+          incrementAnalytics(activeQuiz.id, 'leads');
+        }
+
         goToNode(node.next);
       });
     }

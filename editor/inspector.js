@@ -144,6 +144,47 @@ function updateInspector() {
     html += `<button id="btnAddSolution" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Solução</button>`;
   }
 
+  // Fields section for Lead Form node
+  if (node.type === 'lead_form' && node.fields) {
+    html += `
+      <hr style="border:0;border-top:1px solid var(--border);margin:16px 0;" />
+      <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Campos do Formulário</div>
+    `;
+    node.fields.forEach((field, i) => {
+      html += `
+        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <div style="font-size:11px;color:var(--text-muted);">Campo: ${escHtml(field.id)}</div>
+            <button class="btn-remove-field" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
+              <label>Nome do Campo (Label)</label>
+              <input type="text" id="propFieldLabel_${i}" value="${escHtml(field.label || '')}" />
+            </div>
+            <div class="form-group" style="margin-bottom:6px; width:80px; flex-shrink:0;">
+              <label>Tipo</label>
+              <select id="propFieldType_${i}" style="width:100%;padding:6px;border-radius:4px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);font-size:12px;">
+                <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
+                <option value="email" ${field.type === 'email' ? 'selected' : ''}>E-mail</option>
+                <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Celular</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>Placeholder</label>
+            <input type="text" id="propFieldPlaceholder_${i}" value="${escHtml(field.placeholder || '')}" />
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-main);">
+            <input type="checkbox" id="propFieldReq_${i}" ${field.required ? 'checked' : ''} />
+            <label for="propFieldReq_${i}">Obrigatório</label>
+          </div>
+        </div>
+      `;
+    });
+    html += `<button id="btnAddField" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Campo</button>`;
+  }
+
   // Delete node button
   if (nodeId !== 'start') {
     html += `
@@ -191,6 +232,41 @@ function updateInspector() {
         });
       });
     }
+  }
+
+  if (node.type === 'lead_form' && node.fields) {
+    node.fields.forEach((field, i) => {
+      bindInput(`propFieldLabel_${i}`, val => { field.label = val; refresh(node.id); });
+      bindInput(`propFieldType_${i}`, val => { field.type = val; refresh(node.id); });
+      bindInput(`propFieldPlaceholder_${i}`, val => { field.placeholder = val; refresh(node.id); });
+      
+      const reqCb = document.getElementById(`propFieldReq_${i}`);
+      if (reqCb) {
+        reqCb.addEventListener('change', (e) => {
+          field.required = e.target.checked;
+          refresh(node.id);
+        });
+      }
+    });
+
+    const addFieldBtn = document.getElementById('btnAddField');
+    if (addFieldBtn) {
+      addFieldBtn.addEventListener('click', () => {
+        const fieldId = `campo_${Date.now().toString().slice(-4)}`;
+        node.fields.push({ id: fieldId, label: 'Novo Campo', type: 'text', placeholder: 'Digite aqui...', required: false, errorMsg: 'Campo obrigatório' });
+        updateInspector();
+        refresh(node.id);
+      });
+    }
+
+    document.querySelectorAll('.btn-remove-field').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(e.target.dataset.idx);
+        node.fields.splice(idx, 1);
+        updateInspector();
+        refresh(node.id);
+      });
+    });
   }
 
   if (node.options) {

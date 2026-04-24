@@ -104,3 +104,21 @@ function duplicateQuiz(id) {
   saveQuizzes(quizzes);
   return newQuiz;
 }
+
+// --- Analytics Tracking ---
+function incrementAnalytics(quizId, metric) {
+  if (!quizId) return;
+  let stats = {};
+  try { stats = JSON.parse(localStorage.getItem('sparkmaxx_stats')) || {}; } catch(e){}
+  
+  if (!stats[quizId]) stats[quizId] = { views: 0, leads: 0, completions: 0 };
+  stats[quizId][metric] = (stats[quizId][metric] || 0) + 1;
+  
+  localStorage.setItem('sparkmaxx_stats', JSON.stringify(stats));
+}
+
+function getAnalytics(quizId) {
+  let stats = {};
+  try { stats = JSON.parse(localStorage.getItem('sparkmaxx_stats')) || {}; } catch(e){}
+  return stats[quizId] || { views: 0, leads: 0, completions: 0 };
+}
