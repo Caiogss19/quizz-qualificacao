@@ -26,16 +26,20 @@ function initQuiz() {
 }
 
 function renderNode(nodeId) {
-  const node = activeQuiz.nodes[nodeId];
-  if (!node) return console.error('Node not found:', nodeId);
+  const stepEl = document.createElement('div');
+  stepEl.className = 'step active';
   
+  const node = activeQuiz.nodes[nodeId];
+  if (!node) {
+    alert(`Erro: O fluxo tentou ir para um nó que foi deletado (ID: ${nodeId}). Por favor, edite o quiz e arrume as conexões.`);
+    return;
+  }
+
   state.currentNodeId = nodeId;
   updateProgress(nodeId);
 
   DOM.quizCard.innerHTML = '';
   
-  const stepEl = document.createElement('div');
-  stepEl.className = 'step active';
   stepEl.id = `node-${nodeId}`;
 
   if (node.type === 'lead_form') {
@@ -87,7 +91,10 @@ function updateProgress(nodeId) {
 }
 
 function goToNode(nodeId) {
-  if (!nodeId) return;
+  if (!nodeId) {
+    alert("Erro: O fluxo parou aqui porque este botão não está conectado a nenhuma próxima etapa no Builder. Por favor, edite o quiz e crie uma conexão.");
+    return;
+  }
   pushHistory(state.currentNodeId);
   renderNode(nodeId);
 }

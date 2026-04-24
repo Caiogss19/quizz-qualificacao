@@ -151,7 +151,15 @@ var quizJSON = {
     },
     "result": {
       id: "result",
-      type: "result"
+      type: "result",
+      title: "Seu Perfil: Resultado Final",
+      badge: "🚀 Seu resultado",
+      description: "Você completou o diagnóstico base. Customize este resultado no Builder.",
+      solutions: [
+        { icon: '🌟', name: 'Solução 1', desc: 'Descrição da solução' }
+      ],
+      cta: "Conhecer Solução",
+      url: "https://inlead.digital"
     }
   },
   results: {
