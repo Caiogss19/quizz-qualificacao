@@ -210,12 +210,22 @@ function switchTab(tab) {
 // ===========================
 // LOAD
 // ===========================
-function loadAdminPanel() {
-  allData = getAllResponses().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+async function loadAdminPanel() {
+  const localData = getAllResponses();
+  const cloudData = await getLeadsFromSupabase();
+  
+  // Merge data based on ID to avoid duplicates
+  const mergedMap = new Map();
+  [...localData, ...cloudData].forEach(r => mergedMap.set(r.id, r));
+  allData = Array.from(mergedMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
   filteredData = [...allData];
   
-  // Guarantee there is at least one default quiz if empty
-  if (getQuizzes().length === 0) {
+  // Sincroniza Quizzes do Cloud
+  const cloudQuizzes = await getQuizzesFromSupabase();
+  if (cloudQuizzes && cloudQuizzes.length > 0) {
+    localStorage.setItem('sparkmaxx_quizzes', JSON.stringify(cloudQuizzes));
+  } else if (getQuizzes().length === 0) {
     createQuiz("Diagnóstico Spark MAXX");
   }
 
@@ -816,7 +826,7 @@ function seedDemoData() {
 // INIT
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
-  seedDemoData();
+  // seedDemoData(); // Desativado para usar dados reais do Cloud/Local
   initLogin();
   initNavigation();
   initResponseFilters();

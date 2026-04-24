@@ -88,3 +88,17 @@ async function saveLeadToSupabase(responseData) {
     return null;
   }
 }
+
+async function getLeadsFromSupabase() {
+  if (!SUPABASE_KEY) return [];
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Table_leads?select=*&order=timestamp.desc`, {
+      headers: SUPABASE_HEADERS
+    });
+    if (!res.ok) throw new Error("Falha ao buscar leads do Supabase");
+    return await res.json();
+  } catch (err) {
+    console.error("Supabase Error:", err);
+    return [];
+  }
+}
