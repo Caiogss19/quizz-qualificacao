@@ -4,23 +4,23 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #080808;
-  --bg-sidebar: #0d0d0d;
-  --bg-card: #111111;
-  --bg-hover: #1a1a1a;
-  --bg-input: #141414;
-  --border: #1e1e1e;
-  --border-light: #2a2a2a;
-  --text-primary: #f5f5f5;
-  --text-secondary: #888;
-  --text-muted: #555;
-  --accent: #ffffff;
-  --accent-dim: rgba(255,255,255,0.08);
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --info: #3b82f6;
-  --font: 'Inter', sans-serif;
+  --bg:           #0d1520;
+  --bg-sidebar:   #1F2C41;
+  --bg-card:      #192638;
+  --bg-hover:     rgba(39, 53, 81, 0.8);
+  --bg-input:     rgba(39, 53, 81, 0.4);
+  --border:       rgba(95, 125, 158, 0.15);
+  --border-light: rgba(95, 125, 158, 0.28);
+  --text-primary: #DFE8F2;
+  --text-secondary: #7A9BB8;
+  --text-muted:   #4a6580;
+  --accent:       #B3C5D8;
+  --accent-dim:   rgba(95, 125, 158, 0.12);
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger:  #f87171;
+  --info:    #60a5fa;
+  --font: 'Space Grotesk', 'Inter', sans-serif;
   --sidebar-w: 220px;
   --header-h: 60px;
   --radius: 12px;
@@ -111,7 +111,7 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
   width: 100%;
   padding: 13px;
   background: var(--accent);
-  color: #000;
+  color: #121C2B;
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font);
@@ -518,7 +518,7 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
 
 .filter-select:focus { border-color: rgba(255,255,255,0.2); }
 
-.filter-select option { background: #1a1a1a; }
+.filter-select option { background: #1F2C41; }
 
 /* ===========================
    DATA TABLE
@@ -641,7 +641,7 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
   transition: var(--transition);
 }
 
-.page-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+.page-btn.active { background: var(--accent); color: #121C2B; border-color: var(--accent); font-weight: 700; }
 
 .page-btn:hover:not(.active) { border-color: #444; color: var(--text-primary); }
 
@@ -734,7 +734,7 @@ html, body { height: 100%; font-family: var(--font); background: var(--bg); colo
   margin-top: 8px;
   padding: 10px 20px;
   background: var(--accent);
-  color: #000;
+  color: #121C2B;
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font);

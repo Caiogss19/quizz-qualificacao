@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico Spark MAXX | inlead.digital</title>
+  <meta name="description" content="Faça o diagnóstico e descubra a solução ideal para sua estratégia de influência digital." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Logo -->
+    <header class="quiz-header">
+      <div class="logo">
+        <span class="logo-icon">✦</span>
+        <div class="logo-text">
+          <span class="logo-spark">spark</span>
+          <span class="logo-maxx">MAXX</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quiz Container -->
+    <main class="quiz-main">
+      <div class="quiz-card" id="quizCard">
+
+        <!-- Step 0: Lead Form -->
+        <div class="step active" data-step="0" id="step-0">
+          <div class="step-tag">Identificação</div>
+          <h1 class="step-title">Antes de começar, nos conte um pouco sobre você</h1>
+          <p class="step-subtitle">Preencha os dados abaixo para personalizar seu diagnóstico</p>
+          <form class="lead-form" id="leadForm" novalidate>
+            <div class="form-group">
+              <label for="nome">Nome completo</label>
+              <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required autocomplete="name" />
+              <span class="field-error" id="nome-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email" />
+              <span class="field-error" id="email-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="celular">Celular / WhatsApp</label>
+              <input type="tel" id="celular" name="celular" placeholder="(00) 00000-0000" required autocomplete="tel" />
+              <span class="field-error" id="celular-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="empresa">Empresa</label>
+              <input type="text" id="empresa" name="empresa" placeholder="Nome da sua empresa" required autocomplete="organization" />
+              <span class="field-error" id="empresa-error"></span>
+            </div>
+            <button type="submit" class="btn-primary" id="btnStart">
+              Começar diagnóstico
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Step 1: Profile Selection -->
+        <div class="step" data-step="1" id="step-1">
+          <div class="step-tag">Passo 1 de 3</div>
+          <h2 class="step-title">Qual perfil descreve melhor você, atualmente?</h2>
+          <p class="step-subtitle">Selecione a opção que mais se encaixa com seu momento atual</p>
+          <div class="options-grid" id="profileOptions">
+            <button class="option-card" data-question="perfil" data-value="Empresa / Marca" data-key="A" id="profile-A">
+              <span class="option-letter">A</span>
+              <span class="option-icon">🏢</span>
+              <span class="option-text">Empresa / Marca</span>
+            </button>
+            <button class="option-card" data-question="perfil" data-value="Agência de Publicidade/Marketing" data-key="B" id="profile-B">
+              <span class="option-letter">B</span>
+              <span class="option-icon">📣</span>
+              <span class="option-text">Agência de Publicidade/Marketing</span>
+            </button>
+            <button class="option-card" data-question="perfil" data-value="Creator" data-key="C" id="profile-C">
+              <span class="option-letter">C</span>
+              <span class="option-icon">🎥</span>
+              <span class="option-text">Creator</span>
+            </button>
+            <button class="option-card" data-question="perfil" data-value="Agência de Casting / Agenciador" data-key="D" id="profile-D">
+              <span class="option-letter">D</span>
+              <span class="option-icon">🎯</span>
+              <span class="option-text">Agência de Casting / Agenciador</span>
+            </button>
+          </div>
+          <div class="step-nav">
+            <button class="btn-secondary" id="back-1">← Voltar</button>
+            <button class="btn-primary" id="next-1" disabled>Prosseguir →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Dynamic Question (based on profile) -->
+        <div class="step" data-step="2" id="step-2">
+          <div class="step-tag">Passo 2 de 3</div>
+          <h2 class="step-title" id="q2-title">Carregando...</h2>
+          <p class="step-subtitle" id="q2-subtitle"></p>
+          <div class="options-grid" id="q2-options"></div>
+          <div class="step-nav">
+            <button class="btn-secondary" id="back-2">← Voltar</button>
+            <button class="btn-primary" id="next-2" disabled>Continuar →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Dynamic Question (based on profile) -->
+        <div class="step" data-step="3" id="step-3">
+          <div class="step-tag">Passo 3 de 3</div>
+          <h2 class="step-title" id="q3-title">Carregando...</h2>
+          <p class="step-subtitle" id="q3-subtitle"></p>
+          <div class="options-grid" id="q3-options"></div>
+          <div class="step-nav">
+            <button class="btn-secondary" id="back-3">← Voltar</button>
+            <button class="btn-primary" id="next-3" disabled>Ver resultado →</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Loading/Analysis -->
+        <div class="step" data-step="4" id="step-4">
+          <div class="analyzing-container">
+            <div class="analyzing-spinner">
+              <div class="spinner-ring"></div>
+              <div class="spinner-ring"></div>
+              <div class="spinner-ring"></div>
+            </div>
+            <h2 class="analyzing-title">Analisando seu perfil...</h2>
+            <p class="analyzing-text">Processando suas respostas para encontrar a solução ideal</p>
+            <div class="analyzing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Result -->
+        <div class="step" data-step="5" id="step-5">
+          <div class="result-container">
+            <div class="result-badge" id="resultBadge">✦ Seu diagnóstico está pronto</div>
+            <h2 class="result-title" id="resultTitle">Resultado</h2>
+            <p class="result-description" id="resultDescription"></p>
+            <div class="result-solutions" id="resultSolutions"></div>
+            <div class="result-cta">
+              <a href="#" class="btn-cta" id="btnCTA" target="_blank" rel="noopener">
+                Quero conhecer a solução
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+              <button class="btn-restart" id="btnRestart">Refazer diagnóstico</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="quiz-footer">
+      <p>© 2026 Spark MAXX — <a href="admin.html" target="_blank">Admin</a></p>
+    </footer>
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>
