@@ -29,6 +29,9 @@ function saveResponse(data) {
   try { 
     checkStorageQuota();
     localStorage.setItem(DB_KEY, JSON.stringify(existing)); 
+    if (typeof saveLeadToSupabase !== 'undefined') {
+      saveLeadToSupabase(entry);
+    }
   } catch(e) { 
     console.error('Storage error:', e); 
     if (e.name === 'QuotaExceededError') {

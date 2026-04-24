@@ -65,3 +65,26 @@ async function deleteQuizFromSupabase(id) {
     return false;
   }
 }
+
+// ===========================
+// LEADS / RESPOSTAS (Table_leads)
+// ===========================
+
+async function saveLeadToSupabase(responseData) {
+  if (!SUPABASE_KEY) return null;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/Table_leads`, {
+      method: "POST",
+      headers: {
+        ...SUPABASE_HEADERS,
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify([responseData])
+    });
+    if (!res.ok) throw new Error("Falha ao salvar lead no Supabase");
+    return await res.json();
+  } catch (err) {
+    console.error("Supabase Error:", err);
+    return null;
+  }
+}

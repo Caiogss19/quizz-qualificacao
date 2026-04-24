@@ -270,7 +270,7 @@ function renderQuestion(node) {
 
     nextBtn.addEventListener('click', () => {
       if (!selectedValue) return;
-      saveAnswer(node.id, selectedValue, selectedHint);
+      saveAnswer(node.varName || node.id, selectedValue, selectedHint);
       goToNode(selectedNext);
     });
 

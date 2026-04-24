@@ -31,11 +31,20 @@ function updateInspector() {
     `;
   }
   
-  if (node.tag !== undefined) {
     html += `
       <div class="form-group">
         <label>Tag (ex: Passo 1)</label>
         <input type="text" id="propTag" value="${escHtml(node.tag || '')}" placeholder="Tag" />
+      </div>
+    `;
+  }
+
+  if (node.type === 'question') {
+    html += `
+      <div class="form-group" style="background:rgba(16,185,129,0.1);padding:10px;border-radius:6px;border:1px solid rgba(16,185,129,0.2);">
+        <label style="color:#10B981;font-weight:600;">Nome da Variável (Data Key)</label>
+        <input type="text" id="propVarName" value="${escHtml(node.varName || '')}" placeholder="ex: perfil, faturamento..." style="background:var(--bg-dark);" />
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Como essa resposta será salva no banco (Supabase/Webhook)</div>
       </div>
     `;
   }
@@ -200,6 +209,7 @@ function updateInspector() {
   bindInput('propTitle', val => { node.title = val; refresh(node.id); });
   bindInput('propSubtitle', val => { node.subtitle = val; refresh(node.id); });
   bindInput('propTag', val => { node.tag = val; refresh(node.id); });
+  bindInput('propVarName', val => { node.varName = val; refresh(node.id); });
   bindInput('propBtn', val => { node.buttonText = val; refresh(node.id); });
   bindInput('propDuration', val => { node.duration = parseInt(val); refresh(node.id); });
 
