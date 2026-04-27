@@ -1,6 +1,6 @@
 var quizJSON = {
-  id: "sparkmaxx_diagnostico",
-  title: "Quiz de Diagnóstico — Spark Maxx",
+  id: "spark_maxx_diagnostico_v3",
+  title: "[NOVO] Diagnóstico Spark Maxx",
   nodes: {
     "start": {
       id: "start",
