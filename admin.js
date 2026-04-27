@@ -242,6 +242,86 @@ function switchTab(tab) {
   if (tab === 'analytics') renderAnalytics();
   if (tab === 'export') renderExport();
   if (tab === 'branding') loadBranding();
+  if (tab === 'editor') initEditor();
+  if (tab === 'ia') initIA();
+}
+
+// ===========================
+// IA GENERATOR (Mock/Template)
+// ===========================
+function initIA() {
+  const btn = document.getElementById('btnGenerateIA');
+  const prompt = document.getElementById('iaPrompt');
+  const status = document.getElementById('iaStatus');
+
+  if (!btn) return;
+
+  btn.onclick = () => {
+    if (!prompt.value.trim()) {
+      showToast('⚠️ Descreva o quiz primeiro!');
+      return;
+    }
+
+    if (status) status.style.display = 'inline';
+    btn.disabled = true;
+
+    // Simulate AI delay
+    setTimeout(() => {
+      const name = "Quiz IA: " + (prompt.value.substring(0, 20) + "...");
+      const newQuiz = createQuiz(name);
+      
+      if (status) status.style.display = 'none';
+      btn.disabled = false;
+      
+      showToast('✨ Quiz gerado pela IA com sucesso!');
+      switchTab('quizzes');
+    }, 2500);
+  };
+}
+
+// ===========================
+// JSON EDITOR
+// ===========================
+function initEditor() {
+  const jsonEditor = document.getElementById('jsonEditor');
+  const quizName = document.getElementById('editorQuizName');
+  const webhookUrl = document.getElementById('editorWebhookUrl');
+  const btnSave = document.getElementById('btnSaveConfig');
+
+  if (!jsonEditor) return;
+
+  // Load the first quiz as default for editing if none selected
+  const quizzes = getQuizzes();
+  const currentQuiz = quizzes[0] || quizJSON;
+
+  if (quizName) quizName.value = currentQuiz.name || '';
+  if (webhookUrl) webhookUrl.value = currentQuiz.webhookUrl || '';
+  jsonEditor.value = JSON.stringify({ nodes: currentQuiz.nodes, results: currentQuiz.results }, null, 2);
+
+  if (btnSave) {
+    btnSave.onclick = () => {
+      try {
+        const updatedData = JSON.parse(jsonEditor.value);
+        const allQuizzes = getQuizzes();
+        const target = allQuizzes.find(q => q.id === currentQuiz.id) || currentQuiz;
+        
+        target.name = quizName.value;
+        target.webhookUrl = webhookUrl.value;
+        target.nodes = updatedData.nodes;
+        target.results = updatedData.results;
+
+        saveQuizzes(allQuizzes);
+        showToast('✅ Configurações salvas!');
+      } catch (e) {
+        alert('Erro no JSON: ' + e.message);
+      }
+    };
+  }
+}
+
+function selectEditorNode(nodeId) {
+  // Stub for editor node selection if needed
+  console.log("Selected node in editor:", nodeId);
 }
 
 // ===========================
@@ -478,86 +558,6 @@ function renameQuiz(id) {
 }
 
 function configWebhook(id) {
-  const quizzes = getQuizzes();
-  const target = quizzes.find(q => q.id === id);
-  if (!target) return;
-  
-  const url = prompt('URL do Webhook (para envio de leads):', target.webhookUrl || '');
-  if (url !== null) {
-    target.webhookUrl = url.trim();
-    saveQuizzes(quizzes);
-    renderQuizzes();
-    showToast('✅ Webhook configurado!');
-  }
-}
-
-async function testWebhook(id) {
-  const quizzes = getQuizzes();
-  const quiz = quizzes.find(q => q.id === id);
-  if (!quiz || !quiz.webhookUrl) {
-    alert('Configure o webhook antes de testar.');
-    return;
-  }
-  
-  const testData = { event: "teste_integracao", quiz_id: quiz.id, quiz_name: quiz.name, lead: { nome: "Teste Spark", email: "teste@sparkmaxx.com" } };
-  
-  try {
-    showToast('⚡ Enviando teste...');
-    const res = await fetch(quiz.webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(testData) });
-    if (res.ok) showToast('✅ Webhook enviado com sucesso!');
-    else showToast('⚠️ Webhook retornou erro: ' + res.status);
-  } catch (err) {
-    showToast('❌ Erro ao enviar webhook: ' + err.message);
-  }
-}
-
-function openQuizOptions(id) {
-  const choice = confirm('Opções extras:\n\n- OK para DUPLICAR\n- Cancelar para EXCLUIR\n\n(Dica: no futuro teremos um menu suspenso aqui)');
-  if (choice) {
-    actionDuplicateQuiz(id);
-  } else {
-    actionDeleteQuiz(id);
-  }
-}
-
-function actionDuplicateQuiz(id) {
-  const quizzes = getQuizzes();
-  const source = quizzes.find(q => q.id === id);
-  if (!source) return;
-
-  const newQuiz = JSON.parse(JSON.stringify(source));
-  newQuiz.id = 'quiz_' + Date.now();
-  newQuiz.name = source.name + ' (Cópia)';
-  newQuiz.createdAt = new Date().toISOString();
-  
-  quizzes.push(newQuiz);
-  saveQuizzes(quizzes);
-  renderQuizzes();
-  showToast('✅ Quiz duplicado!');
-}
-
-function actionDeleteQuiz(id) {
-  if (confirm('Tem certeza que deseja excluir este quiz permanentemente?')) {
-    let quizzes = getQuizzes();
-    quizzes = quizzes.filter(q => q.id !== id);
-    saveQuizzes(quizzes);
-    renderQuizzes();
-    showToast('🗑️ Quiz excluído.');
-  }
-}
-
-function copyQuizLink(id) {
-  let basePath = window.location.origin + window.location.pathname;
-  if (basePath.endsWith('index.html')) basePath = basePath.replace('index.html', 'quiz.html');
-  else if (basePath.endsWith('/')) basePath += 'quiz.html';
-  else if (!basePath.endsWith('quiz.html')) basePath += '/quiz.html';
-  
-  const url = basePath + `?id=${id}`;
-  navigator.clipboard.writeText(url);
-  showToast('✅ Link copiado!');
-}
-
-function configWebhook(id) {
   const quiz = typeof getQuizById === 'function' ? getQuizById(id) : null;
   if (!quiz) return;
   const url = prompt('URL do Webhook (para envio de leads):', quiz.webhookUrl || '');
@@ -592,6 +592,15 @@ async function testWebhook(id) {
   }
 }
 
+function openQuizOptions(id) {
+  const choice = confirm('Opções extras:\n\n- OK para DUPLICAR\n- Cancelar para EXCLUIR');
+  if (choice) {
+    actionDuplicateQuiz(id);
+  } else {
+    actionDeleteQuiz(id);
+  }
+}
+
 function actionDuplicateQuiz(id) {
   if (typeof duplicateQuiz === 'function') {
     duplicateQuiz(id);
@@ -606,6 +615,17 @@ function actionDeleteQuiz(id) {
     renderQuizzes();
     showToast('🗑️ Quiz excluído.');
   }
+}
+
+function copyQuizLink(id) {
+  let basePath = window.location.origin + window.location.pathname;
+  if (basePath.endsWith('index.html')) basePath = basePath.replace('index.html', 'quiz.html');
+  else if (basePath.endsWith('/')) basePath += 'quiz.html';
+  else if (!basePath.endsWith('quiz.html')) basePath += '/quiz.html';
+  
+  const url = basePath + `?id=${id}`;
+  navigator.clipboard.writeText(url);
+  showToast('✅ Link copiado!');
 }
 
 // ===========================

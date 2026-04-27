@@ -74,6 +74,8 @@ async function saveLeadToSupabase(responseData) {
   if (!SUPABASE_KEY) return null;
   try {
     const payload = {
+      id:               responseData.id               || null,
+      timestamp:        responseData.timestamp        || new Date().toISOString(),
       quiz_id:          responseData.quiz_id          || null,
       quiz_name:        responseData.quiz_name        || null,
       total_score:      responseData.total_score      || 0,

@@ -12,7 +12,7 @@ function validateLeadForm(fieldsConfig) {
       if (f.id === 'email') {
         ok = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
       } else if (f.id === 'celular') {
-        ok = /^\(\d{2}\)\s\d{5}-\d{4}$/.test(value);
+        ok = /^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(value);
       }
     }
     

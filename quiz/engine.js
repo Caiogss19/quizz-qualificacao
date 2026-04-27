@@ -325,12 +325,21 @@ function initQuiz() {
   const quizId = urlParams.get('id');
 
   const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
-  activeQuiz = quizzes.find(q => q.id === quizId);
+
+  // PRIORIDADE: Se houver ID na URL, tenta carregar do DB. Caso contrário, usa o quizJSON (config.js) oficial.
+  if (quizId) {
+    activeQuiz = quizzes.find(q => q.id === quizId);
+  }
 
   if (!activeQuiz) {
-    // Tenta quizJSON (config.js), senão usa DEFAULT_QUIZ_CONFIG do markdown
+    // Fallback: Usa quizJSON (config.js) se disponível, senão usa DEFAULT_QUIZ_CONFIG
     if (typeof quizJSON !== 'undefined') {
-      activeQuiz = { id: quizJSON.id, name: quizJSON.title, nodes: quizJSON.nodes, results: quizJSON.results };
+      activeQuiz = { 
+        id: quizJSON.id, 
+        name: quizJSON.title, 
+        nodes: quizJSON.nodes, 
+        results: quizJSON.results 
+      };
     } else {
       activeQuiz = DEFAULT_QUIZ_CONFIG;
     }
@@ -338,6 +347,7 @@ function initQuiz() {
 
   document.title = activeQuiz.name;
   resetState();
+  state.startTime = Date.now(); // Inicia o contador de tempo
 
   state.utms = {
     source:   urlParams.get('utm_source') || '',
@@ -386,6 +396,7 @@ function renderNode(nodeId) {
         quiz_id:      activeQuiz.id,
         quiz_name:    activeQuiz.name,
         completed_at: new Date().toISOString(),
+        duration_seconds: state.startTime ? Math.round((Date.now() - state.startTime) / 1000) : 0,
         lead:         state.lead,
         answers:      getAnswers(),
         hints:        state.hints,

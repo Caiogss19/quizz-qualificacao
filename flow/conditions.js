@@ -56,12 +56,3 @@ function removeConnection(fromNodeId, fromOption = null) {
   });
   renderConnections();
 }
-
-/**
- * Add a new empty node to the builder canvas.
- * @param {string} type - Node type (question|lead_form|loading|result)
- */
-  // Select the new node
-  builderState.selectedNodeId = id;
-  return id;
-}
