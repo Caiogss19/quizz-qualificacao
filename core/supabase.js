@@ -121,3 +121,18 @@ async function getLeadsFromSupabase() {
     return [];
   }
 }
+
+async function deleteLeadFromSupabase(id) {
+  if (!SUPABASE_KEY || !id) return false;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/table_leads?id=eq.${id}`, {
+      method: "DELETE",
+      headers: SUPABASE_HEADERS
+    });
+    if (!res.ok) throw new Error("Falha ao deletar lead no Supabase");
+    return true;
+  } catch (err) {
+    console.error("Supabase Error:", err);
+    return false;
+  }
+}

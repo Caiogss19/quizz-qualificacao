@@ -47,13 +47,10 @@ function getInitial(name) {
 
 function showToast(msg, duration = 3000) {
   const t = document.getElementById('toast');
-  if (t) {
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), duration);
-  } else {
-    console.log("Toast:", msg);
-  }
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
 }
 
 function isToday(iso) {
@@ -332,24 +329,18 @@ function editQuiz(id) {
 }
 
 // ===========================
-// MEUS QUIZZES (REDESIGN)
+// MEUS QUIZZES
 // ===========================
-const btnCreateQuizHeader = document.getElementById('btnCreateQuiz');
-if (btnCreateQuizHeader) {
-  btnCreateQuizHeader.addEventListener('click', () => actionCreateNew());
-}
-
-// Suporte para o novo botão estilo pílula
-document.addEventListener('DOMContentLoaded', () => {
+function initQuizzesActions() {
   const btnNew = document.getElementById('btnCreateQuizNew');
   if (btnNew) btnNew.addEventListener('click', actionCreateNew);
-  
-  const btnRefresh = document.getElementById('btnRefreshQuizzes');
-  if (btnRefresh) btnRefresh.addEventListener('click', () => {
+
+  const btnRefreshList = document.getElementById('btnRefreshQuizzes');
+  if (btnRefreshList) btnRefreshList.addEventListener('click', () => {
     loadAdminPanel();
     showToast('✅ Quizzes atualizados');
   });
-});
+}
 
 function actionCreateNew() {
   const name = prompt('Nome do novo quiz:', 'Novo Quiz');
@@ -468,32 +459,43 @@ function renameQuiz(id) {
 }
 
 function configWebhook(id) {
+  const quiz = getQuizById(id);
+  if (!quiz) return;
+
+  const url = prompt('URL do Webhook (para envio de leads):', quiz.webhookUrl || '');
+  if (url === null) return;
+
   const quizzes = getQuizzes();
   const target = quizzes.find(q => q.id === id);
   if (!target) return;
-  
-  const url = prompt('URL do Webhook (para envio de leads):', target.webhookUrl || '');
-  if (url !== null) {
-    target.webhookUrl = url.trim();
-    saveQuizzes(quizzes);
-    renderQuizzes();
-    showToast('✅ Webhook configurado!');
-  }
+
+  target.webhookUrl = url.trim();
+  saveQuizzes(quizzes);
+  renderQuizzes();
+  showToast('✅ Webhook configurado!');
 }
 
 async function testWebhook(id) {
-  const quizzes = getQuizzes();
-  const quiz = quizzes.find(q => q.id === id);
+  const quiz = getQuizById(id);
   if (!quiz || !quiz.webhookUrl) {
     alert('Configure o webhook antes de testar.');
     return;
   }
-  
-  const testData = { event: "teste_integracao", quiz_id: quiz.id, quiz_name: quiz.name, lead: { nome: "Teste Spark", email: "teste@sparkmaxx.com" } };
-  
+
+  const testData = {
+    event: 'teste_integracao',
+    quiz_id: quiz.id,
+    quiz_name: quiz.name,
+    lead: { nome: 'Teste Spark', email: 'teste@sparkmaxx.com' }
+  };
+
   try {
     showToast('⚡ Enviando teste...');
-    const res = await fetch(quiz.webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(testData) });
+    const res = await fetch(quiz.webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testData)
+    });
     if (res.ok) showToast('✅ Webhook enviado com sucesso!');
     else showToast('⚠️ Webhook retornou erro: ' + res.status);
   } catch (err) {
@@ -502,50 +504,23 @@ async function testWebhook(id) {
 }
 
 function openQuizOptions(id) {
-  const choice = confirm('Opções extras:\n\n- OK para DUPLICAR\n- Cancelar para EXCLUIR\n\n(Dica: no futuro teremos um menu suspenso aqui)');
-  if (choice) {
-    actionDuplicateQuiz(id);
-  } else {
-    actionDeleteQuiz(id);
-  }
+  const choice = confirm('Opções extras:\n\n- OK para DUPLICAR\n- Cancelar para EXCLUIR');
+  if (choice) actionDuplicateQuiz(id);
+  else actionDeleteQuiz(id);
 }
 
 function actionDuplicateQuiz(id) {
-  const quizzes = getQuizzes();
-  const source = quizzes.find(q => q.id === id);
-  if (!source) return;
-
-  const newQuiz = JSON.parse(JSON.stringify(source));
-  newQuiz.id = 'quiz_' + Date.now();
-  newQuiz.name = source.name + ' (Cópia)';
-  newQuiz.createdAt = new Date().toISOString();
-  
-  quizzes.push(newQuiz);
-  saveQuizzes(quizzes);
+  if (typeof duplicateQuiz !== 'function') return;
+  duplicateQuiz(id);
   renderQuizzes();
   showToast('✅ Quiz duplicado!');
 }
 
 function actionDeleteQuiz(id) {
-  if (confirm('Tem certeza que deseja excluir este quiz permanentemente?')) {
-    let quizzes = getQuizzes();
-    quizzes = quizzes.filter(q => q.id !== id);
-    saveQuizzes(quizzes);
-    renderQuizzes();
-    showToast('🗑️ Quiz excluído.');
-  }
-}
-
-function editQuiz(id) {
-  const quizzes = getQuizzes();
-  activeEditorQuiz = quizzes.find(q => q.id === id);
-  if (!activeEditorQuiz) return;
-
-  // Mostra o item de menu do construtor e ativa a aba
-  const navEditor = document.getElementById('nav-editor');
-  if (navEditor) navEditor.style.display = 'flex';
-  
-  switchTab('editor');
+  if (!confirm('Tem certeza que deseja excluir este quiz permanentemente?')) return;
+  if (typeof deleteQuiz === 'function') deleteQuiz(id);
+  renderQuizzes();
+  showToast('🗑️ Quiz excluído.');
 }
 
 function copyQuizLink(id) {
@@ -553,61 +528,10 @@ function copyQuizLink(id) {
   if (basePath.endsWith('index.html')) basePath = basePath.replace('index.html', 'quiz.html');
   else if (basePath.endsWith('/')) basePath += 'quiz.html';
   else if (!basePath.endsWith('quiz.html')) basePath += '/quiz.html';
-  
+
   const url = basePath + `?id=${id}`;
   navigator.clipboard.writeText(url);
   showToast('✅ Link copiado!');
-}
-
-function configWebhook(id) {
-  const quiz = typeof getQuizById === 'function' ? getQuizById(id) : null;
-  if (!quiz) return;
-  const url = prompt('URL do Webhook (para envio de leads):', quiz.webhookUrl || '');
-  if (url !== null) {
-    const quizzes = getQuizzes();
-    const target = quizzes.find(q => q.id === id);
-    if (target) {
-      target.webhookUrl = url.trim();
-      saveQuizzes(quizzes);
-      renderQuizzes();
-      showToast('✅ Webhook configurado!');
-    }
-  }
-}
-
-function actionDuplicateQuiz(id) {
-  if (typeof duplicateQuiz === 'function') {
-    duplicateQuiz(id);
-    renderQuizzes();
-    showToast('✅ Quiz duplicado!');
-  }
-}
-
-async function testWebhook(id) {
-  const quiz = typeof getQuizById === 'function' ? getQuizById(id) : null;
-  if (!quiz || !quiz.webhookUrl) {
-    alert('Configure o webhook antes de testar.');
-    return;
-  }
-  
-  const testData = { event: "teste_integracao", quiz_id: quiz.id, quiz_name: quiz.name, lead: { nome: "Teste", email: "teste@teste.com" } };
-  
-  try {
-    showToast('⚡ Enviando teste...');
-    const res = await fetch(quiz.webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(testData) });
-    if (res.ok) showToast('✅ Webhook enviado com sucesso!');
-    else showToast('⚠️ Webhook retornou erro.');
-  } catch (err) {
-    showToast('❌ Erro ao enviar webhook.');
-  }
-}
-
-function actionDeleteQuiz(id) {
-  if (confirm('Tem certeza que deseja excluir este quiz?')) {
-    if (typeof deleteQuiz === 'function') deleteQuiz(id);
-    renderQuizzes();
-    showToast('🗑️ Quiz excluído.');
-  }
 }
 
 // ===========================
@@ -772,21 +696,196 @@ function initModal() {
 }
 
 function deleteRow(id) {
-  if (confirm('Excluir esta resposta permanentemente?')) {
-    if (typeof deleteLeadFromSupabase === 'function') deleteLeadFromSupabase(id);
-    allData = allData.filter(x => x.id !== id);
-    applyFilters();
-    showToast('🗑️ Resposta removida');
-  }
+  if (!confirm('Excluir esta resposta permanentemente?')) return;
+  if (typeof deleteLeadFromSupabase === 'function') deleteLeadFromSupabase(id);
+  allData = allData.filter(x => x.id !== id);
+  applyFilters();
+  showToast('🗑️ Resposta removida');
 }
 
+// ===========================
+// ANALYTICS
+// ===========================
 function renderAnalytics() {
-  // Simplificado para o momento
-  console.log("Analytics rendered");
+  const data = allData;
+  const profileCountsMap = profileCounts(data);
+
+  const resultCounts = {};
+  const q2Counts = {};
+  const q3Counts = {};
+  data.forEach(r => {
+    const rid = r.result_id || r.resultado_id;
+    if (rid) resultCounts[rid] = (resultCounts[rid] || 0) + 1;
+
+    const q2 = getVal(r, 'q2_empresa') || getVal(r, 'q2_agencia') || getVal(r, 'q2_creator') || getVal(r, 'q2_casting');
+    if (q2 && q2 !== '—') q2Counts[q2] = (q2Counts[q2] || 0) + 1;
+
+    const q3 = getVal(r, 'q3_empresa') || getVal(r, 'q3_agencia') || getVal(r, 'q3_creator') || getVal(r, 'q3_casting');
+    if (q3 && q3 !== '—') q3Counts[q3] = (q3Counts[q3] || 0) + 1;
+  });
+
+  renderBarChart('chart-resultados', resultCounts, shortResult);
+  renderBarChart('chart-perfis', profileCountsMap, shortProfile);
+  renderBarChart('chart-q2', q2Counts);
+  renderBarChart('chart-q3', q3Counts);
+  renderTimeline('timelineChart', data);
+}
+
+function renderBarChart(elId, counts, labelFn) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) {
+    el.innerHTML = '<p style="color:var(--fg-3); font-size:13px;">Sem dados ainda</p>';
+    return;
+  }
+
+  const max = Math.max(...entries.map(([, n]) => n));
+  el.innerHTML = entries.map(([key, val]) => {
+    const pct = Math.round((val / max) * 100);
+    const label = labelFn ? labelFn(key) : key;
+    return `
+      <div class="profile-bar-row">
+        <span class="profile-bar-label">${truncate(label, 28)}</span>
+        <div class="profile-bar-track"><div class="profile-bar-fill" style="width:${pct}%"></div></div>
+        <span class="profile-bar-pct">${val}</span>
+      </div>`;
+  }).join('');
+}
+
+function renderTimeline(elId, data) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+
+  const buckets = {};
+  data.forEach(r => {
+    if (!r.timestamp) return;
+    const day = r.timestamp.substring(0, 10);
+    buckets[day] = (buckets[day] || 0) + 1;
+  });
+
+  const days = Object.keys(buckets).sort();
+  if (!days.length) {
+    el.innerHTML = '<p style="color:var(--fg-3); font-size:13px;">Sem dados ainda</p>';
+    return;
+  }
+
+  const max = Math.max(...Object.values(buckets));
+  el.innerHTML = days.map(d => {
+    const pct = Math.round((buckets[d] / max) * 100);
+    return `
+      <div class="profile-bar-row">
+        <span class="profile-bar-label">${d}</span>
+        <div class="profile-bar-track"><div class="profile-bar-fill" style="width:${pct}%"></div></div>
+        <span class="profile-bar-pct">${buckets[d]}</span>
+      </div>`;
+  }).join('');
+}
+
+// ===========================
+// EXPORT
+// ===========================
+function buildCsv(rows) {
+  if (!rows.length) return '';
+  const headers = ['id', 'timestamp', 'quiz_id', 'quiz_name', 'nome', 'email', 'celular', 'empresa', 'perfil', 'result_id', 'result_title', 'total_score', 'duration_seconds'];
+  const escape = v => {
+    if (v === null || v === undefined) return '';
+    const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const head = headers.join(',');
+  const body = rows.map(r => headers.map(h => escape(getVal(r, h) === '—' ? r[h] : getVal(r, h))).join(',')).join('\n');
+  return head + '\n' + body;
+}
+
+function downloadFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function renderExport() {
-  console.log("Export rendered");
+  renderPreview();
+
+  const csvBtn = document.getElementById('btnExportCSV');
+  if (csvBtn && !csvBtn.dataset.bound) {
+    csvBtn.dataset.bound = '1';
+    csvBtn.addEventListener('click', () => {
+      if (!allData.length) return showToast('Nenhum dado para exportar');
+      downloadFile(`respostas_${Date.now()}.csv`, buildCsv(allData), 'text/csv;charset=utf-8');
+      showToast('✅ CSV exportado');
+    });
+  }
+
+  const jsonBtn = document.getElementById('btnExportJSON');
+  if (jsonBtn && !jsonBtn.dataset.bound) {
+    jsonBtn.dataset.bound = '1';
+    jsonBtn.addEventListener('click', () => {
+      if (!allData.length) return showToast('Nenhum dado para exportar');
+      downloadFile(`respostas_${Date.now()}.json`, JSON.stringify(allData, null, 2), 'application/json');
+      showToast('✅ JSON exportado');
+    });
+  }
+
+  const copyBtn = document.getElementById('btnCopyClipboard');
+  if (copyBtn && !copyBtn.dataset.bound) {
+    copyBtn.dataset.bound = '1';
+    copyBtn.addEventListener('click', async () => {
+      if (!allData.length) return showToast('Nenhum dado para copiar');
+      try {
+        await navigator.clipboard.writeText(buildCsv(allData));
+        showToast('✅ CSV copiado');
+      } catch {
+        showToast('❌ Falha ao copiar');
+      }
+    });
+  }
+
+  const clearBtn = document.getElementById('btnClearAll');
+  if (clearBtn && !clearBtn.dataset.bound) {
+    clearBtn.dataset.bound = '1';
+    clearBtn.addEventListener('click', () => {
+      if (!confirm('Apagar TODAS as respostas locais? Esta ação é irreversível.')) return;
+      localStorage.removeItem('quiz_diagnostico_responses');
+      allData = [];
+      filteredData = [];
+      renderPreview();
+      renderResponses();
+      showToast('🗑️ Dados locais apagados');
+    });
+  }
+}
+
+function renderPreview() {
+  const head = document.getElementById('previewHead');
+  const body = document.getElementById('previewBody');
+  if (!head || !body) return;
+
+  if (!allData.length) {
+    head.innerHTML = '';
+    body.innerHTML = '<tr class="empty-row"><td>Nenhuma resposta ainda</td></tr>';
+    return;
+  }
+
+  const cols = ['Data', 'Nome', 'Email', 'Empresa', 'Perfil', 'Score'];
+  head.innerHTML = `<tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr>`;
+  body.innerHTML = allData.slice(0, 10).map(r => `
+    <tr>
+      <td>${formatDate(r.timestamp)}</td>
+      <td>${truncate(getVal(r, 'nome'), 18)}</td>
+      <td>${truncate(getVal(r, 'email'), 22)}</td>
+      <td>${truncate(getVal(r, 'empresa'), 18)}</td>
+      <td>${shortProfile(r.perfil)}</td>
+      <td>${r.total_score || 0}</td>
+    </tr>
+  `).join('');
 }
 
 // ===========================
@@ -797,6 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initResponseFilters();
   initModal();
+  initQuizzesActions();
 });
 
 window.openDetail = openDetail;
@@ -808,5 +908,6 @@ window.configWebhook = configWebhook;
 window.testWebhook = testWebhook;
 window.actionDuplicateQuiz = actionDuplicateQuiz;
 window.actionDeleteQuiz = actionDeleteQuiz;
-window.selectEditorNode = selectEditorNode;
-window.initEditor = initEditor;
+window.openQuizOptions = openQuizOptions;
+window.renameQuiz = renameQuiz;
+window.actionCreateNew = actionCreateNew;
