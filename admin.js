@@ -227,7 +227,7 @@ function switchTab(tab) {
     responses: 'Respostas', 
     analytics: 'Analytics', 
     export: 'Exportar dados',
-    editor: 'Construtor de Quiz'
+    branding: 'Identidade Visual'
   };
   
   const headerTitle = document.getElementById('headerTitle');
@@ -238,7 +238,7 @@ function switchTab(tab) {
   if (tab === 'responses') renderResponses();
   if (tab === 'analytics') renderAnalytics();
   if (tab === 'export') renderExport();
-  if (tab === 'editor') initEditor();
+  if (tab === 'branding') loadBranding();
 }
 
 // ===========================
@@ -279,295 +279,56 @@ async function loadAdminPanel() {
 }
 
 // ===========================
-// STEP EDITOR LOGIC
+// BRANDING
 // ===========================
-let activeEditorQuiz = null;
-let selectedNodeId = null;
+const BRANDING_KEY = 'sparkmaxx_branding';
+
+function loadBranding() {
+  const branding = JSON.parse(localStorage.getItem(BRANDING_KEY) || '{}');
+  const logo = document.getElementById('brandingLogo');
+  const picker = document.getElementById('brandingColorPicker');
+  const hex = document.getElementById('brandingColorHex');
+  const favicon = document.getElementById('brandingFavicon');
+
+  if (logo) logo.value = branding.logo || '';
+  if (picker) picker.value = branding.primaryColor || '#10B981';
+  if (hex) hex.value = branding.primaryColor || '#10B981';
+  if (favicon) favicon.value = branding.favicon || '';
+}
+
+const colorPicker = document.getElementById('brandingColorPicker');
+if (colorPicker) {
+  colorPicker.addEventListener('input', (e) => {
+    const hex = document.getElementById('brandingColorHex');
+    if (hex) hex.value = e.target.value.toUpperCase();
+  });
+}
+
+const colorHex = document.getElementById('brandingColorHex');
+if (colorHex) {
+  colorHex.addEventListener('input', (e) => {
+    const picker = document.getElementById('brandingColorPicker');
+    if (picker && /^#[0-9A-F]{6}$/i.test(e.target.value)) {
+      picker.value = e.target.value;
+    }
+  });
+}
+
+const btnSaveBranding = document.getElementById('btnSaveBranding');
+if (btnSaveBranding) {
+  btnSaveBranding.addEventListener('click', () => {
+    const branding = {
+      logo: document.getElementById('brandingLogo').value,
+      primaryColor: document.getElementById('brandingColorHex').value,
+      favicon: document.getElementById('brandingFavicon').value
+    };
+    localStorage.setItem(BRANDING_KEY, JSON.stringify(branding));
+    showToast('🎨 Identidade visual salva!');
+  });
+}
 
 function editQuiz(id) {
-  const quizzes = getQuizzes();
-  activeEditorQuiz = quizzes.find(q => q.id === id);
-  if (!activeEditorQuiz) return;
-
-  // Mostra o item de menu do construtor e ativa a aba
-  const navEditor = document.getElementById('nav-editor');
-  if (navEditor) navEditor.style.display = 'flex';
-  
-  switchTab('editor');
-}
-
-function initEditor() {
-  if (!activeEditorQuiz) return;
-  
-  // Seleciona o primeiro nó por padrão se nenhum estiver selecionado
-  if (!selectedNodeId) {
-    const nodeIds = Object.keys(activeEditorQuiz.nodes);
-    if (nodeIds.length > 0) selectedNodeId = nodeIds[0];
-  }
-  
-  renderEditorSteps();
-  selectEditorNode(selectedNodeId);
-  
-  // Listeners
-  document.getElementById('btnAddStep').onclick = () => {
-    const id = 'step_' + Date.now();
-    activeEditorQuiz.nodes[id] = {
-      id: id, type: 'question', title: 'Nova Pergunta',
-      subtitle: 'Descrição da pergunta...',
-      options: [{ text: 'Opção 1', next: null, score: 0 }]
-    };
-    renderEditorSteps();
-    selectEditorNode(id);
-  };
-
-  document.getElementById('btnSaveEditor').onclick = () => {
-    const quizzes = getQuizzes();
-    const idx = quizzes.findIndex(q => q.id === activeEditorQuiz.id);
-    if (idx !== -1) {
-      quizzes[idx] = activeEditorQuiz;
-      saveQuizzes(quizzes);
-      showToast('✅ Quiz salvo com sucesso!');
-    }
-  };
-}
-
-function renderEditorSteps() {
-  const list = document.getElementById('editorStepsList');
-  const count = document.getElementById('editorStepCount');
-  if (!list || !activeEditorQuiz) return;
-
-  const nodeIds = Object.keys(activeEditorQuiz.nodes);
-  count.textContent = nodeIds.length;
-
-  list.innerHTML = nodeIds.map((nid, i) => {
-    const n = activeEditorQuiz.nodes[nid];
-    return `
-      <div class="step-item ${selectedNodeId === nid ? 'active' : ''}" onclick="selectEditorNode('${nid}')">
-        <div class="step-id-badge">${(i + 1).toString().padStart(2, '0')}</div>
-        <div class="step-info">
-          <div class="step-name">${n.title || nid}</div>
-        </div>
-        <span class="step-tag-pill">${n.type}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function selectEditorNode(id) {
-  if (!id) return;
-  selectedNodeId = id;
-  renderEditorSteps();
-  renderInspector();
-  updateEditorPreview();
-}
-
-function renderInspector() {
-  const content = document.getElementById('inspectorContent');
-  const stepIdLabel = document.getElementById('inspectorStepId');
-  const node = activeEditorQuiz.nodes[selectedNodeId];
-  if (!content || !node) return;
-
-  stepIdLabel.textContent = selectedNodeId.toUpperCase();
-
-  let specificFields = '';
-  if (node.type === 'question') {
-    specificFields = `
-      <div class="inspector-group">
-        <label class="inspector-label">OPÇÕES E LÓGICA</label>
-        ${(node.options || []).map((opt, i) => `
-          <div style="background:rgba(255,255,255,0.02); padding:14px; border-radius:12px; margin-bottom:16px; border:1px solid rgba(255,255,255,0.05);">
-            <div class="inspector-group" style="margin-bottom:10px;">
-              <label class="inspector-label" style="font-size:8px;">TEXTO DA OPÇÃO</label>
-              <input type="text" class="inspector-input" value="${opt.text}" oninput="updateNodeOption(${i}, 'text', this.value)">
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
-              <div class="inspector-group">
-                <label class="inspector-label" style="font-size:8px;">PONTO (SCORE)</label>
-                <input type="number" class="inspector-input" value="${opt.score || 0}" oninput="updateNodeOption(${i}, 'score', parseInt(this.value))">
-              </div>
-              <div class="inspector-group">
-                <label class="inspector-label" style="font-size:8px;">DICA (HINT)</label>
-                <input type="text" class="inspector-input" value="${opt.hint || ''}" oninput="updateNodeOption(${i}, 'hint', this.value)" placeholder="ex: discovery">
-              </div>
-            </div>
-            <div class="inspector-group">
-              <label class="inspector-label" style="font-size:8px;">DESTINO (NEXT STEP)</label>
-              <div style="display:flex; gap:8px;">
-                <select class="inspector-select" onchange="updateNodeOption(${i}, 'next', this.value)">
-                  <option value="">-- Selecione o próximo passo --</option>
-                  ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${opt.next === nid ? 'selected' : ''}>${nid} (${activeEditorQuiz.nodes[nid].type})</option>`).join('')}
-                </select>
-                <button class="btn-del-row" onclick="removeNodeOption(${i})">✕</button>
-              </div>
-            </div>
-          </div>
-        `).join('')}
-        <button class="btn-detail" onclick="addNodeOption()" style="width:100%; padding:10px;">+ Adicionar Opção</button>
-      </div>
-    `;
-  } else if (node.type === 'lead_form') {
-    specificFields = `
-      <div class="inspector-group">
-        <label class="inspector-label">CAMPOS DO FORMULÁRIO</label>
-        ${(node.fields || []).map((f, i) => `
-          <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.05);">
-            <div style="display:flex; gap:8px; align-items:center;">
-              <div style="font-family:var(--font-mono); font-size:9px; color:var(--fg-3); width:60px;">${f.id}</div>
-              <input type="text" class="inspector-input" value="${f.label}" oninput="updateLeadField(${i}, 'label', this.value)" placeholder="Etiqueta do campo">
-            </div>
-          </div>
-        `).join('')}
-        <div class="inspector-group" style="margin-top:12px;">
-          <label class="inspector-label">TEXTO DO BOTÃO</label>
-          <input type="text" class="inspector-input" value="${node.buttonText || ''}" oninput="updateNodeProp('buttonText', this.value)" placeholder="Começar diagnóstico">
-        </div>
-        <div class="inspector-group">
-          <label class="inspector-label">PRÓXIMO PASSO</label>
-          <select class="inspector-select" onchange="updateNodeProp('next', this.value)">
-            <option value="">-- Selecione o próximo passo --</option>
-            ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${node.next === nid ? 'selected' : ''}>${nid} (${activeEditorQuiz.nodes[nid].type})</option>`).join('')}
-          </select>
-        </div>
-      </div>
-    `;
-  } else if (node.type === 'result') {
-    specificFields = `
-      <div class="inspector-group">
-        <label class="inspector-label">SOLUÇÕES / BENEFÍCIOS</label>
-        ${(node.solutions || []).map((s, i) => `
-          <div style="display:flex; gap:8px; margin-bottom:8px;">
-            <input type="text" class="inspector-input" value="${s.name}" oninput="updateResultSolution(${i}, 'name', this.value)">
-            <button class="btn-del-row" onclick="removeResultSolution(${i})">✕</button>
-          </div>
-        `).join('')}
-        <button class="btn-detail" onclick="addResultSolution()" style="width:100%;">+ Adicionar Solução</button>
-      </div>
-    `;
-  } else if (node.type === 'loading') {
-    specificFields = `
-      <div class="inspector-group">
-        <label class="inspector-label">DURAÇÃO (MS)</label>
-        <input type="number" class="inspector-input" value="${node.duration || 3000}" oninput="updateNodeProp('duration', parseInt(this.value))">
-      </div>
-      <div class="inspector-group">
-        <label class="inspector-label">PRÓXIMO PASSO (AUTO)</label>
-        <select class="inspector-select" onchange="updateNodeProp('next', this.value)">
-          <option value="">-- Selecione o próximo passo --</option>
-          ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${node.next === nid ? 'selected' : ''}>${nid} (${activeEditorQuiz.nodes[nid].type})</option>`).join('')}
-        </select>
-      </div>
-    `;
-  }
-
-  content.innerHTML = `
-    <div class="inspector-group">
-      <label class="inspector-label">TIPO DE STEP</label>
-      <select class="inspector-select" onchange="updateNodeProp('type', this.value)">
-        <option value="question" ${node.type === 'question' ? 'selected' : ''}>QUESTION</option>
-        <option value="lead_form" ${node.type === 'lead_form' ? 'selected' : ''}>LEAD FORM</option>
-        <option value="loading" ${node.type === 'loading' ? 'selected' : ''}>LOADING</option>
-        <option value="result" ${node.type === 'result' ? 'selected' : ''}>RESULT</option>
-      </select>
-    </div>
-
-    <div class="inspector-group">
-      <label class="inspector-label">TÍTULO</label>
-      <input type="text" class="inspector-input" value="${node.title || ''}" oninput="updateNodeProp('title', this.value)">
-    </div>
-
-    <div class="inspector-group">
-      <label class="inspector-label">SUBTÍTULO</label>
-      <textarea class="inspector-input" rows="3" oninput="updateNodeProp('subtitle', this.value)">${node.subtitle || ''}</textarea>
-    </div>
-
-    ${specificFields}
-    
-    <div style="margin-top:auto; padding-top:20px; border-top:1px solid var(--border-1);">
-      <button class="btn-danger" style="width:100%;" onclick="deleteCurrentStep()">Excluir este passo</button>
-    </div>
-  `;
-}
-
-// Helpers reativos
-window.updateNodeProp = (prop, val) => {
-  activeEditorQuiz.nodes[selectedNodeId][prop] = val;
-  updateEditorPreview();
-  if (prop === 'title' || prop === 'type') renderEditorSteps();
-};
-
-window.updateNodeOption = (idx, prop, val) => {
-  activeEditorQuiz.nodes[selectedNodeId].options[idx][prop] = val;
-  updateEditorPreview();
-};
-
-window.addNodeOption = () => {
-  if (!activeEditorQuiz.nodes[selectedNodeId].options) activeEditorQuiz.nodes[selectedNodeId].options = [];
-  activeEditorQuiz.nodes[selectedNodeId].options.push({ text: 'Nova Opção', next: null, score: 0 });
-  renderInspector();
-  updateEditorPreview();
-};
-
-window.removeNodeOption = (idx) => {
-  activeEditorQuiz.nodes[selectedNodeId].options.splice(idx, 1);
-  renderInspector();
-  updateEditorPreview();
-};
-
-window.updateLeadField = (idx, prop, val) => {
-  activeEditorQuiz.nodes[selectedNodeId].fields[idx][prop] = val;
-  updateEditorPreview();
-};
-
-window.updateResultSolution = (idx, prop, val) => {
-  activeEditorQuiz.nodes[selectedNodeId].solutions[idx][prop] = val;
-  updateEditorPreview();
-};
-
-window.addResultSolution = () => {
-  if (!activeEditorQuiz.nodes[selectedNodeId].solutions) activeEditorQuiz.nodes[selectedNodeId].solutions = [];
-  activeEditorQuiz.nodes[selectedNodeId].solutions.push({ name: 'Nova Solução' });
-  renderInspector();
-  updateEditorPreview();
-};
-
-window.removeResultSolution = (idx) => {
-  activeEditorQuiz.nodes[selectedNodeId].solutions.splice(idx, 1);
-  renderInspector();
-  updateEditorPreview();
-};
-
-window.deleteCurrentStep = () => {
-  if (confirm('Excluir este passo permanentemente?')) {
-    delete activeEditorQuiz.nodes[selectedNodeId];
-    const remaining = Object.keys(activeEditorQuiz.nodes);
-    selectedNodeId = remaining.length > 0 ? remaining[0] : null;
-    initEditor();
-  }
-};
-
-function updateEditorPreview() {
-  const body = document.getElementById('editorPreviewBody');
-  const node = activeEditorQuiz.nodes[selectedNodeId];
-  if (!body || !node) { body.innerHTML = ''; return; }
-
-  body.innerHTML = `
-    <div style="text-align:center; animation: fadeIn 0.3s ease;">
-      <div class="step-tag" style="margin: 0 auto 16px; justify-content:center;">Step: ${selectedNodeId}</div>
-      <h2 class="step-title" style="font-size:28px;">${node.title || 'Sem título'}</h2>
-      <p class="step-subtitle" style="margin: 0 auto 24px;">${node.subtitle || ''}</p>
-      
-      <div style="display:flex; flex-direction:column; gap:10px; max-width:320px; margin:0 auto;">
-        ${(node.options || []).map((opt, i) => `
-          <div class="option-card" style="padding:14px 18px; pointer-events:none;">
-            <div class="option-letter">${String.fromCharCode(65 + i)}</div>
-            <div class="option-text">${opt.text}</div>
-          </div>
-        `).join('')}
-        ${node.type === 'lead_form' ? '<div class="btn-primary" style="pointer-events:none;">Visualização do Formulário</div>' : ''}
-        ${node.type === 'loading' ? '<div class="spinner-circle" style="width:40px; height:40px; margin:0 auto;"></div>' : ''}
-      </div>
-    </div>
-  `;
+  window.location.href = `builder.html?id=${id}`;
 }
 
 // ===========================
