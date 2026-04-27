@@ -55,9 +55,15 @@ function initQuiz() {
   const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
 
   activeQuiz = quizzes.find(q => q.id === quizId);
+  
   if (!activeQuiz) {
-    if (quizzes.length > 0) activeQuiz = quizzes[0];
-    else activeQuiz = { id: quizJSON.id, name: quizJSON.title, webhookUrl: '', nodes: quizJSON.nodes, results: quizJSON.results };
+    if (quizId) {
+      // If a specific ID was requested but not found, fallback to first or default
+      activeQuiz = (quizzes.length > 0) ? quizzes[0] : { id: quizJSON.id, name: quizJSON.title, nodes: quizJSON.nodes, results: quizJSON.results };
+    } else {
+      // Default: Always use the latest quizJSON from config.js
+      activeQuiz = { id: quizJSON.id, name: quizJSON.title, nodes: quizJSON.nodes, results: quizJSON.results };
+    }
   }
 
   document.title = activeQuiz.name;
