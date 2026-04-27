@@ -206,8 +206,40 @@ body {
 .node-type-result { border-left: 2px solid var(--sm-mist); }
 
 /* ── CONNECTION LINES ────────────────────────────── */
-.connection-line { stroke: rgba(95,125,158,0.40); stroke-width: 1.5px; fill: none; stroke-dasharray: 4 4; }
-.connection-line:hover { stroke: rgba(95,125,158,0.8); }
+.canvas-connections {
+  z-index: 1;
+}
+
+.connection-path {
+  fill: none;
+  stroke: var(--sm-steel);
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-dasharray: 6 6;
+  opacity: 0.6;
+  transition: opacity var(--dur-base), stroke-width var(--dur-base), stroke var(--dur-base);
+  animation: flowLine 30s linear infinite;
+  cursor: pointer;
+  pointer-events: stroke; /* Permite hover na linha mas não no espaço vazio */
+}
+
+.connection-path:hover {
+  opacity: 1;
+  stroke-width: 3px;
+  stroke: var(--sm-offwhite);
+  filter: drop-shadow(0 0 4px rgba(179,197,216,0.4));
+}
+
+@keyframes flowLine {
+  from { stroke-dashoffset: 500; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Dots nas extremidades */
+.connection-dot {
+  fill: var(--sm-steel);
+  opacity: 0.8;
+}
 
 /* ── INSPECTOR ───────────────────────────────────── */
 .inspector {

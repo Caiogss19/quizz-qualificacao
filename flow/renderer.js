@@ -32,11 +32,30 @@ function renderConnections() {
         const x2 = (toRect.left + toRect.width / 2 - containerRect.left) / scale;
         const y2 = (toRect.top + toRect.height / 2 - containerRect.top) / scale;
 
+        // Draw Dot at Start
+        const dotStart = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dotStart.setAttribute('cx', x1);
+        dotStart.setAttribute('cy', y1);
+        dotStart.setAttribute('r', 3);
+        dotStart.setAttribute('class', 'connection-dot');
+        svg.appendChild(dotStart);
+
+        // Draw Dot at End
+        const dotEnd = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dotEnd.setAttribute('cx', x2);
+        dotEnd.setAttribute('cy', y2);
+        dotEnd.setAttribute('r', 3);
+        dotEnd.setAttribute('class', 'connection-dot');
+        svg.appendChild(dotEnd);
+
+        // Draw Path
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('class', 'connection-path');
         
-        const dx = Math.abs(x2 - x1) * 0.5;
-        const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+        // n8n-style curvature: more horizontal stretch
+        const distance = Math.abs(x2 - x1);
+        const horizontalStretch = Math.max(distance * 0.4, 40);
+        const d = `M ${x1} ${y1} C ${x1 + horizontalStretch} ${y1}, ${x2 - horizontalStretch} ${y2}, ${x2} ${y2}`;
         path.setAttribute('d', d);
         
         svg.appendChild(path);
