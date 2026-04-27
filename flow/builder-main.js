@@ -44,29 +44,75 @@ function initBuilder() {
   // Extract connections from node data
   extractConnections();
 
-  initCanvas();
+  initCanvasWithToolbar();
   initInspector();
+  initPalette();
   renderAllNodes();
   renderConnections();
 
-  // Toolbar buttons
-  const btnAddNode = document.getElementById('btnAddNode');
-  if (btnAddNode) {
-    btnAddNode.addEventListener('change', (e) => {
+  // Toolbar buttons (Legacy dropdown - keeping for compatibility)
+  const btnAddNodeSelect = document.getElementById('btnAddNode');
+  if (btnAddNodeSelect) {
+    btnAddNodeSelect.addEventListener('change', (e) => {
       const type = e.target.value;
       if (type) {
-        const id = addNewNode(type);
-        renderAllNodes();
-        renderConnections();
-        // Scroll/highlight the new node
-        const el = document.getElementById(`node-${id}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        addNewNodeAtCenter(type);
         e.target.value = ''; // Reset select
       }
     });
   }
 
   document.getElementById('btnSaveFlow').addEventListener('click', saveFlow);
+}
+
+function initPalette() {
+  const items = document.querySelectorAll('.palette-item');
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const type = item.dataset.type;
+      addNewNodeAtCenter(type);
+    });
+    
+    // Suporte a Drag & Drop nativo simplificado
+    item.setAttribute('draggable', 'true');
+    item.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('nodeType', item.dataset.type);
+    });
+  });
+
+  const wrapper = document.getElementById('canvasWrapper');
+  wrapper.addEventListener('dragover', (e) => e.preventDefault());
+  wrapper.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('nodeType');
+    if (type) {
+      const rect = wrapper.getBoundingClientRect();
+      const x = (e.clientX - rect.left - builderState.transform.x) / builderState.transform.scale;
+      const y = (e.clientY - rect.top - builderState.transform.y) / builderState.transform.scale;
+      
+      const id = addNewNode(type);
+      if (builderState.nodes[id]) {
+        builderState.nodes[id].editor = { x: x - 100, y: y - 40 };
+        renderAllNodes();
+        renderConnections();
+      }
+    }
+  });
+}
+
+function addNewNodeAtCenter(type) {
+  const id = addNewNode(type);
+  if (builderState.nodes[id]) {
+    // Posiciona próximo ao centro visível
+    builderState.nodes[id].editor = { 
+      x: (window.innerWidth / 2 - 400 - builderState.transform.x) / builderState.transform.scale, 
+      y: (window.innerHeight / 2 - 200 - builderState.transform.y) / builderState.transform.scale 
+    };
+    renderAllNodes();
+    renderConnections();
+    const el = document.getElementById(`node-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 }
 
 function extractConnections() {

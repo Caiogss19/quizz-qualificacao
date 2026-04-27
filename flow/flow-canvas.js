@@ -53,5 +53,46 @@ function initCanvas() {
 function updateTransform() {
   const panZoom = document.getElementById('canvasPanZoom');
   panZoom.style.transform = `translate(${builderState.transform.x}px, ${builderState.transform.y}px) scale(${builderState.transform.scale})`;
-  renderConnections(); // Optional: might not be needed if connections scale with the container, but good to ensure
+  
+  // Update zoom label
+  const zoomLabel = document.querySelector('.canvas-zoom');
+  if (zoomLabel) {
+    zoomLabel.textContent = `${Math.round(builderState.transform.scale * 100)}%`;
+  }
+
+  renderConnections();
+}
+
+// Toolbar functionality
+function initToolbar() {
+  const wrapper = document.getElementById('canvasWrapper');
+  const toolbar = document.querySelector('.canvas-toolbar');
+  if (!toolbar) return;
+
+  const btnZoomOut = toolbar.querySelector('button[title="Zoom out"]');
+  const btnZoomIn = toolbar.querySelector('button[title="Zoom in"]');
+  const btnCenter = toolbar.querySelector('button[title="Centralizar"]');
+
+  btnZoomOut?.addEventListener('click', () => {
+    builderState.transform.scale = Math.max(0.2, builderState.transform.scale - 0.1);
+    updateTransform();
+  });
+
+  btnZoomIn?.addEventListener('click', () => {
+    builderState.transform.scale = Math.min(2, builderState.transform.scale + 0.1);
+    updateTransform();
+  });
+
+  btnCenter?.addEventListener('click', () => {
+    builderState.transform.x = 60;
+    builderState.transform.y = 60;
+    builderState.transform.scale = 0.85;
+    updateTransform();
+  });
+}
+
+// Chamar initToolbar no final do initCanvas
+function initCanvasWithToolbar() {
+  initCanvas();
+  initToolbar();
 }

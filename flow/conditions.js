@@ -93,6 +93,11 @@ function addNewNode(type = 'question') {
     newNode.title = 'Analisando suas respostas...';
     newNode.subtitle = 'Isso pode levar alguns segundos.';
     newNode.duration = 2400;
+  } else if (type === 'webhook') {
+    newNode.title = 'Disparar Webhook';
+    newNode.subtitle = 'Envia os dados do lead para uma URL externa';
+    newNode.webhookUrl = '';
+    newNode.method = 'POST';
   }
 
   builderState.nodes[id] = newNode;
