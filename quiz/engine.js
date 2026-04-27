@@ -1,16 +1,16 @@
 // Dependencies loaded globally via quiz.html scripts
-
+ 
 const DOM = {
   quizCard:    document.getElementById('quizCard'),
   progressBar: document.getElementById('progressBar'),
   stepCount:   document.getElementById('stepCount'),
 };
-
+ 
 // ── HINT ORDER (cd=0, ss=1, cp=2) ─────────────────────────────────
 // Garante que combos sempre gerem a chave correta do markdown:
 // cd+ss → cd_ss | cd+cp → cd_cp | ss+cp → ss_cp
 const HINT_ORDER = { cd: 0, ss: 1, cp: 2 };
-
+ 
 // ── RESULT METRICS ─────────────────────────────────────────────────
 // Dados exibidos no card de métrica do resultado
 const RESULT_METRICS = {
@@ -21,7 +21,7 @@ const RESULT_METRICS = {
   cd_cp: { metric: 'Full',  metricLabel: 'segurança de nicho',   tag: 'Combo',        short: 'Estratégia Cultural Segura' },
   ss_cp: { metric: 'Safe',  metricLabel: 'performance auditada', tag: 'Combo',        short: 'Performance com Segurança' },
 };
-
+ 
 // ── DEFAULT QUIZ CONFIG ────────────────────────────────────────────
 // Estrutura completa do quiz baseada no markdown.
 // Usada como fallback quando quizJSON (config.js) não estiver disponível.
@@ -29,7 +29,7 @@ const DEFAULT_QUIZ_CONFIG = {
   id: 'sparkmaxx_v1',
   name: 'Quiz Spark Maxx',
   nodes: {
-
+ 
     // ── 1. FORMULÁRIO DE CAPTURA ──────────────────────────────────
     start: {
       type: 'lead_form',
@@ -43,7 +43,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { id: 'empresa', label: 'Empresa',  type: 'text',  placeholder: 'Nome da empresa',   required: false },
       ],
     },
-
+ 
     // ── 2. BIFURCAÇÃO PRINCIPAL ───────────────────────────────────
     perfil: {
       type: 'question',
@@ -58,9 +58,9 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Casting / Agenciador — curadoria de talentos',     value: 'casting', hint: null, next: 'q2_casting' },
       ],
     },
-
+ 
     // ── 3A. FLUXO MARCA ───────────────────────────────────────────
-
+ 
     q2_empresa: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -73,7 +73,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Proteger e monitorar a reputação de influenciadores',         hint: 'cp', next: 'q3_empresa' },
       ],
     },
-
+ 
     q3_empresa: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -86,9 +86,9 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Monitorar a reputação dos creators/embaixadores',       hint: 'cp', next: 'analyzing' },
       ],
     },
-
+ 
     // ── 3B. FLUXO AGÊNCIA ─────────────────────────────────────────
-
+ 
     q2_agencia: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -101,7 +101,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Auditoria, compliance e segurança dos influencers',       hint: 'cp', next: 'q3_agencia' },
       ],
     },
-
+ 
     q3_agencia: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -114,9 +114,9 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Monitoramento contínuo de perfis de creators',            hint: 'cp', next: 'analyzing' },
       ],
     },
-
+ 
     // ── 3C. FLUXO CREATOR ─────────────────────────────────────────
-
+ 
     q2_creator: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -129,7 +129,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Proteger minha imagem e reputação digital',               hint: 'cp', next: 'q3_creator' },
       ],
     },
-
+ 
     q3_creator: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -142,9 +142,9 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Uso análises avançadas de audiência e nicho',             hint: 'cp', next: 'analyzing' },
       ],
     },
-
+ 
     // ── 3D. FLUXO CASTING ─────────────────────────────────────────
-
+ 
     q2_casting: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -157,7 +157,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Conquistar novas parcerias/publis',                       hint: 'cp', next: 'q3_casting' },
       ],
     },
-
+ 
     q3_casting: {
       type: 'question',
       tag: 'Diagnóstico',
@@ -170,9 +170,9 @@ const DEFAULT_QUIZ_CONFIG = {
         { text: 'Relatórios de desempenho e resultados anteriores',        hint: 'ss', next: 'analyzing' },
       ],
     },
-
+ 
     // ── 4. FUNIL DE CONVERGÊNCIA ──────────────────────────────────
-
+ 
     analyzing: {
       type: 'loading',
       title: 'Analisando suas respostas',
@@ -180,19 +180,19 @@ const DEFAULT_QUIZ_CONFIG = {
       duration: 3000,
       next: 'result',
     },
-
+ 
     // ── 5. RESULTADO (conteúdo calculado em computeResultData) ────
     result: {
       type: 'result',
     },
   },
-
+ 
   // ── RESULTADOS POSSÍVEIS ──────────────────────────────────────────
   // 3 puros (2-0) + 3 mistos (1-1) conforme lógica do markdown
   results: {
-
+ 
     // ── PUROS ────────────────────────────────────────────────────
-
+ 
     ss: {
       badge: 'Resultado puro (2–0)',
       title: 'Sprout Social',
@@ -208,7 +208,7 @@ const DEFAULT_QUIZ_CONFIG = {
       cta: 'Agendar conversa com especialista',
       url: '#',
     },
-
+ 
     cd: {
       badge: 'Resultado puro (2–0)',
       title: 'Community Discovery',
@@ -223,7 +223,7 @@ const DEFAULT_QUIZ_CONFIG = {
       cta: 'Agendar conversa com especialista',
       url: '#',
     },
-
+ 
     cp: {
       badge: 'Resultado puro (2–0)',
       title: 'Creator Pulse',
@@ -238,10 +238,10 @@ const DEFAULT_QUIZ_CONFIG = {
       cta: 'Agendar conversa com especialista',
       url: '#',
     },
-
+ 
     // ── MISTOS ───────────────────────────────────────────────────
     // Chaves sempre ordenadas por HINT_ORDER: cd < ss < cp
-
+ 
     cd_ss: {
       badge: 'Resultado misto (1–1)',
       title: 'Combo Inovação',
@@ -256,7 +256,7 @@ const DEFAULT_QUIZ_CONFIG = {
       cta: 'Agendar conversa com especialista',
       url: '#',
     },
-
+ 
     cd_cp: {
       badge: 'Resultado misto (1–1)',
       title: 'Combo Estratégia Segura',
@@ -271,7 +271,7 @@ const DEFAULT_QUIZ_CONFIG = {
       cta: 'Agendar conversa com especialista',
       url: '#',
     },
-
+ 
     ss_cp: {
       badge: 'Resultado misto (1–1)',
       title: 'Combo Performance Auditada',
@@ -288,7 +288,7 @@ const DEFAULT_QUIZ_CONFIG = {
     },
   },
 };
-
+ 
 // ── STEP MAP ───────────────────────────────────────────────────────
 const STEP_MAP = {
   start:      { pct: 5,   num: 1 },
@@ -304,7 +304,7 @@ const STEP_MAP = {
   analyzing:  { pct: 85,  num: 5 },
   result:     { pct: 100, num: 6 },
 };
-
+ 
 function applyBranding() {
   const branding = JSON.parse(localStorage.getItem('sparkmaxx_branding') || '{}');
   if (branding.primaryColor) {
@@ -316,17 +316,17 @@ function applyBranding() {
     link.href = branding.favicon;
   }
 }
-
+ 
 let activeQuiz = null;
-
+ 
 function initQuiz() {
   applyBranding();
   const urlParams = new URLSearchParams(window.location.search);
   const quizId = urlParams.get('id');
-
+ 
   const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
   activeQuiz = quizzes.find(q => q.id === quizId);
-
+ 
   if (!activeQuiz) {
     // Tenta quizJSON (config.js), senão usa DEFAULT_QUIZ_CONFIG do markdown
     if (typeof quizJSON !== 'undefined') {
@@ -335,11 +335,10 @@ function initQuiz() {
       activeQuiz = DEFAULT_QUIZ_CONFIG;
     }
   }
-
+ 
   document.title = activeQuiz.name;
   resetState();
-  state.startTime = Date.now(); // Rastreador de tempo
-
+ 
   state.utms = {
     source:   urlParams.get('utm_source') || '',
     medium:   urlParams.get('utm_medium') || '',
@@ -347,29 +346,29 @@ function initQuiz() {
     content:  urlParams.get('utm_content') || '',
     term:     urlParams.get('utm_term') || '',
   };
-
+ 
   if (typeof incrementAnalytics === 'function' && activeQuiz) {
     incrementAnalytics(activeQuiz.id, 'views');
   }
-
+ 
   renderNode(state.currentNodeId);
 }
-
+ 
 function renderNode(nodeId) {
   const node = activeQuiz.nodes[nodeId];
   if (!node) {
     alert(`Erro: nó não encontrado (ID: ${nodeId}). Verifique as conexões do quiz.`);
     return;
   }
-
+ 
   state.currentNodeId = nodeId;
   updateProgress(nodeId);
   DOM.quizCard.innerHTML = '';
-
+ 
   const stepEl = document.createElement('div');
   stepEl.className = 'step active';
   stepEl.id = `node-${nodeId}`;
-
+ 
   if (node.type === 'lead_form') {
     stepEl.appendChild(renderLeadForm(node));
   } else if (node.type === 'question') {
@@ -381,13 +380,12 @@ function renderNode(nodeId) {
     if (!state.resultadoId) {
       state.completedAt = Date.now();
       state.resultadoId = computeResultId();
-
+ 
       const responseData = {
         event:        'quiz_completed',
         quiz_id:      activeQuiz.id,
         quiz_name:    activeQuiz.name,
         completed_at: new Date().toISOString(),
-        duration_seconds: state.startTime ? Math.round((Date.now() - state.startTime) / 1000) : 0,
         lead:         state.lead,
         answers:      getAnswers(),
         hints:        state.hints,
@@ -396,7 +394,7 @@ function renderNode(nodeId) {
         user_agent:   navigator.userAgent,
         url_origem:   window.location.href,
       };
-
+ 
       saveResponse(responseData);
       sendWebhook(responseData);
       if (typeof incrementAnalytics === 'function') {
@@ -405,26 +403,26 @@ function renderNode(nodeId) {
     }
     stepEl.appendChild(renderResult(node));
   }
-
+ 
   DOM.quizCard.appendChild(stepEl);
 }
-
+ 
 function updateProgress(nodeId) {
   const stepData = STEP_MAP[nodeId] || { pct: 50, num: 3 };
   const totalSteps = 4;
-
+ 
   if (nodeId === 'analyzing') {
     if (DOM.progressBar) DOM.progressBar.style.width = '95%';
     if (DOM.stepCount) DOM.stepCount.textContent = `4 / 4 · Processando...`;
     return;
   }
-
+ 
   if (nodeId === 'result') {
     if (DOM.progressBar) DOM.progressBar.style.width = '100%';
     if (DOM.stepCount) DOM.stepCount.textContent = `Concluído · Diagnóstico`;
     return;
   }
-
+ 
   if (DOM.progressBar) DOM.progressBar.style.width = stepData.pct + '%';
   if (DOM.stepCount) {
     const node = activeQuiz.nodes[nodeId];
@@ -433,7 +431,7 @@ function updateProgress(nodeId) {
     DOM.stepCount.textContent = `${num} / ${totalSteps} · ${tag}`;
   }
 }
-
+ 
 function goToNode(nodeId) {
   if (!nodeId) {
     alert('Erro: este botão não está conectado a nenhuma próxima etapa.');
@@ -442,56 +440,56 @@ function goToNode(nodeId) {
   pushHistory(state.currentNodeId);
   renderNode(nodeId);
 }
-
+ 
 function goBack() {
   const prevId = popHistory();
   if (prevId) renderNode(prevId);
 }
-
+ 
 // ── SCORING ────────────────────────────────────────────────────────
-
+ 
 // Calcula o resultId correto usando HINT_ORDER (cd=0, ss=1, cp=2)
 // Garante chaves corretas: cd_ss | cd_cp | ss_cp (nunca cp_ss, ss_cd, etc.)
 function computeResultId() {
   const hints = (state.hints || []).filter(Boolean);
   if (hints.length === 0) return null;
-
+ 
   const uniqueHints = [...new Set(hints)].sort((a, b) => HINT_ORDER[a] - HINT_ORDER[b]);
-
+ 
   if (uniqueHints.length === 1) {
     // Predominância 2-0: resultado puro
     return uniqueHints[0];
   }
-
+ 
   // Empate 1-1: resultado misto
   return uniqueHints.join('_');
 }
-
+ 
 function computeResultData() {
   const resultId = state.resultadoId || computeResultId();
   const resultsSource = activeQuiz.results || DEFAULT_QUIZ_CONFIG.results;
-
+ 
   if (resultId && resultsSource[resultId]) {
     return { ...resultsSource[resultId], _metricId: resultId };
   }
-
+ 
   // Fallback: hint mais frequente
   const hintCount = {};
   (state.hints || []).filter(Boolean).forEach(h => { hintCount[h] = (hintCount[h] || 0) + 1; });
   const topHint = Object.entries(hintCount).sort((a, b) => b[1] - a[1])[0]?.[0];
-
+ 
   if (topHint && resultsSource[topHint]) {
     return { ...resultsSource[topHint], _metricId: topHint };
   }
-
+ 
   return { title: 'Diagnóstico concluído', description: '', _metricId: null };
 }
-
+ 
 // ── RENDERERS ──────────────────────────────────────────────────────
-
+ 
 function renderLeadForm(node) {
   const container = document.createElement('div');
-
+ 
   let fieldsHtml = '';
   if (node.fields.length === 4) {
     const [f0, f1, f2, f3] = node.fields;
@@ -499,7 +497,7 @@ function renderLeadForm(node) {
   } else {
     fieldsHtml = node.fields.map(fieldHtml).join('');
   }
-
+ 
   container.innerHTML = `
 <div class="lead-hero"><img src="assets/cube-hero.webp" alt="" /></div>
 <div class="step-header">
@@ -516,11 +514,11 @@ function renderLeadForm(node) {
 <p style="text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-3);margin:8px 0 0;">Leva menos de 2 minutos · sem spam</p>
 </form>
   `;
-
+ 
   setTimeout(() => {
     const form = document.getElementById('leadForm');
     const celularInput = document.getElementById('celular');
-
+ 
     if (celularInput) {
       celularInput.addEventListener('input', function() {
         let v = this.value.replace(/\D/g, '').substr(0, 11);
@@ -530,7 +528,7 @@ function renderLeadForm(node) {
         this.value = v;
       });
     }
-
+ 
     const emailInput = document.getElementById('email');
     if (emailInput) {
       emailInput.addEventListener('blur', () => {
@@ -556,7 +554,7 @@ function renderLeadForm(node) {
         }
       });
     }
-
+ 
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -569,10 +567,10 @@ function renderLeadForm(node) {
       });
     }
   }, 0);
-
+ 
   return container;
 }
-
+ 
 function fieldHtml(f) {
   return `
 <div class="form-group">
@@ -582,10 +580,10 @@ function fieldHtml(f) {
 </div>
   `;
 }
-
+ 
 function renderQuestion(node) {
   const container = document.createElement('div');
-
+ 
   container.innerHTML = `
 <div class="step-tag">${node.tag || 'Pergunta'}</div>
 <h2 class="step-title">${node.title}</h2>
@@ -609,13 +607,13 @@ function renderQuestion(node) {
 </button>
 </div>
   `;
-
+ 
   setTimeout(() => {
     const options = container.querySelectorAll('.option-card');
     const nextBtn = document.getElementById(`next-${node.id}`);
     const backBtn = document.getElementById(`back-${node.id}`);
     let selectedOpt = null;
-
+ 
     options.forEach((opt, idx) => {
       opt.addEventListener('click', () => {
         options.forEach(o => o.classList.remove('selected'));
@@ -624,19 +622,19 @@ function renderQuestion(node) {
         nextBtn.disabled = false;
       });
     });
-
+ 
     nextBtn.addEventListener('click', () => {
       if (!selectedOpt) return;
       saveAnswer(node.varName || node.id, selectedOpt.value || selectedOpt.text, selectedOpt.hint, selectedOpt.score || 0);
       goToNode(selectedOpt.next);
     });
-
+ 
     backBtn.addEventListener('click', () => goBack());
   }, 0);
-
+ 
   return container;
 }
-
+ 
 function renderLoading(node) {
   const container = document.createElement('div');
   container.className = 'loading-screen';
@@ -650,20 +648,20 @@ function renderLoading(node) {
 <div class="loading-step" id="lStep3">Calculando recomendação</div>
 </div>
   `;
-
+ 
   const duration = node.duration || 3000;
   const phase = duration / 3;
   setTimeout(() => { const s = container.querySelector('#lStep2'); if (s) s.classList.add('active'); }, phase);
   setTimeout(() => { const s = container.querySelector('#lStep3'); if (s) s.classList.add('active'); }, phase * 2);
-
+ 
   return container;
 }
-
+ 
 function renderResult(node) {
   const container = document.createElement('div');
   const resultData = computeResultData();
   const metricData = RESULT_METRICS[resultData._metricId] || null;
-
+ 
   const solutionsHtml = (resultData.solutions || []).map(s => `
 <div class="solution-card">
 <span class="solution-check">
@@ -672,7 +670,7 @@ function renderResult(node) {
 <span class="solution-name">${s.name || ''}</span>
 </div>
   `).join('');
-
+ 
   const metricHtml = metricData ? `
 <div class="result-metric">
 <div class="result-metric-value">${metricData.metric}</div>
@@ -683,9 +681,9 @@ function renderResult(node) {
 </div>
 </div>
   ` : '';
-
+ 
   const firstName = (state.lead?.nome) ? state.lead.nome.split(' ')[0] : 'você';
-
+ 
   container.innerHTML = `
 <div class="result-container">
 <div class="result-hero"><img src="assets/sphere-orb.png" alt="" /></div>
@@ -712,15 +710,15 @@ function renderResult(node) {
 </div>
 </div>
   `;
-
+ 
   setTimeout(() => {
     const btn = document.getElementById('btnRestart');
     if (btn) btn.addEventListener('click', () => initQuiz());
   }, 0);
-
+ 
   return container;
 }
-
+ 
 // ── START ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (DOM.quizCard) initQuiz();

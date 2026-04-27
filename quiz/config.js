@@ -5,233 +5,234 @@ var quizJSON = {
     "start": {
       id: "start",
       type: "lead_form",
-      title: "Quiz de Diagnóstico — Spark Maxx",
-      subtitle: "Em menos de 3 minutos, você recebe um diagnóstico preciso e a solução ideal para o seu momento.",
+      tag: "Captura",
+      title: "Quiz Spark Maxx",
+      subtitle: "Descubra a solução ideal para a sua operação.",
       fields: [
-        { id: 'nome', label: 'Nome completo', type: 'text', placeholder: 'Seu nome completo', required: true, errorMsg: 'Por favor, informe seu nome' },
-        { id: 'email', label: 'E-mail', type: 'email', placeholder: 'seu@email.com', required: true, errorMsg: 'Informe um e-mail válido' },
-        { id: 'celular', label: 'WhatsApp', type: 'tel', placeholder: '(00) 00000-0000', required: true, errorMsg: 'Informe seu WhatsApp' },
-        { id: 'empresa', label: 'Empresa', type: 'text', placeholder: 'Nome da sua empresa', required: true, errorMsg: 'Informe sua empresa' }
+        { id: 'nome',    label: 'Nome',     type: 'text',  placeholder: 'Seu nome completo', required: true },
+        { id: 'email',   label: 'E-mail',   type: 'email', placeholder: 'seu@email.com',     required: true },
+        { id: 'celular', label: 'WhatsApp', type: 'tel',   placeholder: '(11) 99999-9999',   required: true },
+        { id: 'empresa', label: 'Empresa',  type: 'text',  placeholder: 'Nome da empresa',   required: false },
       ],
-      buttonText: "Começar diagnóstico!",
+      buttonText: "Começar diagnóstico",
       next: "perfil"
     },
     "perfil": {
       id: "perfil",
       type: "question",
-      tag: "Bloco 2",
-      title: "Qual perfil melhor descreve você hoje?",
-      subtitle: "Selecione a opção que mais se encaixa com sua atuação profissional",
+      tag: "Perfil",
+      title: "Antes de começar — quem é você?",
+      subtitle: "Escolha o perfil que melhor representa sua atuação.",
+      varName: "perfil",
       options: [
-        { id: "A", icon: "🏢", text: "Marca", next: "q2_empresa", value: "Marca" },
-        { id: "B", icon: "📣", text: "Agência", next: "q2_agencia", value: "Agência" },
-        { id: "C", icon: "🎥", text: "Creator", next: "q2_creator", value: "Creator" },
-        { id: "D", icon: "🎯", text: "Casting / Agenciador", next: "q2_casting", value: "Casting" }
+        { text: 'Marca — gestão de embaixadores e campanhas',       value: 'marca',   hint: null, next: 'q2_empresa' },
+        { text: 'Agência — atendimento e entrega de resultados',    value: 'agencia', hint: null, next: 'q2_agencia' },
+        { text: 'Creator — profissionalização e parcerias',         value: 'creator', hint: null, next: 'q2_creator' },
+        { text: 'Casting / Agenciador — curadoria de talentos',     value: 'casting', hint: null, next: 'q2_casting' },
       ]
     },
-    // 3A. Fluxo Marca
     "q2_empresa": {
       id: "q2_empresa",
       type: "question",
-      tag: "Fluxo Marca",
+      tag: "Diagnóstico",
       title: "Qual é a sua prioridade estratégica com influencer marketing?",
-      subtitle: "T3 — Prioridade estratégica",
+      subtitle: "Escolha a opção que melhor descreve o seu foco atual.",
+      varName: "q2",
       options: [
-        { id: "A", text: "Identificar novos nichos e criadores alinhados", next: "q3_empresa", hint: "cd" },
-        { id: "B", text: "Gerir campanhas e medir ROI de forma centralizada", next: "q3_empresa", hint: "ss" },
-        { id: "C", text: "Proteger e monitorar a reputação da marca", next: "q3_empresa", hint: "cp" }
+        { text: "Identificar novos nichos e criadores alinhados", next: "q3_empresa", hint: "cd" },
+        { text: "Gerir campanhas e medir ROI de forma centralizada", next: "q3_empresa", hint: "ss" },
+        { text: "Proteger e monitorar a reputação de influenciadores", next: "q3_empresa", hint: "cp" }
       ]
     },
     "q3_empresa": {
       id: "q3_empresa",
       type: "question",
-      tag: "Fluxo Marca",
-      title: "Qual é o seu maior desafio operacional hoje?",
-      subtitle: "T4 — Desafio operacional",
+      tag: "Diagnóstico",
+      title: "Qual é sua maior dor no dia-a-dia?",
+      subtitle: "Escolha a opção mais próxima da sua realidade.",
+      varName: "q3",
       options: [
-        { id: "A", text: "Encontrar os criadores certos para cada campanha", next: "analyzing", hint: "cd" },
-        { id: "B", text: "Controlar contratos, pagamentos e fluxo operacional", next: "analyzing", hint: "ss" },
-        { id: "C", text: "Monitorar riscos e garantir a segurança da marca", next: "analyzing", hint: "cp" }
+        { text: "Nichos saturados e creators sem fit com a marca", next: "analyzing", hint: "cd" },
+        { text: "Falta de dados e gestão de multiplas campanhas", next: "analyzing", hint: "ss" },
+        { text: "Monitorar a reputação dos creators/embaixadores", next: "analyzing", hint: "cp" }
       ]
     },
-    // 3B. Fluxo Agência
     "q2_agencia": {
       id: "q2_agencia",
       type: "question",
-      tag: "Fluxo Agência",
+      tag: "Diagnóstico",
       title: "Qual é o principal foco de entrega aos seus clientes?",
-      subtitle: "T3 — Foco de entrega",
+      subtitle: "Escolha a opção que melhor representa seu trabalho.",
+      varName: "q2",
       options: [
-        { id: "A", text: "Campanhas com ROI e resultados comprovados", next: "q3_agencia", hint: "ss" },
-        { id: "B", text: "Planejamento estratégico e mapeamento de audiências", next: "q3_agencia", hint: "cd" },
-        { id: "C", text: "Auditoria, compliance e segurança dos influencers", next: "q3_agencia", hint: "cp" }
+        { text: "Campanhas com ROI e resultados comprovados", next: "q3_agencia", hint: "ss" },
+        { text: "Análise de público-alvo e mapeamento de nichos", next: "q3_agencia", hint: "cd" },
+        { text: "Auditoria, compliance e segurança dos influencers", next: "q3_agencia", hint: "cp" }
       ]
     },
     "q3_agencia": {
       id: "q3_agencia",
       type: "question",
-      tag: "Fluxo Agência",
+      tag: "Diagnóstico",
       title: "Qual é o principal gargalo para escalar a agência?",
-      subtitle: "T4 — Gargalo de escala",
+      subtitle: "Escolha o que mais trava o seu crescimento hoje.",
+      varName: "q3",
       options: [
-        { id: "A", text: "Contratação e gestão eficiente de influencers", next: "analyzing", hint: "ss" },
-        { id: "B", text: "Insights de mercado e inteligência competitiva", next: "analyzing", hint: "cd" },
-        { id: "C", text: "Monitoramento contínuo e relatórios de risco", next: "analyzing", hint: "cp" }
+        { text: "Contratação e gestão eficiente de influencers", next: "analyzing", hint: "ss" },
+        { text: "Monitoramento de crescimento orgãnico no mercado", next: "analyzing", hint: "cd" },
+        { text: "Monitoramento contínuo de perfis de creators", next: "analyzing", hint: "cp" }
       ]
     },
-    // 3C. Fluxo Creator
     "q2_creator": {
       id: "q2_creator",
       type: "question",
-      tag: "Fluxo Creator",
+      tag: "Diagnóstico",
       title: "Qual é o seu principal objetivo de carreira agora?",
-      subtitle: "T3 — Objetivo de carreira",
+      subtitle: "Escolha a opção que mais define sua meta atual.",
+      varName: "q2",
       options: [
-        { id: "A", text: "Crescer meu alcance e métricas de engajamento", next: "q3_creator", hint: "ss" },
-        { id: "B", text: "Dominar meu nicho e fortalecer posicionamento", next: "q3_creator", hint: "cd" },
-        { id: "C", text: "Proteger minha imagem e reputação digital", next: "q3_creator", hint: "cp" }
+        { text: "Crescer meu alcance e métricas de engajamento", next: "q3_creator", hint: "cp" },
+        { text: "Dominar meu nicho e fortalecer posicionamento", next: "q3_creator", hint: "cp" },
+        { text: "Proteger minha imagem e reputação digital", next: "q3_creator", hint: "cp" }
       ]
     },
     "q3_creator": {
       id: "q3_creator",
       type: "question",
-      tag: "Fluxo Creator",
+      tag: "Diagnóstico",
       title: "Como você usa dados ao apresentar propostas para marcas?",
-      subtitle: "T4 — Uso de dados",
+      subtitle: "Seja honesto — isso define sua solução ideal.",
+      varName: "q3",
       options: [
-        { id: "A", text: "Ainda não incluo dados nas minhas propostas", next: "analyzing", hint: "cp" },
-        { id: "B", text: "Uso métricas básicas de alcance e visualizações", next: "analyzing", hint: "ss" },
-        { id: "C", text: "Uso análises avançadas de audiência e nicho", next: "analyzing", hint: "cd" }
+        { text: "Ainda não incluo dados nas minhas propostas", next: "analyzing", hint: "cp" },
+        { text: "Uso métricas básicas de alcance e visualizações", next: "analyzing", hint: "cp" },
+        { text: "Uso análises avançadas de audiência e nicho", next: "analyzing", hint: "cp" }
       ]
     },
-    // 3D. Fluxo Casting
     "q2_casting": {
       id: "q2_casting",
       type: "question",
-      tag: "Fluxo Casting",
+      tag: "Diagnóstico",
       title: "Qual é a maior prioridade no seu trabalho de casting?",
-      subtitle: "T3 — Prioridade de casting",
+      subtitle: "Escolha o que mais define sua atuação diária.",
+      varName: "q2",
       options: [
-        { id: "A", text: "Descobrir e mapear novos talentos e criadores", next: "q3_casting", hint: "cd" },
-        { id: "B", text: "Proteger a reputação e imagem dos agenciados", next: "q3_casting", hint: "cp" },
-        { id: "C", text: "Escalar a operação de contratos e campanhas", next: "q3_casting", hint: "ss" }
+        { text: "Descobrir e mapear novos talentos e criadores", next: "q3_casting", hint: "ss" },
+        { text: "Proteger a reputação e imagem dos agenciados", next: "q3_casting", hint: "cp" },
+        { text: "Conquistar novas parcerias/publis", next: "q3_casting", hint: "cp" }
       ]
     },
     "q3_casting": {
       id: "q3_casting",
       type: "question",
-      tag: "Fluxo Casting",
+      tag: "Diagnóstico",
       title: "O que seus clientes mais demandam nas contratações?",
-      subtitle: "T4 — Demanda dos clientes",
+      subtitle: "Escolha o que aparece com mais frequência nas negociações.",
+      varName: "q3",
       options: [
-        { id: "A", text: "Fit cultural e alinhamento de valores com a marca", next: "analyzing", hint: "cd" },
-        { id: "B", text: "Gestão de riscos e histórico de imagem limpo", next: "analyzing", hint: "cp" },
-        { id: "C", text: "Relatórios de desempenho e resultados anteriores", next: "analyzing", hint: "ss" }
+        { text: "Fit cultural e alinhamento de values com a marca", next: "analyzing", hint: "cp" },
+        { text: "Gestão de riscos e histórico de imagem limpo", next: "analyzing", hint: "cp" },
+        { text: "Relatórios de desempenho e resultados anteriores", next: "analyzing", hint: "ss" }
       ]
     },
     "analyzing": {
       id: "analyzing",
       type: "loading",
-      title: "Gerando diagnóstico personalizado...",
-      subtitle: "Cruzando suas prioridades com as soluções do ecossistema Spark Maxx.",
+      title: "Analisando suas respostas",
+      subtitle: "Cruzando seu perfil com nossa base de soluções martech curadas.",
       duration: 3000,
       next: "result"
     },
     "result": {
       id: "result",
-      type: "result",
-      title: "Seu Diagnóstico de Influência",
-      badge: "🔍 Resultado calculado",
-      description: "Baseado nas suas respostas, identificamos as ferramentas ideais para escalar sua operação.",
-      solutions: [],
-      cta: "Agendar conversa com especialista",
-      url: "https://sparkmaxx.com.br"
+      type: "result"
     }
   },
   results: {
     'ss': {
-      id: 'ss',
-      title: 'Sprout Social (ss)',
-      badge: 'Operação e Performance',
+      badge: 'Resultado puro (2–0)',
+      title: 'Sprout Social',
+      subtitle: 'Operação e Performance',
       description: 'Você precisa de uma plataforma centralizada para gerir campanhas, contratos e medir ROI de influencer marketing. A ferramenta indicada é o Sprout Social — solução completa para operação, pagamentos e performance.',
       solutions: [
-        { name: 'Gestão centralizada de campanhas', desc: '' },
-        { name: 'Controle de contratos e pagamentos', desc: '' },
-        { name: 'Métricas e ROI em tempo real', desc: '' },
-        { name: 'Dashboard de performance', desc: '' }
+        { name: 'Gestão centralizada de campanhas' },
+        { name: 'Controle de contratos e pagamentos' },
+        { name: 'Métricas e ROI em tempo real' },
+        { name: 'Dashboard de performance' },
+        { name: 'Encontrar influenciadores por IA' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: 'https://sparkmaxx.com.br'
+      url: '#'
     },
     'cd': {
-      id: 'cd',
-      title: 'Community Discovery (cd)',
-      badge: 'Inteligência de Comunidades',
+      badge: 'Resultado puro (2–0)',
+      title: 'Community Discovery',
+      subtitle: 'Inteligência de Comunidades',
       description: 'Você precisa de inteligência para mapear nichos, territórios e microcomunidades e encontrar os criadores certos por afinidade real. A ferramenta indicada é o Community Discovery — motor de descoberta e mapeamento de audiências.',
       solutions: [
-        { name: 'Mapeamento de nichos e territórios', desc: '' },
-        { name: 'Descoberta de criadores por afinidade', desc: '' },
-        { name: 'Inteligência de audiência', desc: '' },
-        { name: 'Análise de microcomunidades', desc: '' }
+        { name: 'Mapeamento de nichos e novos territórios' },
+        { name: 'Descoberta de criadores por afinidade' },
+        { name: 'Análise do público-alvo' },
+        { name: 'Monitoramento de crescimento orgãnico nos nichos' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: 'https://sparkmaxx.com.br'
+      url: '#'
     },
     'cp': {
-      id: 'cp',
-      title: 'Creator Pulse (cp)',
-      badge: 'Segurança e Reputação',
+      badge: 'Resultado puro (2–0)',
+      title: 'Creator Pulse',
+      subtitle: 'Segurança e Reputação',
       description: 'Você precisa de uma camada de segurança, auditoria de imagem e gestão de riscos sobre os criadores com quem trabalha. A ferramenta indicada é o Creator Pulse — monitoramento de reputação, histórico e compliance.',
       solutions: [
-        { name: 'Auditoria de imagem e histórico', desc: '' },
-        { name: 'Monitoramento de riscos em tempo real', desc: '' },
-        { name: 'Compliance de influencers', desc: '' },
-        { name: 'Proteção da marca', desc: '' }
+        { name: 'Auditoria de imagem e histórico' },
+        { name: 'Monitoramento de riscos em tempo real' },
+        { name: 'Identificação de atributos e temas associados ao creator' },
+        { name: 'Relatórios que agregam valor para novos contratos' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: 'https://sparkmaxx.com.br'
+      url: '#'
     },
     'cd_ss': {
-      id: 'cd_ss',
-      title: 'Combo Inovação (cd_ss)',
-      badge: 'Inteligência e Performance',
+      badge: 'Resultado misto (1–1)',
+      title: 'Combo Inovação',
+      subtitle: 'Inteligência e Performance',
       description: 'Você tem necessidades em dois eixos: inteligência de nichos e gestão de campanhas com ROI. As ferramentas indicadas são o Community Discovery (para descoberta e mapeamento) + Sprout Social (para operação e performance).',
       solutions: [
-        { name: 'Descoberta de nichos + gestão de campanhas', desc: '' },
-        { name: 'ROI com inteligência de audiência', desc: '' },
-        { name: 'Planejamento estratégico e performance', desc: '' },
-        { name: 'Operação escalável com dados', desc: '' }
+        { name: 'Descoberta de nichos + gestão de campanhas' },
+        { name: 'ROI com inteligência de audiência' },
+        { name: 'Planejamento estratégico e performance' },
+        { name: 'Operação escalável com influenciadores com match real' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: 'https://sparkmaxx.com.br'
+      url: '#'
     },
     'cd_cp': {
-      id: 'cd_cp',
-      title: 'Combo Estratégia Segura (cd_cp)',
-      badge: 'Estratégia Cultural Segura',
+      badge: 'Resultado misto (1–1)',
+      title: 'Combo Estratégia Segura',
+      subtitle: 'Estratégia Cultural Segura',
       description: 'Você tem necessidades em dois eixos: inteligência de nichos e segurança e auditoria de imagem. As ferramentas indicadas são o Community Discovery (para descoberta e mapeamento) + Creator Pulse (para reputação e compliance).',
       solutions: [
-        { name: 'Cultura e segurança simultaneamente', desc: '' },
-        { name: 'Curadoria de criadores com proteção', desc: '' },
-        { name: 'Branding com compliance', desc: '' },
-        { name: 'Nichos com auditoria de reputação', desc: '' }
+        { name: 'Cultura e segurança simultaneamente' },
+        { name: 'Curadoria de criadores alinhados com o seu público' },
+        { name: 'Branding com compliance' },
+        { name: 'Monitoramento dos nichos e creators' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: 'https://sparkmaxx.com.br'
+      url: '#'
     },
     'ss_cp': {
-      id: 'ss_cp',
-      title: 'Combo Performance Auditada (ss_cp)',
-      badge: 'Performance com Segurança',
+      badge: 'Resultado misto (1–1)',
+      title: 'Combo Performance Auditada',
+      subtitle: 'Performance com Segurança',
       description: 'Você tem necessidades em dois eixos: gestão de campanhas com ROI e segurança e auditoria de imagem. As ferramentas indicadas são o Sprout Social (para operação e performance) + Creator Pulse (para reputação e compliance).',
       solutions: [
-        { name: 'ROI + compliance em uma estratégia', desc: '' },
-        { name: 'Campanhas com monitoramento de riscos', desc: '' },
-        { name: 'Performance auditada em tempo real', desc: '' },
-        { name: 'Segurança sem abrir mão de resultados', desc: '' }
+        { name: 'ROI + compliance em uma estratégia' },
+        { name: 'Gestão de campanhas e reputação' },
+        { name: 'Performance auditada em tempo real' },
+        { name: 'Monitoramento de campanhas e creators' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: 'https://sparkmaxx.com.br'
+      url: '#'
     }
   }
 };
