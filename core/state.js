@@ -16,15 +16,25 @@ function setLeadData(data) {
 }
 
 function saveAnswer(nodeId, value, hint, score = 0) {
-  state.answers[nodeId] = value;
-  state.totalScore += (parseInt(score) || 0);
-  if (hint) {
-    state.hints.push(hint);
-  }
+  // Armazena a resposta completa para o nó
+  state.answers[nodeId] = { value, hint, score: (parseInt(score) || 0) };
+  
+  // Recalcula o score total baseado em todas as respostas atuais
+  state.totalScore = Object.values(state.answers).reduce((acc, curr) => acc + curr.score, 0);
+  
+  // Reconstrói a lista de hints ativa baseada nas respostas atuais
+  // Isso evita duplicação de hints se o usuário voltar e mudar a resposta
+  state.hints = Object.values(state.answers)
+    .map(ans => ans.hint)
+    .filter(h => h);
 }
 
 function getAnswers() {
-  return state.answers;
+  const flat = {};
+  Object.keys(state.answers).forEach(key => {
+    flat[key] = state.answers[key].value;
+  });
+  return flat;
 }
 
 function pushHistory(nodeId) {

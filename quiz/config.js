@@ -35,23 +35,23 @@ var quizJSON = {
       type: "question",
       tag: "Fluxo Marca",
       title: "Qual sua prioridade estratégica?",
-      subtitle: "T3 — Escolha o foco principal do seu momento",
+      subtitle: "T3 — Foco principal do seu momento (Nichos, Gestão ou Reputação)",
       options: [
-        { id: "A", text: "Encontrar novos nichos/comunidades", next: "q3_marca", hint: "cd" },
-        { id: "B", text: "Gerir campanhas de influência e encontrar creators", next: "q3_marca", hint: "ss" },
-        { id: "C", text: "Analisar reputação dos meus embaixadores", next: "q3_marca", hint: "cp" }
+        { id: "A", text: "Encontrar novos nichos e comunidades", next: "q3_marca", hint: "cd" },
+        { id: "B", text: "Gerir campanhas de influência e operação", next: "q3_marca", hint: "ss" },
+        { id: "C", text: "Analisar reputação e fit de embaixadores", next: "q3_marca", hint: "cp" }
       ]
     },
     "q3_marca": {
       id: "q3_marca",
       type: "question",
       tag: "Fluxo Marca",
-      title: "Qual seu maior desafio?",
-      subtitle: "T4 — O que mais trava sua operação hoje?",
+      title: "Qual seu maior desafio operacional?",
+      subtitle: "T4 — O que mais trava sua entrega (Discovery, Operação ou Segurança)",
       options: [
-        { id: "A", text: "Audiência genérica e sem dados culturais", next: "analyzing", hint: "cd" },
+        { id: "A", text: "Minha audiência é genérica e sem dados culturais", next: "analyzing", hint: "cd" },
         { id: "B", text: "Processos manuais e falta de dados em campanhas", next: "analyzing", hint: "ss" },
-        { id: "C", text: "Prever riscos de imagem e dados do embaixador", next: "analyzing", hint: "cp" }
+        { id: "C", text: "Dificuldade em prever riscos de imagem e sentimentos", next: "analyzing", hint: "cp" }
       ]
     },
     // Fluxo B - Agência
@@ -59,8 +59,8 @@ var quizJSON = {
       id: "q2_agencia",
       type: "question",
       tag: "Fluxo Agência",
-      title: "O que seu cliente mais espera da agência?",
-      subtitle: "T3 — O critério de sucesso mais cobrado",
+      title: "Qual o foco da sua entrega para os clientes?",
+      subtitle: "T3 — Campanha, Planejamento ou Auditoria",
       options: [
         { id: "A", text: "Inovação: públicos e territórios inexplorados", next: "q3_agencia", hint: "cd" },
         { id: "B", text: "Resultados: gestão de influenciadores e ROI", next: "q3_agencia", hint: "ss" },
@@ -71,12 +71,12 @@ var quizJSON = {
       id: "q3_agencia",
       type: "question",
       tag: "Fluxo Agência",
-      title: "Qual KPI é mais recorrente nas entregas?",
-      subtitle: "T4 — A métrica que não pode faltar nos relatórios",
+      title: "Qual seu maior gargalo de escala?",
+      subtitle: "T4 — Contratação, Insights ou Monitoramento",
       options: [
-        { id: "A", text: "EMV, CPE, tempo de operação, ROI", next: "analyzing", hint: "ss" },
-        { id: "B", text: "CPL, engajamento por comunidade, SoV, Brand Affinity", next: "analyzing", hint: "cd" },
-        { id: "C", text: "Aumento de engajamento e parcerias de influenciadores", next: "analyzing", hint: "cp" }
+        { id: "A", text: "EMV, CPE, tempo de operação e ROI", next: "analyzing", hint: "ss" },
+        { id: "B", text: "CPL, engajamento por comunidade e SoV", next: "analyzing", hint: "cd" },
+        { id: "C", text: "Aumento de segurança e auditoria de perfis", next: "analyzing", hint: "cp" }
       ]
     },
     // Fluxo C - Creator
@@ -84,25 +84,24 @@ var quizJSON = {
       id: "q2_creator",
       type: "question",
       tag: "Fluxo Creator",
-      title: "Como quer potencializar sua carreira?",
-      subtitle: "T3 — Seu objetivo de crescimento",
+      title: "Qual seu principal objetivo de crescimento?",
+      subtitle: "T3 — Público, Valor ou Posicionamento",
       options: [
-        { id: "A", text: "Entender meu público e comunidades", next: "q3_creator", hint: "cp" },
-        { id: "B", text: "Provar meu valor para marcas", next: "q3_creator", hint: "cp" },
-        { id: "C", text: "Melhorar meu posicionamento", next: "q3_creator", hint: "cp" },
-        { id: "D", text: "Atrair mais parcerias", next: "q3_creator", hint: "cp" }
+        { id: "A", text: "Entender meu público e comunidades", next: "q3_creator", hint: "cd" },
+        { id: "B", text: "Provar meu valor técnico para as marcas", next: "q3_creator", hint: "ss" },
+        { id: "C", text: "Melhorar meu posicionamento e reputação", next: "q3_creator", hint: "cp" }
       ]
     },
     "q3_creator": {
       id: "q3_creator",
       type: "question",
       tag: "Fluxo Creator",
-      title: "Você utiliza dados para negociar contratos?",
-      subtitle: "T4 — Como você embasa suas propostas comerciais",
+      title: "Como você utiliza dados hoje?",
+      subtitle: "T4 — Uso de dados para negociar contratos",
       options: [
-        { id: "A", text: "Não uso", next: "analyzing", hint: "cp" },
-        { id: "B", text: "Uso apenas o media kit básico", next: "analyzing", hint: "cp" },
-        { id: "C", text: "Quero usar dados de busca e sentimento", next: "analyzing", hint: "cp" }
+        { id: "A", text: "Não utilizo dados em minhas propostas", next: "analyzing", hint: "cd" },
+        { id: "B", text: "Uso apenas o media kit básico da rede", next: "analyzing", hint: "ss" },
+        { id: "C", text: "Utilizo dados de busca, sentimento e autoridade", next: "analyzing", hint: "cp" }
       ]
     },
     // Fluxo D - Casting
@@ -111,25 +110,23 @@ var quizJSON = {
       type: "question",
       tag: "Fluxo Casting",
       title: "Qual a prioridade para o seu casting?",
-      subtitle: "T3 — O foco da sua agência de talentos",
+      subtitle: "T3 — Novos Talentos, Reputação ou Operação",
       options: [
-        { id: "A", text: "Descobrir novos talentos por nicho", next: "q3_casting", hint: "ss" },
+        { id: "A", text: "Descobrir novos talentos por nicho", next: "q3_casting", hint: "cd" },
         { id: "B", text: "Auditar reputação dos agenciados", next: "q3_casting", hint: "cp" },
-        { id: "C", text: "Organizar a operação comercial", next: "q3_casting", hint: "ss" },
-        { id: "D", text: "Atrair mais parcerias", next: "q3_casting", hint: "cp" }
+        { id: "C", text: "Organizar a operação comercial", next: "q3_casting", hint: "ss" }
       ]
     },
     "q3_casting": {
       id: "q3_casting",
       type: "question",
       tag: "Fluxo Casting",
-      title: "O que seus clientes mais pedem?",
-      subtitle: "T4 — A maior demanda que chega para você",
+      title: "Qual a maior demanda dos seus clientes?",
+      subtitle: "T4 — Fit Cultural, Riscos ou Relatórios",
       options: [
-        { id: "A", text: "Fit cultural e nicho", next: "analyzing", hint: "cp" },
-        { id: "B", text: "Prevenção de riscos de imagem", next: "analyzing", hint: "cp" },
-        { id: "C", text: "Eficiência e relatórios", next: "analyzing", hint: "ss" },
-        { id: "D", text: "Descobrir novos influenciadores", next: "analyzing", hint: "ss" }
+        { id: "A", text: "Fit cultural e identificação de nicho", next: "analyzing", hint: "cd" },
+        { id: "B", text: "Prevenção de riscos de imagem e segurança", next: "analyzing", hint: "cp" },
+        { id: "C", text: "Eficiência, ROI e relatórios de performance", next: "analyzing", hint: "ss" }
       ]
     },
     "analyzing": {
