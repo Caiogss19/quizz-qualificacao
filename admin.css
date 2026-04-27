@@ -1,6 +1,9 @@
 /* Spark Maxx Admin UI — admin.css (Redesign 2026.04) */
 @import url('design-system.css');
 
+/* ── UTILS ─────────────────────────────────────── */
+.hidden { display: none !important; }
+
 /* ── LOGIN ─────────────────────────────────────── */
 .login-screen {
   min-height: 100vh; display: grid;

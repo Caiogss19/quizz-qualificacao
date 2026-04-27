@@ -107,6 +107,7 @@ function profileCounts(data) {
 // LOGIN
 // ===========================
 async function hashPassword(pass) {
+  if (!crypto.subtle) return pass; // Fallback para ambientes não seguros (HTTP/Local)
   const msgUint8 = new TextEncoder().encode(pass);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -114,6 +115,9 @@ async function hashPassword(pass) {
 }
 
 async function checkPassword(input) {
+  // Se não houver crypto.subtle, compara direto
+  if (!crypto.subtle) return input === ADMIN_PASS;
+  
   const expectedHash = await hashPassword(ADMIN_PASS);
   const inputHash = await hashPassword(input);
   return expectedHash === inputHash;
