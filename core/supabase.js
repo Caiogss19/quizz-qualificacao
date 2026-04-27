@@ -73,37 +73,21 @@ async function deleteQuizFromSupabase(id) {
 async function saveLeadToSupabase(responseData) {
   if (!SUPABASE_KEY) return null;
   try {
-    // Flatten: extrai campos do lead e UTMs como colunas SQL diretas
-    const lead = responseData.lead || {};
-    const utms = responseData.utms || {};
-
     const payload = {
-      quiz_id:       responseData.quiz_id       || null,
-      quiz_name:     responseData.quiz_name     || null,
-      completed_at:  responseData.completed_at  || new Date().toISOString(),
-      event:         responseData.event         || "quiz_completed",
+      quiz_id:          responseData.quiz_id          || null,
+      quiz_name:        responseData.quiz_name        || null,
+      total_score:      responseData.total_score      || 0,
+      result_id:        responseData.result_id        || null,
+      result_title:     responseData.result_title     || null,
       duration_seconds: responseData.duration_seconds || null,
-      total_score:   responseData.total_score   || null,
-      result_id:     responseData.result_id     || null,
-      result_title:  responseData.result_title  || null,
-      // Campos do lead
-      nome:          lead.nome     || null,
-      email:         lead.email    || null,
-      celular:       lead.celular  || null,
-      empresa:       lead.empresa  || null,
-      // UTMs
-      utm_source:    utms.utm_source   || null,
-      utm_medium:    utms.utm_medium   || null,
-      utm_campaign:  utms.utm_campaign || null,
-      utm_content:   utms.utm_content  || null,
-      utm_term:      utms.utm_term     || null,
-      // Respostas serializadas
-      answers:       JSON.stringify(responseData.answers || {}),
-      user_agent:    responseData.user_agent || navigator.userAgent || null,
-      url_origem:    responseData.url_origem || window.location.href || null
+      lead:             responseData.lead             || {},
+      answers:          responseData.answers          || {},
+      utms:             responseData.utms             || {},
+      user_agent:       responseData.user_agent       || navigator.userAgent || null,
+      url_origem:       responseData.url_origem       || window.location.href || null
     };
 
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/Table_leads`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/table_leads`, {
       method: "POST",
       headers: {
         ...SUPABASE_HEADERS,
@@ -127,7 +111,7 @@ async function saveLeadToSupabase(responseData) {
 async function getLeadsFromSupabase() {
   if (!SUPABASE_KEY) return [];
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/Table_leads?select=*&order=timestamp.desc`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/table_leads?select=*&order=timestamp.desc`, {
       headers: SUPABASE_HEADERS
     });
     if (!res.ok) throw new Error("Falha ao buscar leads do Supabase");
