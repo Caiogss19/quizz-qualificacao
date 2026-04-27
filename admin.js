@@ -91,11 +91,12 @@ function shortProfile(profile) {
 function shortResult(id) {
   if (!id) return '—';
   const map = {
-    'community_discovery': 'Discovery',
-    'sprout_social': 'Sprout',
-    'monitoring_insights': 'Monitoring',
-    'cultural_influencer': 'Cultural',
-    'professional_creator': 'Professional'
+    'ss': 'Sprout Social',
+    'cd': 'Community Discovery',
+    'cp': 'Creator Pulse',
+    'cd_ss': 'Combo Inovação',
+    'cd_cp': 'Estratégia Segura',
+    'ss_cp': 'Performance Auditada'
   };
   return map[id] || id;
 }
