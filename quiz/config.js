@@ -1,5 +1,5 @@
 var quizJSON = {
-  id: "spark_maxx_diagnostico_v5_final",
+  id: "spark_maxx_diagnostico_v6_master",
   title: "[FINAL] Diagnóstico Spark Maxx v4",
   nodes: {
     "start": {
@@ -153,7 +153,7 @@ var quizJSON = {
       id: 'ss',
       title: 'Sprout Social Influencer Marketing',
       badge: '📊 Gestão & Escala',
-      description: 'Plataforma completa de gestão de influência para agências e marcas que buscam eficiência operacional. Centraliza toda a jornada da campanha — do discovery de creators via IA até contratos e pagamentos — entregando comprovação real do ROI.',
+      description: 'Foco total em operação, gestão de campanhas e ROI. Ideal para quem precisa centralizar campanhas, contratos e performance em uma plataforma robusta.',
       solutions: [
         { name: 'Gestão Ponta a Ponta', desc: 'Centralize contratos, pagamentos e aprovações.' },
         { name: 'Discovery via IA', desc: 'Encontre os creators certos em segundos.' },
@@ -166,7 +166,7 @@ var quizJSON = {
       id: 'cd',
       title: 'Community Discovery',
       badge: '🗺️ Inteligência de Território',
-      description: 'Inteligência de territórios e microcomunidades para times de estratégia e redação. Identifica onde o público conversa e quais são seus códigos de linguagem, conectando marcas a novos mercados de forma autêntica.',
+      description: 'Foco total em inteligência de nichos, territórios e microcomunidades. Mapeia criadores por afinidade real com audiência e cultura digital.',
       solutions: [
         { name: 'Mapeamento de Nichos', desc: 'Descubra onde sua audiência realmente está.' },
         { name: 'Análise Cultural', desc: 'Entenda os códigos de linguagem de cada comunidade.' },
@@ -179,7 +179,7 @@ var quizJSON = {
       id: 'cp',
       title: 'Creator Pulse',
       badge: '🛡️ Saúde & Reputação',
-      description: 'Raio-x da saúde digital focado no influenciador e no casting. Monitora tendências de busca, sentimentos e autoridade do creator, profissionalizando o posicionamento comercial com dados técnicos auditados.',
+      description: 'Foco total em segurança, auditoria de imagem e gestão de riscos. Monitora a reputação, autoridade e histórico dos criadores agenciados.',
       solutions: [
         { name: 'Auditoria de Reputação', desc: 'Segurança absoluta para marcas e embaixadores.' },
         { name: 'Share of Search', desc: 'Mapeie o desejo de busca da sua audiência.' },
@@ -190,9 +190,9 @@ var quizJSON = {
     },
     'cd_ss': {
       id: 'cd_ss',
-      title: 'Community Discovery + Sprout Social',
+      title: 'Combo Inovação',
       badge: '⚡ Inovação & Escala',
-      description: 'A combinação ideal para quem precisa descobrir novos territórios e gerenciar campanhas com alta performance. Você une a inteligência cultural à eficiência operacional.',
+      description: 'Você precisa de Discovery + Gestão simultaneamente. Unimos o Community Discovery para inteligência cultural à eficiência operacional do Sprout Social.',
       solutions: [
         { name: 'Inteligência e Gestão', desc: 'O melhor do mapeamento com o melhor da operação.' }
       ],
@@ -201,9 +201,9 @@ var quizJSON = {
     },
     'cd_cp': {
       id: 'cd_cp',
-      title: 'Community Discovery + Creator Pulse',
+      title: 'Combo Estratégia Segura',
       badge: '🛡️ Estratégia Segura',
-      description: 'Foco total em encontrar comunidades e garantir a saúde digital da sua marca. Ideal para estratégias de branding e curadoria de embaixadores de longo prazo.',
+      description: 'Foco em encontrar comunidades e garantir a saúde digital simultaneamente. Ideal para estratégias de branding e curadoria de embaixadores.',
       solutions: [
         { name: 'Cultura e Segurança', desc: 'Descubra nichos e monitore reputação simultaneamente.' }
       ],
@@ -212,9 +212,9 @@ var quizJSON = {
     },
     'ss_cp': {
       id: 'ss_cp',
-      title: 'Sprout Social + Creator Pulse',
+      title: 'Combo Performance Auditada',
       badge: '📈 Performance & Auditoria',
-      description: 'Para operações que não podem errar. Combine a gestão robusta de campanhas com o monitoramento rigoroso de reputação e sentimentos.',
+      description: 'Para operações que precisam de Gestão + Auditoria simultaneamente. Combine a performance de campanhas com o monitoramento rigoroso de riscos.',
       solutions: [
         { name: 'Gestão e Reputação', desc: 'ROI comprovado com segurança de imagem.' }
       ],
