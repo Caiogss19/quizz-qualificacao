@@ -32,6 +32,7 @@ function createNodeElement(node) {
     <div class="node-header">
       <div class="node-icon">${getTypeIcon(node.type)}</div>
       <span class="node-type-badge">${getTypeLabel(node.type)}</span>
+      ${node.tag ? `<span class="node-tag-badge">${node.tag}</span>` : ''}
     </div>
     <div class="node-body">
       <div class="node-title" title="${node.title || node.id}">${truncate(node.title || node.id, 28)}</div>
@@ -56,6 +57,18 @@ function createNodeElement(node) {
       `;
     });
     html += `</div>`;
+  } else if (node.type === 'lead_form' && node.fields && node.fields.length > 0) {
+    html += `<div class="node-options">`;
+    node.fields.forEach((field) => {
+      html += `
+        <div class="node-option">
+          <span class="opt-text" style="font-size: 10px; opacity: 0.8;">[${field.type}] ${truncate(field.label, 18)}</span>
+          <span class="node-option-dot"></span>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    html += `<div class="handle handle-out" data-nodeid="${node.id}" data-optidx="-1" title="Conectar"></div>`;
   } else if (node.type !== 'result') {
     // Node-level single out handle
     html += `<div class="handle handle-out" data-nodeid="${node.id}" data-optidx="-1" title="Conectar"></div>`;

@@ -40,6 +40,8 @@ function updateInspector() {
   if (node.subtitle !== undefined) {
     addInput(basicSection, 'Subtítulo', 'propSubtitle', node.subtitle || '', 'Descrição auxiliar...', val => { node.subtitle = val; refresh(node.id); });
   }
+  
+  addInput(basicSection, 'Tag do Nó (Opcional)', 'propTag', node.tag || '', 'Ex: Fluxo A', val => { node.tag = val; refresh(node.id); });
   container.appendChild(basicSection);
 
   // 3. Seções Específicas por Tipo
@@ -62,9 +64,49 @@ function updateInspector() {
   }
 
   if (node.type === 'result') {
+    const resultSection = createInspectorSection('Conteúdo do Resultado');
+    addInput(resultSection, 'Título', 'propTitleResult', node.title || '', 'Ex: Sprout Social', val => { node.title = val; refresh(node.id); });
+    addInput(resultSection, 'Badge / Selo', 'propBadge', node.badge || '', 'Ex: 📈 Alta Performance', val => { node.badge = val; refresh(node.id); });
+    
+    const descGroup = document.createElement('div');
+    descGroup.className = 'form-group';
+    descGroup.innerHTML = `
+        <label>Descrição do Resultado</label>
+        <textarea id="propDescription" style="height:80px;">${escHtml(node.description || '')}</textarea>
+    `;
+    resultSection.appendChild(descGroup);
+    bindInput('propDescription', val => { node.description = val; refresh(node.id); });
+
     const ctaSection = createInspectorSection('Call to Action');
     addInput(ctaSection, 'Texto do Botão', 'propCta', node.cta || '', 'Ex: Falar com Especialista', val => { node.cta = val; refresh(node.id); });
     addInput(ctaSection, 'Link de Destino', 'propUrl', node.url || '', 'https://...', val => { node.url = val; refresh(node.id); });
+    container.appendChild(resultSection);
+    
+    if (!node.solutions) node.solutions = [];
+    renderIterableSection(container, 'Soluções / Diferenciais', node.solutions, (sol, i) => {
+        return `
+            <div class="form-group">
+                <label>Nome da Solução</label>
+                <input type="text" id="solName_${i}" value="${escHtml(sol.name || '')}" />
+            </div>
+            <div class="form-group">
+                <label>Descrição curta</label>
+                <input type="text" id="solDesc_${i}" value="${escHtml(sol.desc || '')}" />
+            </div>
+        `;
+    }, (i) => {
+        bindInput(`solName_${i}`, val => { node.solutions[i].name = val; refresh(node.id); });
+        bindInput(`solDesc_${i}`, val => { node.solutions[i].desc = val; refresh(node.id); });
+    }, () => {
+        node.solutions.push({ name: 'Nova Solução', desc: 'Breve descrição...' });
+        updateInspector();
+        refresh(node.id);
+    }, (i) => {
+        node.solutions.splice(i, 1);
+        updateInspector();
+        refresh(node.id);
+    });
+
     container.appendChild(ctaSection);
   }
 
@@ -113,8 +155,13 @@ function updateInspector() {
   }
 
   // 5. Seção de Campos (Lead Form)
-  if (node.type === 'lead_form' && node.fields) {
-    renderIterableSection(container, 'Campos do Formulário', node.fields, (field, i) => {
+  if (node.type === 'lead_form') {
+    const leadFormSection = createInspectorSection('Configuração do Formulário');
+    addInput(leadFormSection, 'Texto do Botão (CTA)', 'propButtonText', node.buttonText || 'Continuar', 'Ex: Começar diagnóstico!', val => { node.buttonText = val; refresh(node.id); });
+    container.appendChild(leadFormSection);
+    
+    if (node.fields) {
+      renderIterableSection(container, 'Campos do Formulário', node.fields, (field, i) => {
         return `
             <div class="form-group">
                 <label>ID da Variável</label>

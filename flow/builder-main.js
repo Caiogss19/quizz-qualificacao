@@ -189,8 +189,7 @@ function autoLayout(nodes) {
 }
 
 function saveFlow() {
-  let quizzes = [];
-  try { quizzes = JSON.parse(localStorage.getItem('sparkmaxx_quizzes') || '[]'); } catch(e) {}
+  const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
   
   const targetIndex = quizzes.findIndex(q => q.id === currentQuizId);
   if (targetIndex === -1) {
@@ -202,9 +201,10 @@ function saveFlow() {
   quizzes[targetIndex].nodes = JSON.parse(JSON.stringify(builderState.nodes));
   
   try {
-    localStorage.setItem('sparkmaxx_quizzes', JSON.stringify(quizzes));
-    if (typeof saveQuizToSupabase !== 'undefined') {
-      saveQuizToSupabase(quizzes[targetIndex]);
+    if (typeof saveQuizzes === 'function') {
+      saveQuizzes(quizzes);
+    } else {
+      localStorage.setItem('spark_maxx_quizzes_v3', JSON.stringify(quizzes));
     }
     showToast('✅ Fluxo salvo com sucesso no banco!');
   } catch(e) {

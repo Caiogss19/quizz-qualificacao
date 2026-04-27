@@ -177,6 +177,12 @@ body {
   font-family: var(--font-mono); font-size: 9px;
   letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--fg-3);
 }
+.node-tag-badge {
+  font-family: var(--font-mono); font-size: 8px;
+  background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3);
+  color: #a5b4fc; padding: 2px 6px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
 .node-icon { font-size: 14px; opacity: 0.7; }
 
 .node-body { padding: 12px 14px 12px; }
