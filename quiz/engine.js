@@ -326,30 +326,31 @@ function renderQuestion(node) {
 
 function renderLoading(node) {
   const container = document.createElement('div');
+  container.className = 'loading-screen';
   container.innerHTML = `
-    <div class="analyzing-container">
-      <div class="sm-tag" style="margin-bottom:16px;">Processando</div>
-      <div class="analyzing-image">
-        <img src="assets/cubes-multi.webp" alt="" />
-      </div>
-      <h2 class="analyzing-title">${node.title || 'Analisando seu perfil…'}</h2>
-      <p class="analyzing-text" id="analyzingPhase">Lendo seu perfil</p>
-      <div class="analyzing-dots">
-        <span></span><span></span><span></span>
-      </div>
+    <div class="spinner-circle"></div>
+    <h1 class="loading-title">${node.title || 'Analisando suas respostas'}</h1>
+    <p class="loading-sub">${node.subtitle || 'Cruzando seu perfil com nossa base de soluções martech curadas.'}</p>
+    <div class="loading-steps">
+      <div class="loading-step active" id="lStep1">Perfil Identificado</div>
+      <div class="loading-step" id="lStep2">Prioridades Mapeadas</div>
+      <div class="loading-step" id="lStep3">Calculando Recomendação</div>
     </div>
   `;
 
   // Cycle through phases
-  const phases = ['Lendo seu perfil', 'Cruzando com dados de mercado', 'Selecionando sua solução'];
-  let phaseIdx = 0;
-  const phaseEl = container.querySelector('#analyzingPhase');
-  const phaseTimer = setInterval(() => {
-    phaseIdx = Math.min(phaseIdx + 1, phases.length - 1);
-    if (phaseEl) phaseEl.textContent = phases[phaseIdx];
-  }, 700);
+  const duration = node.duration || 3000;
+  const phaseDuration = duration / 3;
 
-  setTimeout(() => clearInterval(phaseTimer), node.duration || 2400);
+  setTimeout(() => {
+    const s2 = container.querySelector('#lStep2');
+    if (s2) s2.classList.add('active');
+  }, phaseDuration);
+
+  setTimeout(() => {
+    const s3 = container.querySelector('#lStep3');
+    if (s3) s3.classList.add('active');
+  }, phaseDuration * 2);
 
   return container;
 }
