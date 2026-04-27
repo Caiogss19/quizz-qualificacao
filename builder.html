@@ -16,43 +16,95 @@
   <header class="builder-header">
     <div class="header-logo">
       <img src="assets/logo-horizontal.svg" alt="spark MAXX" />
-      <span>Flow Editor</span>
+      <span>Builder</span>
+    </div>
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span class="status-text">canvas · v.2026.04 · auto-save</span>
     </div>
     <div class="header-actions">
-      <div class="dropdown">
-        <select class="btn-secondary" id="btnAddNode">
-          <option value="" disabled selected>+ Novo Componente</option>
-          <option value="question">Pergunta de Quiz</option>
-          <option value="lead_form">Captura de Lead</option>
-          <option value="loading">Tela de Processamento</option>
-          <option value="webhook">Disparo de Webhook (n8n)</option>
-          <option value="result">Resultado Final</option>
-        </select>
-      </div>
-      <button class="btn-primary" id="btnSaveFlow">Publicar Fluxo</button>
-      <div class="header-divider"></div>
-      <a href="index.html?tab=quizzes" class="btn-link">Sair do Editor</a>
+      <select class="btn-secondary" id="btnAddNode">
+        <option value="" disabled selected>+ Adicionar Nó</option>
+        <option value="question">Pergunta</option>
+        <option value="loading">Análise (Loading)</option>
+        <option value="result">Resultado Final</option>
+      </select>
+      <button class="btn-primary" id="btnSaveFlow">Salvar Fluxo</button>
+      <a href="index.html?tab=quizzes" class="btn-link">← Admin</a>
     </div>
   </header>
 
   <!-- Flow Area -->
   <main class="builder-main">
-    
-    <!-- Inspector Sidebar (Fase 4, mas já deixamos o esqueleto) -->
+
+    <!-- Block Palette -->
+    <aside class="block-palette">
+      <div class="palette-header">Blocos</div>
+      <div class="palette-list">
+        <div class="palette-item" data-type="question">
+          <div class="palette-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="palette-info">
+            <div class="palette-name">Pergunta</div>
+            <div class="palette-desc">Multiple choice</div>
+          </div>
+        </div>
+        <div class="palette-item" data-type="lead_form">
+          <div class="palette-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="palette-info">
+            <div class="palette-name">Form de Lead</div>
+            <div class="palette-desc">Coleta dados</div>
+          </div>
+        </div>
+        <div class="palette-item" data-type="loading">
+          <div class="palette-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+          </div>
+          <div class="palette-info">
+            <div class="palette-name">Análise</div>
+            <div class="palette-desc">Loading + delay</div>
+          </div>
+        </div>
+        <div class="palette-item" data-type="result">
+          <div class="palette-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="palette-info">
+            <div class="palette-name">Resultado</div>
+            <div class="palette-desc">Tela final + CTA</div>
+          </div>
+        </div>
+      </div>
+      <div class="palette-footer">
+        <span class="palette-hint">Arraste para o canvas</span>
+      </div>
+    </aside>
+
+    <!-- Canvas Container -->
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <div class="canvas-toolbar">
+        <button class="canvas-btn" title="Zoom out">−</button>
+        <span class="canvas-zoom">100%</span>
+        <button class="canvas-btn" title="Zoom in">+</button>
+        <span class="canvas-divider"></span>
+        <button class="canvas-btn" title="Centralizar">⊙</button>
+      </div>
+      <div class="canvas-pan-zoom" id="canvasPanZoom">
+        <svg class="canvas-connections" id="canvasConnections"></svg>
+        <div class="canvas-nodes" id="canvasNodes"></div>
+      </div>
+    </div>
+
+    <!-- Inspector Sidebar -->
     <aside class="inspector" id="inspector">
       <div class="inspector-header">Propriedades do Nó</div>
       <div class="inspector-body" id="inspectorBody">
         <p class="empty-state">Selecione um nó para editar</p>
       </div>
     </aside>
-
-    <!-- Canvas Container -->
-    <div class="canvas-wrapper" id="canvasWrapper">
-      <div class="canvas-pan-zoom" id="canvasPanZoom">
-        <svg class="canvas-connections" id="canvasConnections"></svg>
-        <div class="canvas-nodes" id="canvasNodes"></div>
-      </div>
-    </div>
 
   </main>
 

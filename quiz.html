@@ -7,7 +7,7 @@
   <meta name="description" content="Faça o diagnóstico e descubra a solução ideal para sua estratégia de influência digital." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@1,300;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="design-system.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -23,10 +23,24 @@
       <div class="logo">
         <img src="assets/logo-horizontal.svg" alt="spark MAXX" />
       </div>
+      <div class="quiz-meta">
+        <span class="meta-eyebrow">v.2026.04 · diagnóstico</span>
+      </div>
     </header>
 
     <!-- Quiz Container -->
     <main class="quiz-main">
+      <!-- Hero lateral cromada (decorativa, esconde no mobile) -->
+      <aside class="quiz-stage" aria-hidden="true">
+        <div class="stage-grid"></div>
+        <img class="stage-object stage-object-cube" src="assets/cube-hero.webp" alt="" />
+        <img class="stage-object stage-object-sphere" src="assets/sphere-orb.png" alt="" />
+        <div class="stage-status">
+          <span class="status-dot"></span>
+          <span class="status-text">analyzing · spark maxx engine</span>
+        </div>
+      </aside>
+
       <div class="quiz-card" id="quizCard">
         <!-- O motor do quiz em quiz/engine.js irá injetar os passos dinamicamente aqui -->
       </div>

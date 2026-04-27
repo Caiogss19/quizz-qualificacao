@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex,nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@1,300;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="design-system.css" />
   <link rel="stylesheet" href="admin.css" />
 </head>
@@ -15,11 +15,14 @@
 
 <!-- Login Screen -->
 <div id="loginScreen" class="login-screen">
+  <div class="login-stage" aria-hidden="true">
+    <img src="assets/cube-hero.webp" alt="" class="login-stage-img" />
+  </div>
   <div class="login-card">
     <div class="login-logo">
       <img src="assets/logo-horizontal.svg" alt="spark MAXX" />
     </div>
-    <p class="login-sub">painel administrativo</p>
+    <p class="login-sub">painel administrativo · v.2026.04</p>
     <form id="loginForm" novalidate>
       <div class="login-field">
         <label for="adminPassword">Senha de acesso</label>
@@ -39,29 +42,30 @@
     <div class="sidebar-logo">
       <img src="assets/logo-horizontal.svg" alt="spark MAXX" />
     </div>
+    <div class="sidebar-section-label">Workspace</div>
     <nav class="sidebar-nav">
       <a href="#" class="nav-item" id="nav-overview" data-tab="overview">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Visão geral
       </a>
       <a href="#" class="nav-item active" id="nav-quizzes" data-tab="quizzes">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Meus Quizzes
       </a>
       <a href="#" class="nav-item" id="nav-responses" data-tab="responses">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         Respostas
       </a>
       <a href="#" class="nav-item" id="nav-analytics" data-tab="analytics">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Analytics
       </a>
       <a href="#" class="nav-item" id="nav-export" data-tab="export">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar
       </a>
       <a href="#" class="nav-item" id="nav-branding" data-tab="branding">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Branding
       </a>
     </nav>
@@ -76,12 +80,12 @@
     <!-- Header -->
     <header class="admin-header">
       <button class="burger-btn" id="burgerBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="header-title" id="headerTitle">Visão Geral</div>
       <div class="header-actions">
         <button class="btn-action" id="btnRefresh">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
           Atualizar
         </button>
       </div>
@@ -90,35 +94,44 @@
     <!-- Tab: Overview -->
     <section class="tab-content active" id="tab-overview">
       <div class="page-header">
-        <h1>Visão Geral</h1>
+        <span class="page-eyebrow">overview · diagnóstico engine</span>
+        <h1>Visão <em>Geral</em></h1>
         <p class="page-desc">Resumo dos dados coletados pelo quiz diagnóstico</p>
       </div>
 
       <!-- KPI Cards -->
       <div class="kpi-grid" id="kpiGrid">
         <div class="kpi-card">
-          <div class="kpi-icon">👥</div>
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
           <div class="kpi-data">
             <span class="kpi-value" id="kpiTotal">0</span>
             <span class="kpi-label">Respostas totais</span>
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">📅</div>
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
           <div class="kpi-data">
             <span class="kpi-value" id="kpiToday">0</span>
             <span class="kpi-label">Hoje</span>
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">⏱️</div>
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
           <div class="kpi-data">
             <span class="kpi-value" id="kpiAvgTime">—</span>
             <span class="kpi-label">Tempo médio</span>
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">🏆</div>
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+          </div>
           <div class="kpi-data">
             <span class="kpi-value" id="kpiTopProfile">—</span>
             <span class="kpi-label">Perfil mais frequente</span>
@@ -142,7 +155,8 @@
     <!-- Tab: Branding -->
     <section class="tab-content" id="tab-branding">
       <div class="page-header">
-        <h1>Branding (White-label)</h1>
+        <span class="page-eyebrow">branding · white-label</span>
+        <h1>Identidade <em>visual</em></h1>
         <p class="page-desc">Personalize a identidade visual de todos os seus quizzes</p>
       </div>
 
@@ -169,9 +183,10 @@
 
     <!-- Tab: Meus Quizzes -->
     <section class="tab-content" id="tab-quizzes">
-      <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
-          <h1>Meus Quizzes</h1>
+          <span class="page-eyebrow">quizzes · catálogo</span>
+          <h1>Meus <em>quizzes</em></h1>
           <p class="page-desc">Gerencie seus múltiplos quizzes, links e webhooks</p>
         </div>
         <button class="btn-primary" id="btnCreateQuiz">+ Novo Quiz</button>
@@ -185,7 +200,8 @@
     <!-- Tab: Responses -->
     <section class="tab-content" id="tab-responses">
       <div class="page-header">
-        <h1>Respostas</h1>
+        <span class="page-eyebrow">respostas · base de leads</span>
+        <h1>Respostas <em>coletadas</em></h1>
         <p class="page-desc">Todas as respostas coletadas pelo quiz</p>
       </div>
 
@@ -239,7 +255,8 @@
     <!-- Tab: Analytics -->
     <section class="tab-content" id="tab-analytics">
       <div class="page-header">
-        <h1>Analytics</h1>
+        <span class="page-eyebrow">analytics · insights</span>
+        <h1>Padrões e <em>tendências</em></h1>
         <p class="page-desc">Insights e tendências das respostas</p>
       </div>
 
@@ -271,25 +288,32 @@
     <!-- Tab: Export -->
     <section class="tab-content" id="tab-export">
       <div class="page-header">
-        <h1>Exportar dados</h1>
+        <span class="page-eyebrow">export · download</span>
+        <h1>Exportar <em>dados</em></h1>
         <p class="page-desc">Exporte todas as respostas nos formatos disponíveis</p>
       </div>
 
       <div class="export-grid">
         <div class="export-card" id="exportCSV">
-          <div class="export-icon">📄</div>
+          <div class="export-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
           <h3>CSV</h3>
           <p>Compatível com Excel, Google Sheets e qualquer planilha. Ideal para análises rápidas.</p>
           <button class="btn-export" id="btnExportCSV">Baixar CSV</button>
         </div>
         <div class="export-card" id="exportJSON">
-          <div class="export-icon">🗂️</div>
+          <div class="export-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
           <h3>JSON</h3>
           <p>Formato estruturado para integração com sistemas, APIs e ferramentas de BI.</p>
           <button class="btn-export" id="btnExportJSON">Baixar JSON</button>
         </div>
         <div class="export-card">
-          <div class="export-icon">📋</div>
+          <div class="export-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </div>
           <h3>Copiar para área de transferência</h3>
           <p>Copie os dados em formato CSV diretamente para colar em qualquer planilha.</p>
           <button class="btn-export" id="btnCopyClipboard">Copiar CSV</button>
@@ -307,7 +331,7 @@
       </div>
 
       <div class="danger-zone">
-        <h3>⚠️ Zona de perigo</h3>
+        <h3>Zona de perigo</h3>
         <p>Apagar todos os dados é irreversível. Faça um export antes de continuar.</p>
         <button class="btn-danger" id="btnClearAll">Apagar todos os dados</button>
       </div>
