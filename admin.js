@@ -248,7 +248,34 @@ function switchTab(tab) {
 // LOAD
 // ===========================
 async function loadAdminPanel() {
-  // Leads
+  console.log("%c Spark Maxx Engine v3.0 - Syncing Quizzes... ", "background: #121C2B; color: #10B981; font-weight: bold;");
+
+  // 1. Quizzes Sync - Force update the Spark Maxx Diagnostic to the new structure
+  // Movemos para o topo para garantir que ocorra antes de qualquer outra operação
+  let quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
+  const existingIdx = quizzes.findIndex(q => q.id === quizJSON.id);
+
+  if (existingIdx === -1) {
+    const newQuiz = {
+      id: quizJSON.id,
+      name: quizJSON.title,
+      webhookUrl: '',
+      nodes: JSON.parse(JSON.stringify(quizJSON.nodes)),
+      results: JSON.parse(JSON.stringify(quizJSON.results)),
+      createdAt: new Date().toISOString()
+    };
+    quizzes.push(newQuiz);
+    saveQuizzes(quizzes);
+    console.log("Quiz criado com sucesso:", quizJSON.id);
+  } else {
+    quizzes[existingIdx].nodes = JSON.parse(JSON.stringify(quizJSON.nodes));
+    quizzes[existingIdx].results = JSON.parse(JSON.stringify(quizJSON.results));
+    quizzes[existingIdx].name = quizJSON.title;
+    saveQuizzes(quizzes);
+    console.log("Quiz atualizado com sucesso:", quizJSON.id);
+  }
+
+  // 2. Leads
   const localData = typeof getAllResponses === 'function' ? getAllResponses() : [];
   let cloudData = [];
   if (typeof getLeadsFromSupabase === 'function') {
@@ -267,35 +294,20 @@ async function loadAdminPanel() {
     if (typeof getQuizzesFromSupabase === 'function') {
       const cloudQuizzes = await getQuizzesFromSupabase();
       if (cloudQuizzes && Array.isArray(cloudQuizzes) && cloudQuizzes.length > 0) {
-        saveQuizzes(cloudQuizzes, true); 
+        // Fazemos merge dos cloud quizzes com o local, mantendo o nosso novo quiz forçado
+        const currentLocal = getQuizzes();
+        const mergedQuizzes = [...currentLocal];
+        
+        cloudQuizzes.forEach(cq => {
+           if (!mergedQuizzes.find(lq => lq.id === cq.id)) {
+              mergedQuizzes.push(cq);
+           }
+        });
+        saveQuizzes(mergedQuizzes, true); 
       }
     }
   } catch (e) {
     console.error("Erro ao sincronizar quizzes com Cloud:", e);
-  }
-
-  // Quizzes Sync - Force update the Spark Maxx Diagnostic to the new structure
-  console.log("Checking for Quiz ID:", quizJSON.id);
-  const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
-  const existingIdx = quizzes.findIndex(q => q.id === quizJSON.id);
-
-  if (existingIdx === -1) {
-    const newQuiz = {
-      id: quizJSON.id,
-      name: quizJSON.title,
-      webhookUrl: '',
-      nodes: JSON.parse(JSON.stringify(quizJSON.nodes)),
-      results: JSON.parse(JSON.stringify(quizJSON.results)),
-      createdAt: new Date().toISOString()
-    };
-    quizzes.push(newQuiz);
-    saveQuizzes(quizzes);
-  } else {
-    // Se já existe, forçamos a atualização dos nós e resultados para garantir que a nova lógica de 50/50 e fluxos esteja presente
-    quizzes[existingIdx].nodes = JSON.parse(JSON.stringify(quizJSON.nodes));
-    quizzes[existingIdx].results = JSON.parse(JSON.stringify(quizJSON.results));
-    quizzes[existingIdx].name = quizJSON.title;
-    saveQuizzes(quizzes);
   }
 
   const urlParams = new URLSearchParams(window.location.search);

@@ -51,7 +51,7 @@ function generateId() {
 }
 
 // --- Multi-Quiz Management ---
-const QUIZ_DB_KEY = 'sparkmaxx_quizzes';
+const QUIZ_DB_KEY = 'spark_maxx_quizzes_v3';
 
 function getQuizzes() {
   try { 
