@@ -275,6 +275,7 @@ async function loadAdminPanel() {
   }
 
   // Quizzes Sync - Force update the Spark Maxx Diagnostic to the new structure
+  console.log("Checking for Quiz ID:", quizJSON.id);
   const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
   const existingIdx = quizzes.findIndex(q => q.id === quizJSON.id);
 
