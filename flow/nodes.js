@@ -18,7 +18,7 @@ function renderAllNodes() {
 
 function createNodeElement(node) {
   const el = document.createElement('div');
-  el.className = 'flow-node';
+  el.className = `flow-node node-type-${node.type}`;
   el.id = `node-${node.id}`;
   el.style.left = `${node.editor?.x || 0}px`;
   el.style.top = `${node.editor?.y || 0}px`;
@@ -27,48 +27,41 @@ function createNodeElement(node) {
     el.classList.add('selected');
   }
 
-  const nodeColor = getNodeColor(node.type);
-  el.style.borderTopColor = nodeColor;
-
   let html = `
+    <div class="node-accent-bar"></div>
     <div class="node-header">
-      <div>
-        <span class="node-type-badge" style="background:${nodeColor}22;color:${nodeColor};">${getTypeLabel(node.type)}</span>
-      </div>
-      <span class="node-icon">${getTypeIcon(node.type)}</span>
+      <div class="node-icon">${getTypeIcon(node.type)}</div>
+      <span class="node-type-badge">${getTypeLabel(node.type)}</span>
     </div>
-    <div class="node-title" title="${node.title || node.id}">${truncate(node.title || node.id, 32)}</div>
+    <div class="node-body">
+      <div class="node-title" title="${node.title || node.id}">${truncate(node.title || node.id, 28)}</div>
+      <div class="node-subtitle" title="${node.subtitle || ''}">${truncate(node.subtitle || 'Sem descrição', 40)}</div>
+    </div>
   `;
 
-  if (node.subtitle) {
-    html += `<div class="node-subtitle" title="${node.subtitle}">${truncate(node.subtitle, 50)}</div>`;
+  // Handle Entrada (exceto para o nó inicial)
+  if (node.id !== 'start') {
+    html += `<div class="handle handle-in" data-nodeid="${node.id}" title="Entrada"></div>`;
   }
 
   // Options with per-option out handles
   if (node.options && node.options.length > 0) {
     html += `<div class="node-options">`;
     node.options.forEach((opt, i) => {
-      const hint = opt.hint ? `<span class="opt-tag">${opt.hint}</span>` : '';
       html += `
         <div class="node-option" data-optidx="${i}">
-          <span class="opt-text">${truncate(opt.icon ? opt.icon + ' ' + opt.text : opt.text, 26)}</span>
-          ${hint}
-          <div class="handle handle-out opt-handle" data-nodeid="${node.id}" data-optidx="${i}" title="Arrastar para conectar"></div>
+          <span class="opt-text">${truncate(opt.text, 22)}</span>
+          <div class="handle handle-out" data-nodeid="${node.id}" data-optidx="${i}" title="Conectar"></div>
         </div>
       `;
     });
     html += `</div>`;
   } else if (node.type !== 'result') {
     // Node-level single out handle
-    html += `<div class="handle handle-out" data-nodeid="${node.id}" data-optidx="-1" title="Arrastar para conectar"></div>`;
+    html += `<div class="handle handle-out" data-nodeid="${node.id}" data-optidx="-1" title="Conectar"></div>`;
   }
 
-  // Input handle (all except start)
-  if (node.id !== 'start') {
-    html += `<div class="handle handle-in" data-nodeid="${node.id}" title="Entrada de conexão"></div>`;
-  }
-
-  // Delete button
+  // Delete button (somente se não for nó fixo)
   if (node.id !== 'start' && node.id !== 'result') {
     html += `<button class="node-delete" data-nodeid="${node.id}" title="Remover nó">✕</button>`;
   }
@@ -218,12 +211,26 @@ function truncate(str, n) {
 }
 
 function getTypeLabel(type) {
-  const map = { lead_form: 'Formulário', question: 'Pergunta', loading: 'Análise', result: 'Resultado' };
+  const map = { 
+    start: 'Gatilho (Start)',
+    lead_form: 'Captura (Lead)', 
+    question: 'Pergunta', 
+    loading: 'Processamento', 
+    webhook: 'Integração (Webhook)',
+    result: 'Conversão (Fim)' 
+  };
   return map[type] || type;
 }
 
 function getTypeIcon(type) {
-  const map = { lead_form: '📝', question: '❓', loading: '⚙️', result: '🎉' };
+  const map = { 
+    start: '⚡', 
+    lead_form: '👤', 
+    question: '🔹', 
+    loading: '⏳', 
+    webhook: '🔗',
+    result: '🎯' 
+  };
   return map[type] || '📄';
 }
 

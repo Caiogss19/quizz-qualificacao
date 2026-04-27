@@ -1,5 +1,5 @@
 function initInspector() {
-  // init placeholder
+  // Inicialização se necessário
 }
 
 function updateInspector() {
@@ -8,352 +8,243 @@ function updateInspector() {
   const node = builderState.nodes[nodeId];
 
   if (!node) {
-    container.innerHTML = '<p class="empty-state">Clique em um nó para editar suas propriedades</p>';
+    container.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size: 24px; margin-bottom: 12px; opacity: 0.5;">⚡</div>
+        Selecione um nó no canvas para editar suas propriedades.
+      </div>
+    `;
     return;
   }
 
-  let html = `
-    <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:var(--text-main); display:flex; justify-content:space-between; align-items:center;">
-      <span>🔧 Nó: <code style="background:var(--bg-dark);padding:2px 6px;border-radius:3px;font-size:11px;">${node.id}</code></span>
-    </div>
-    <div class="form-group">
-      <label>Título</label>
-      <input type="text" id="propTitle" value="${escHtml(node.title || '')}" placeholder="Título do nó" />
+  container.innerHTML = ''; // Limpa para reconstruir
+
+  // 1. Header do Nó no Inspector
+  const header = document.createElement('div');
+  header.className = 'inspector-section';
+  header.innerHTML = `
+    <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:16px;">${getTypeIcon(node.type)}</span>
+        <div>
+            <div style="font-size:14px; font-weight:600; color:var(--fg-1);">${getTypeLabel(node.type)}</div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--fg-3);">${node.id}</div>
+        </div>
     </div>
   `;
+  container.appendChild(header);
 
-  if (node.subtitle !== undefined) {
-    html += `
-      <div class="form-group">
-        <label>Subtítulo</label>
-        <input type="text" id="propSubtitle" value="${escHtml(node.subtitle || '')}" placeholder="Subtítulo" />
-      </div>
-    `;
-  }
+  // 2. Seção Básica
+  const basicSection = createInspectorSection('Configuração Geral');
+  addInput(basicSection, 'Título', 'propTitle', node.title || '', 'Ex: Qual seu perfil?', val => { node.title = val; refresh(node.id); });
   
-  if (node.tag !== undefined) {
-    html += `
-      <div class="form-group">
-        <label>Tag (ex: Passo 1)</label>
-        <input type="text" id="propTag" value="${escHtml(node.tag || '')}" placeholder="Tag" />
-      </div>
-    `;
+  if (node.subtitle !== undefined) {
+    addInput(basicSection, 'Subtítulo', 'propSubtitle', node.subtitle || '', 'Descrição auxiliar...', val => { node.subtitle = val; refresh(node.id); });
   }
+  container.appendChild(basicSection);
 
+  // 3. Seções Específicas por Tipo
   if (node.type === 'question') {
-    html += `
-      <div class="form-group" style="background:rgba(16,185,129,0.1);padding:10px;border-radius:6px;border:1px solid rgba(16,185,129,0.2);">
-        <label style="color:#10B981;font-weight:600;">Nome da Variável (Data Key)</label>
-        <input type="text" id="propVarName" value="${escHtml(node.varName || '')}" placeholder="ex: perfil, faturamento..." style="background:var(--bg-dark);" />
-        <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Como essa resposta será salva no banco (Supabase/Webhook)</div>
-      </div>
-    `;
+    const logicSection = createInspectorSection('Lógica de Dados');
+    addInput(logicSection, 'ID da Variável (Data Key)', 'propVarName', node.varName || '', 'ex: faturamento', val => { node.varName = val; refresh(node.id); });
+    container.appendChild(logicSection);
   }
 
-  if (node.type === 'lead_form' && node.buttonText !== undefined) {
-    html += `
-      <div class="form-group">
-        <label>Texto do Botão</label>
-        <input type="text" id="propBtn" value="${escHtml(node.buttonText || '')}" />
-      </div>
-    `;
+  if (node.type === 'loading') {
+    const timeSection = createInspectorSection('Tempo de Espera');
+    addInput(timeSection, 'Duração (ms)', 'propDuration', node.duration || 2000, '', val => { node.duration = parseInt(val); refresh(node.id); }, 'number');
+    container.appendChild(timeSection);
   }
 
-  if (node.type === 'loading' && node.duration !== undefined) {
-    html += `
-      <div class="form-group">
-        <label>Duração (ms)</label>
-        <input type="number" id="propDuration" value="${node.duration || 2400}" min="500" max="10000" />
-      </div>
-    `;
+  if (node.type === 'webhook') {
+    const webhookSection = createInspectorSection('Configuração n8n / Webhook');
+    addInput(webhookSection, 'URL do Webhook', 'propWebhookUrl', node.webhookUrl || '', 'https://n8n.exemplo.com/...', val => { node.webhookUrl = val; refresh(node.id); });
+    container.appendChild(webhookSection);
   }
 
   if (node.type === 'result') {
-    html += `
-      <div class="form-group">
-        <label>Texto do Botão (CTA)</label>
-        <input type="text" id="propCta" value="${escHtml(node.cta || '')}" placeholder="Ex: Conhecer Solução" />
-      </div>
-      <div class="form-group">
-        <label>URL do Botão</label>
-        <input type="text" id="propUrl" value="${escHtml(node.url || '')}" placeholder="https://..." />
-      </div>
-    `;
+    const ctaSection = createInspectorSection('Call to Action');
+    addInput(ctaSection, 'Texto do Botão', 'propCta', node.cta || '', 'Ex: Falar com Especialista', val => { node.cta = val; refresh(node.id); });
+    addInput(ctaSection, 'Link de Destino', 'propUrl', node.url || '', 'https://...', val => { node.url = val; refresh(node.id); });
+    container.appendChild(ctaSection);
   }
 
-  // Options section
-  if (node.options && node.options.length > 0) {
-    html += `
-      <hr style="border:0;border-top:1px solid var(--border);margin:16px 0;" />
-      <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Opções de Resposta</div>
-    `;
-    node.options.forEach((opt, i) => {
-      html += `
-        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <div style="font-size:11px;color:var(--text-muted);">Opção ${String.fromCharCode(65 + i)}</div>
-            <button class="btn-remove-opt" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <div class="form-group" style="margin-bottom:6px; width:50px; flex-shrink:0;">
-              <label>Ícone</label>
-              <input type="text" id="propOptIcon_${i}" value="${escHtml(opt.icon || '')}" placeholder="Emoji" />
-            </div>
-            <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
-              <label>Texto</label>
-              <input type="text" id="propOptText_${i}" value="${escHtml(opt.text || '')}" />
-            </div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <div class="form-group" style="margin-bottom:0; flex-grow:1;">
-              <label>Tag / Hint</label>
-              <input type="text" id="propOptHint_${i}" value="${escHtml(opt.hint || '')}" placeholder="ex: discovery, roi..." />
-            </div>
-            <div class="form-group" style="margin-bottom:0; width:60px; flex-shrink:0;">
-              <label>Valor</label>
-              <input type="number" id="propOptScore_${i}" value="${opt.score || 0}" min="0" max="100" />
-            </div>
-          </div>
-        </div>
-      `;
-    });
-
-    html += `<button id="btnAddOption" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Opção</button>`;
-  }
-
-  // Solutions section for Result node
-  if (node.type === 'result' && node.solutions) {
-    html += `
-      <hr style="border:0;border-top:1px solid var(--border);margin:16px 0;" />
-      <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Soluções / Benefícios</div>
-    `;
-    node.solutions.forEach((sol, i) => {
-      html += `
-        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <div style="font-size:11px;color:var(--text-muted);">Solução ${i+1}</div>
-            <button class="btn-remove-sol" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <div class="form-group" style="margin-bottom:6px; width:50px; flex-shrink:0;">
-              <label>Ícone</label>
-              <input type="text" id="propSolIcon_${i}" value="${escHtml(sol.icon || '')}" placeholder="Emoji" />
-            </div>
-            <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
-              <label>Título</label>
-              <input type="text" id="propSolName_${i}" value="${escHtml(sol.name || '')}" placeholder="Nome da solução" />
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label>Descrição</label>
-            <input type="text" id="propSolDesc_${i}" value="${escHtml(sol.desc || '')}" placeholder="Breve descrição" />
-          </div>
-        </div>
-      `;
-    });
-    html += `<button id="btnAddSolution" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Solução</button>`;
-  }
-
-  // Fields section for Lead Form node
-  if (node.type === 'lead_form' && node.fields) {
-    html += `
-      <hr style="border:0;border-top:1px solid var(--border);margin:16px 0;" />
-      <div style="font-size:12px;color:var(--text-muted);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Campos do Formulário</div>
-    `;
-    node.fields.forEach((field, i) => {
-      html += `
-        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border);position:relative;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <div style="font-size:11px;color:var(--text-muted);">Configuração do Campo</div>
-            <button class="btn-remove-field" data-idx="${i}" style="background:none;border:none;color:#ff4444;cursor:pointer;font-size:11px;">✕ Remover</button>
-          </div>
-          <div class="form-group" style="margin-bottom:8px; background:rgba(16,185,129,0.05); padding:6px; border-radius:4px;">
-            <label style="color:#10B981; font-size:10px;">ID da Variável (Data Key)</label>
-            <input type="text" id="propFieldId_${i}" value="${escHtml(field.id || '')}" style="font-size:11px; background:transparent;" placeholder="ex: nome, cargo, celular..." />
-          </div>
-          <div style="display:flex; gap:8px;">
-            <div class="form-group" style="margin-bottom:6px; flex-grow:1;">
-              <label>Nome do Campo (Label)</label>
-              <input type="text" id="propFieldLabel_${i}" value="${escHtml(field.label || '')}" />
-            </div>
-            <div class="form-group" style="margin-bottom:6px; width:80px; flex-shrink:0;">
-              <label>Tipo</label>
-              <select id="propFieldType_${i}" style="width:100%;padding:6px;border-radius:4px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);font-size:12px;">
-                <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
-                <option value="email" ${field.type === 'email' ? 'selected' : ''}>E-mail</option>
-                <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Celular</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom:6px;">
-            <label>Placeholder</label>
-            <input type="text" id="propFieldPlaceholder_${i}" value="${escHtml(field.placeholder || '')}" />
-          </div>
-          <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-main);">
-            <input type="checkbox" id="propFieldReq_${i}" ${field.required ? 'checked' : ''} />
-            <label for="propFieldReq_${i}">Obrigatório</label>
-          </div>
-        </div>
-      `;
-    });
-    html += `<button id="btnAddField" style="width:100%;padding:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);border-radius:6px;font-size:12px;cursor:pointer;margin-top:4px;">+ Adicionar Campo</button>`;
-  }
-
-  // Delete node button
-  if (nodeId !== 'start') {
-    html += `
-      <hr style="border:0;border-top:1px solid var(--border);margin:24px 0 16px;" />
-      <button id="btnDeleteNode" style="width:100%;padding:10px;background:rgba(255,0,0,0.1);border:1px solid rgba(255,0,0,0.2);color:#ff4444;border-radius:6px;font-size:13px;cursor:pointer;font-weight:600;">Excluir Nó</button>
-    `;
-  }
-
-  container.innerHTML = html;
-
-  // --- Listeners ---
-
-  bindInput('propTitle', val => { node.title = val; refresh(node.id); });
-  bindInput('propSubtitle', val => { node.subtitle = val; refresh(node.id); });
-  bindInput('propTag', val => { node.tag = val; refresh(node.id); });
-  bindInput('propVarName', val => { node.varName = val; refresh(node.id); });
-  bindInput('propBtn', val => { node.buttonText = val; refresh(node.id); });
-  bindInput('propDuration', val => { node.duration = parseInt(val); refresh(node.id); });
-
-  if (node.type === 'result') {
-    bindInput('propCta', val => { node.cta = val; refresh(node.id); });
-    bindInput('propUrl', val => { node.url = val; refresh(node.id); });
-    
-    if (node.solutions) {
-      node.solutions.forEach((sol, i) => {
-        bindInput(`propSolIcon_${i}`, val => { sol.icon = val; refresh(node.id); });
-        bindInput(`propSolName_${i}`, val => { sol.name = val; refresh(node.id); });
-        bindInput(`propSolDesc_${i}`, val => { sol.desc = val; refresh(node.id); });
-      });
-
-      const addSolBtn = document.getElementById('btnAddSolution');
-      if (addSolBtn) {
-        addSolBtn.addEventListener('click', () => {
-          node.solutions.push({ icon: '✅', name: 'Nova Solução', desc: 'Descrição' });
-          updateInspector();
-          refresh(node.id);
-        });
-      }
-
-      document.querySelectorAll('.btn-remove-sol').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = parseInt(e.target.dataset.idx);
-          node.solutions.splice(idx, 1);
-          updateInspector();
-          refresh(node.id);
-        });
-      });
-    }
-  }
-
-  if (node.type === 'lead_form' && node.fields) {
-    node.fields.forEach((field, i) => {
-      bindInput(`propFieldId_${i}`, val => { field.id = val; refresh(node.id); });
-      bindInput(`propFieldLabel_${i}`, val => { field.label = val; refresh(node.id); });
-      bindInput(`propFieldType_${i}`, val => { field.type = val; refresh(node.id); });
-      bindInput(`propFieldPlaceholder_${i}`, val => { field.placeholder = val; refresh(node.id); });
-      
-      const reqCb = document.getElementById(`propFieldReq_${i}`);
-      if (reqCb) {
-        reqCb.addEventListener('change', (e) => {
-          field.required = e.target.checked;
-          refresh(node.id);
-        });
-      }
-    });
-
-    const addFieldBtn = document.getElementById('btnAddField');
-    if (addFieldBtn) {
-      addFieldBtn.addEventListener('click', () => {
-        const fieldId = `campo_${Date.now().toString().slice(-4)}`;
-        node.fields.push({ id: fieldId, label: 'Novo Campo', type: 'text', placeholder: 'Digite aqui...', required: false, errorMsg: 'Campo obrigatório' });
-        updateInspector();
-        refresh(node.id);
-      });
-    }
-
-    document.querySelectorAll('.btn-remove-field').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const idx = parseInt(e.target.dataset.idx);
-        node.fields.splice(idx, 1);
-        updateInspector();
-        refresh(node.id);
-      });
-    });
-  }
-
+  // 4. Seção de Opções (Iterável)
   if (node.options) {
-    node.options.forEach((opt, i) => {
-      bindInput(`propOptIcon_${i}`, val => { opt.icon = val; refresh(node.id); });
-      bindInput(`propOptText_${i}`, val => { opt.text = val; refresh(node.id); });
-      bindInput(`propOptHint_${i}`, val => { opt.hint = val; refresh(node.id); });
-      bindInput(`propOptScore_${i}`, val => { opt.score = parseInt(val) || 0; });
-    });
-
-    const addOptBtn = document.getElementById('btnAddOption');
-    if (addOptBtn) {
-      addOptBtn.addEventListener('click', () => {
-        const idx = node.options.length;
-        node.options.push({ text: `Nova Opção`, hint: '', score: 0, next: null, icon: '✨' });
+    renderIterableSection(container, 'Opções de Resposta', node.options, (item, i) => {
+        return `
+            <div class="input-row">
+                <div class="form-group" style="flex:0 0 50px;">
+                    <label>Ícone</label>
+                    <input type="text" id="optIcon_${i}" value="${escHtml(item.icon || '')}" placeholder="✨" />
+                </div>
+                <div class="form-group">
+                    <label>Texto da Opção</label>
+                    <input type="text" id="optText_${i}" value="${escHtml(item.text || '')}" />
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Tag (Interna)</label>
+                    <input type="text" id="optHint_${i}" value="${escHtml(item.hint || '')}" placeholder="ex: pme" />
+                </div>
+                <div class="form-group" style="flex:0 0 70px;">
+                    <label>Score</label>
+                    <input type="number" id="optScore_${i}" value="${item.score || 0}" />
+                </div>
+            </div>
+        `;
+    }, (i) => {
+        // Bindings
+        bindInput(`optIcon_${i}`, val => { node.options[i].icon = val; refresh(node.id); });
+        bindInput(`optText_${i}`, val => { node.options[i].text = val; refresh(node.id); });
+        bindInput(`optHint_${i}`, val => { node.options[i].hint = val; refresh(node.id); });
+        bindInput(`optScore_${i}`, val => { node.options[i].score = parseInt(val) || 0; });
+    }, () => {
+        node.options.push({ text: 'Nova Opção', hint: '', score: 0, next: null, icon: '🔹' });
         updateInspector();
         refresh(node.id);
-      });
-    }
-
-    document.querySelectorAll('.btn-remove-opt').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const idx = parseInt(e.target.dataset.idx);
-        // Remove connections from this option
-        builderState.connections = builderState.connections.filter(c => !(c.from === nodeId && c.fromOption === idx));
-        // Shift remaining connection option indexes
-        builderState.connections.forEach(c => {
-          if (c.from === nodeId && c.fromOption > idx) {
-            c.fromOption--;
-          }
-        });
-        node.options.splice(idx, 1);
+    }, (i) => {
+        builderState.connections = builderState.connections.filter(c => !(c.from === nodeId && c.fromOption === i));
+        builderState.connections.forEach(c => { if (c.from === nodeId && c.fromOption > i) c.fromOption--; });
+        node.options.splice(i, 1);
         updateInspector();
         refresh(node.id);
-      });
     });
   }
 
-  const btnDeleteNode = document.getElementById('btnDeleteNode');
-  if (btnDeleteNode) {
-    btnDeleteNode.addEventListener('click', () => {
-      if(confirm('Excluir este nó?')) {
-        delete builderState.nodes[nodeId];
-        // Remove all connections from/to this node
-        builderState.connections = builderState.connections.filter(c => c.from !== nodeId && c.to !== nodeId);
-        // Also remove references in other nodes
-        Object.values(builderState.nodes).forEach(n => {
-          if (n.next === nodeId) n.next = null;
-          if (n.options) n.options.forEach(o => { if (o.next === nodeId) o.next = null; });
-        });
-        builderState.selectedNodeId = null;
+  // 5. Seção de Campos (Lead Form)
+  if (node.type === 'lead_form' && node.fields) {
+    renderIterableSection(container, 'Campos do Formulário', node.fields, (field, i) => {
+        return `
+            <div class="form-group">
+                <label>ID da Variável</label>
+                <input type="text" id="fieldId_${i}" value="${escHtml(field.id || '')}" placeholder="ex: nome_completo" />
+            </div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Label</label>
+                    <input type="text" id="fieldLabel_${i}" value="${escHtml(field.label || '')}" />
+                </div>
+                <div class="form-group" style="flex:0 0 90px;">
+                    <label>Tipo</label>
+                    <select id="fieldType_${i}">
+                        <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
+                        <option value="email" ${field.type === 'email' ? 'selected' : ''}>E-mail</option>
+                        <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>WhatsApp</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                <input type="checkbox" id="fieldReq_${i}" ${field.required ? 'checked' : ''} style="width:auto;" />
+                <label for="fieldReq_${i}" style="font-size:11px;">Obrigatório</label>
+            </div>
+        `;
+    }, (i) => {
+        bindInput(`fieldId_${i}`, val => { node.fields[i].id = val; refresh(node.id); });
+        bindInput(`fieldLabel_${i}`, val => { node.fields[i].label = val; refresh(node.id); });
+        document.getElementById(`fieldType_${i}`).onchange = (e) => { node.fields[i].type = e.target.value; refresh(node.id); };
+        document.getElementById(`fieldReq_${i}`).onchange = (e) => { node.fields[i].required = e.target.checked; refresh(node.id); };
+    }, () => {
+        node.fields.push({ id: `campo_${Date.now().toString().slice(-3)}`, label: 'Novo Campo', type: 'text', placeholder: '', required: false });
         updateInspector();
-        renderAllNodes();
-        renderConnections();
-      }
+        refresh(node.id);
+    }, (i) => {
+        node.fields.splice(i, 1);
+        updateInspector();
+        refresh(node.id);
     });
   }
+
+  // 6. Botão de Excluir Nó (Final)
+  if (node.id !== 'start') {
+    const footer = document.createElement('div');
+    footer.style.padding = '20px 0';
+    footer.innerHTML = `
+        <button id="btnDeleteNode" style="width:100%; padding:12px; background:rgba(217,122,122,0.05); border:1px solid rgba(217,122,122,0.2); color:var(--sm-danger); border-radius:var(--radius-md); font-size:13px; font-weight:600; cursor:pointer;">
+            Excluir Nó permanentemente
+        </button>
+    `;
+    container.appendChild(footer);
+
+    document.getElementById('btnDeleteNode').onclick = () => {
+        if (confirm('Deseja realmente excluir este nó e todas as suas conexões?')) {
+            delete builderState.nodes[nodeId];
+            builderState.connections = builderState.connections.filter(c => c.from !== nodeId && c.to !== nodeId);
+            builderState.selectedNodeId = null;
+            updateInspector();
+            renderAllNodes();
+            renderConnections();
+        }
+    };
+  }
+}
+
+// --- Helpers de UI do Inspector ---
+
+function createInspectorSection(title) {
+    const sec = document.createElement('div');
+    sec.className = 'inspector-section';
+    sec.innerHTML = `<div class="inspector-section-title">${title}</div>`;
+    return sec;
+}
+
+function addInput(parent, label, id, value, placeholder, onChange, type = 'text') {
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    group.innerHTML = `
+        <label>${label}</label>
+        <input type="${type}" id="${id}" value="${escHtml(value)}" placeholder="${placeholder}" />
+    `;
+    parent.appendChild(group);
+    bindInput(id, onChange);
+}
+
+function renderIterableSection(container, title, list, itemHtmlFn, bindFn, addFn, removeFn) {
+    const sec = createInspectorSection(title);
+    
+    list.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'inspector-item-card';
+        card.innerHTML = `
+            <div class="item-card-header">
+                <span class="item-card-num">#${i + 1}</span>
+                <button class="btn-icon-danger" data-idx="${i}">✕</button>
+            </div>
+            ${itemHtmlFn(item, i)}
+        `;
+        sec.appendChild(card);
+        
+        // Bind remove
+        card.querySelector('.btn-icon-danger').onclick = () => removeFn(i);
+        // Bind custom inputs
+        bindFn(i);
+    });
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add-item';
+    addBtn.innerText = `+ Adicionar ${title.split(' ')[0]}`;
+    addBtn.onclick = addFn;
+    sec.appendChild(addBtn);
+
+    container.appendChild(sec);
 }
 
 function bindInput(id, onChange) {
   const el = document.getElementById(id);
-  if (el) el.addEventListener('input', (e) => onChange(e.target.value));
+  if (el) {
+    el.oninput = (e) => onChange(e.target.value);
+  }
 }
 
 function refresh(nodeId) {
   renderAllNodes();
   renderConnections();
+  // Mantém o nó visualmente selecionado após o refresh
   const el = document.getElementById(`node-${nodeId}`);
   if (el) el.classList.add('selected');
 }
 
 function escHtml(str) {
+  if (!str && str !== 0) return '';
   return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

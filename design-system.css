@@ -65,6 +65,14 @@
   --sm-warn:        #D9B77E;
   --sm-danger:      #D97A7A;
   --sm-info:        #7FA3D1;
+  --sm-accent:      #A5D7E8;
+
+  /* ─── NODE COLORS ──────────────────────────────── */
+  --node-trigger:   #6FB39A;
+  --node-logic:     #7FA3D1;
+  --node-action:    #D9B77E;
+  --node-result:    #B3C5D8;
+  --node-socket:    #DFE8F2;
 
   /* ─── SEMANTIC TOKENS ──────────────────────────── */
   --bg-1:           var(--sm-bg-deep);
@@ -184,8 +192,8 @@ body {
   color: var(--fg-3);
 }
 .dot-grid {
-  background-image: radial-gradient(rgba(179,197,216,0.10) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(179,197,216,0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 .stat-big {
   font-family: var(--font-display);

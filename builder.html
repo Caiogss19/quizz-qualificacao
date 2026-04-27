@@ -16,17 +16,22 @@
   <header class="builder-header">
     <div class="header-logo">
       <img src="assets/logo-horizontal.svg" alt="spark MAXX" />
-      <span>Builder</span>
+      <span>Flow Editor</span>
     </div>
     <div class="header-actions">
-      <select class="btn-secondary" id="btnAddNode" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 8px; border-radius: 6px; cursor: pointer;">
-        <option value="" disabled selected>+ Adicionar Nó</option>
-        <option value="question">Pergunta</option>
-        <option value="loading">Análise (Loading)</option>
-        <option value="result">Resultado Final</option>
-      </select>
-      <button class="btn-primary" id="btnSaveFlow">Salvar Fluxo</button>
-      <a href="index.html?tab=quizzes" class="btn-link">Voltar ao Admin</a>
+      <div class="dropdown">
+        <select class="btn-secondary" id="btnAddNode">
+          <option value="" disabled selected>+ Novo Componente</option>
+          <option value="question">Pergunta de Quiz</option>
+          <option value="lead_form">Captura de Lead</option>
+          <option value="loading">Tela de Processamento</option>
+          <option value="webhook">Disparo de Webhook (n8n)</option>
+          <option value="result">Resultado Final</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="btnSaveFlow">Publicar Fluxo</button>
+      <div class="header-divider"></div>
+      <a href="index.html?tab=quizzes" class="btn-link">Sair do Editor</a>
     </div>
   </header>
 
