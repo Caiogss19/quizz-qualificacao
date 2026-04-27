@@ -223,5 +223,6 @@ var quizJSON = {
       ],
       cta: 'Agendar conversa com especialista',
       url: 'https://sparkmaxx.com.br'
+    }
   }
 };
