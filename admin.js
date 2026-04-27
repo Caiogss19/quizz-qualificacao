@@ -274,8 +274,19 @@ async function loadAdminPanel() {
     console.error("Erro ao sincronizar quizzes com Cloud:", e);
   }
 
-  if (typeof getQuizzes === 'function' && getQuizzes().length === 0) {
-    if (typeof createQuiz === 'function') createQuiz("Diagnóstico Spark MAXX");
+  // Quizzes Sync
+  const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
+  if (quizzes.length === 0 || !quizzes.find(q => q.id === quizJSON.id)) {
+    const newQuiz = {
+      id: quizJSON.id,
+      name: quizJSON.title,
+      webhookUrl: '',
+      nodes: JSON.parse(JSON.stringify(quizJSON.nodes)),
+      results: JSON.parse(JSON.stringify(quizJSON.results)),
+      createdAt: new Date().toISOString()
+    };
+    quizzes.push(newQuiz);
+    saveQuizzes(quizzes);
   }
 
   const urlParams = new URLSearchParams(window.location.search);
