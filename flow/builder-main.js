@@ -1,3 +1,9 @@
+// Global error handler for debugging
+window.addEventListener('error', function(e) {
+  console.error("Builder Error:", e.message, "at", e.filename, ":", e.lineno);
+  // alert("Erro no Builder: " + e.message + "\nVeja o console para detalhes.");
+});
+
 // Global builder state - accessible by all modules
 var builderState = {
   nodes: {},
