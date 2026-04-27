@@ -8,11 +8,12 @@ const DOM = {
 
 // Metric data per result (shown in result chrome card)
 const RESULT_METRICS = {
-  community_discovery: { metric: '+100',   metricLabel: 'comunidades mapeadas', tag: 'Dados',        short: 'Mapeamento de comunidades digitais' },
-  sprout_social:       { metric: '+1200',  metricLabel: 'campanhas geridas',    tag: 'Operação',     short: 'End-to-end de campanhas de influência' },
-  monitoring_insights: { metric: '+35%',   metricLabel: 'em publis fechadas',   tag: 'Reputação',    short: 'Monitoramento e insights de marca' },
-  cultural_influencer: { metric: '+3x',    metricLabel: 'em contratos',         tag: 'Creator',      short: 'Fit cultural e posicionamento' },
-  professional_creator:{ metric: '+2x',    metricLabel: 'em negociações',       tag: 'Profissional', short: 'Performance e profissionalização' },
+  ss:       { metric: '+1200',  metricLabel: 'campanhas geridas',    tag: 'Operação',     short: 'End-to-end de campanhas de influência' },
+  cd:       { metric: '+100',   metricLabel: 'comunidades mapeadas', tag: 'Inteligência', short: 'Mapeamento de comunidades digitais' },
+  cp:       { metric: '+35%',   metricLabel: 'em brand safety',     tag: 'Reputação',    short: 'Monitoramento e insights de marca' },
+  cd_ss:    { metric: 'Max',    metricLabel: 'eficiência cultural', tag: 'Combo',        short: 'Inovação e Escala Operacional' },
+  cd_cp:    { metric: 'Full',   metricLabel: 'segurança de nicho',  tag: 'Combo',        short: 'Estratégia Cultural Segura' },
+  ss_cp:    { metric: 'Safe',   metricLabel: 'performance auditada',tag: 'Combo',        short: 'Gestão e Reputação em tempo real' },
 };
 
 // Step counter config
@@ -368,26 +369,32 @@ function renderLoading(node) {
 }
 
 function computeResultData(node) {
-  // Tally hints to determine which result profile to show
-  const hintCount = {};
-  (state.hints || []).forEach(h => {
-    if (h) hintCount[h] = (hintCount[h] || 0) + 1;
-  });
+  const hints = (state.hints || []).filter(h => h);
+  if (hints.length === 0) return { ...node, _metricId: null };
 
-  const hintToResultId = {
-    discovery:    'community_discovery',
-    roi:          'sprout_social',
-    monitoring:   'monitoring_insights',
-    cultural:     'cultural_influencer',
-    professional: 'professional_creator',
-  };
-
-  const topHint = Object.entries(hintCount).sort((a, b) => b[1] - a[1])[0]?.[0];
-  const resultId = hintToResultId[topHint];
+  // Sort hints alphabetically to have consistent keys for combos (e.g., cd_ss instead of ss_cd)
+  const uniqueHints = [...new Set(hints)].sort();
+  
+  let resultId;
+  if (uniqueHints.length === 1) {
+    resultId = uniqueHints[0]; // e.g. "ss", "cd", "cp"
+  } else {
+    // Combination, e.g. "cd_ss"
+    resultId = uniqueHints.join('_');
+  }
 
   const resultsSource = (activeQuiz.results) || (quizJSON && quizJSON.results) || {};
-  if (resultId && resultsSource[resultId]) {
+  if (resultsSource[resultId]) {
     return { ...resultsSource[resultId], _metricId: resultId };
+  }
+
+  // Fallback to top hint if combo doesn't exist
+  const hintCount = {};
+  hints.forEach(h => { hintCount[h] = (hintCount[h] || 0) + 1; });
+  const topHint = Object.entries(hintCount).sort((a, b) => b[1] - a[1])[0]?.[0];
+  
+  if (topHint && resultsSource[topHint]) {
+    return { ...resultsSource[topHint], _metricId: topHint };
   }
 
   return { ...node, _metricId: null };
@@ -428,7 +435,7 @@ function renderResult(node) {
         <img src="assets/sphere-orb.png" alt="" />
       </div>
 
-      <div class="result-badge">Seu diagnóstico · ${firstName}</div>
+      <div class="result-badge">${resultData.badge || 'Seu diagnóstico'} · ${firstName}</div>
 
       <div class="result-head">
         <div class="result-label">Solução recomendada</div>
@@ -442,10 +449,17 @@ function renderResult(node) {
 
       <div class="result-cta">
         <a href="${resultData.url || '#'}" class="btn-cta" target="_blank" rel="noopener">
-          ${resultData.cta || 'Agendar reunião com o time Spark Maxx'}
+          ${resultData.cta || 'Agendar conversa com especialista'}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
         </a>
-        <button class="btn-restart" id="btnRestart" type="button">Refazer diagnóstico</button>
+        
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Acabei de fazer o diagnóstico Spark Maxx e meu resultado foi: ' + (resultData.title || ''))}" 
+           class="btn-secondary-cta" target="_blank" rel="noopener">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+           Receber resumo no WhatsApp
+        </a>
+
+        <button class="btn-restart" id="btnRestart" type="button" style="margin-top:8px;">Refazer diagnóstico</button>
       </div>
     </div>
   `;

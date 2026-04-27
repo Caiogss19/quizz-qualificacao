@@ -1,232 +1,227 @@
 var quizJSON = {
   id: "sparkmaxx_diagnostico",
-  title: "Diagnóstico Spark MAXX",
+  title: "Quiz de Diagnóstico — Spark Maxx",
   nodes: {
     "start": {
       id: "start",
       type: "lead_form",
-      title: "Antes de começar, nos conte um pouco sobre você",
-      subtitle: "Preencha os dados abaixo para personalizar seu diagnóstico",
+      title: "Quiz de Diagnóstico — Spark Maxx",
+      subtitle: "Em menos de 3 minutos, você recebe um diagnóstico preciso e a solução ideal para o seu momento.",
       fields: [
         { id: 'nome', label: 'Nome completo', type: 'text', placeholder: 'Seu nome completo', required: true, errorMsg: 'Por favor, informe seu nome' },
         { id: 'email', label: 'E-mail', type: 'email', placeholder: 'seu@email.com', required: true, errorMsg: 'Informe um e-mail válido' },
-        { id: 'celular', label: 'Celular / WhatsApp', type: 'tel', placeholder: '(00) 00000-0000', required: true, errorMsg: 'Informe seu celular' },
+        { id: 'celular', label: 'WhatsApp', type: 'tel', placeholder: '(00) 00000-0000', required: true, errorMsg: 'Informe seu WhatsApp' },
         { id: 'empresa', label: 'Empresa', type: 'text', placeholder: 'Nome da sua empresa', required: true, errorMsg: 'Informe sua empresa' }
       ],
-      buttonText: "Começar diagnóstico",
+      buttonText: "Começar diagnóstico!",
       next: "perfil"
     },
     "perfil": {
       id: "perfil",
       type: "question",
-      tag: "Passo 1",
-      title: "Qual perfil descreve melhor você, atualmente?",
-      subtitle: "Selecione a opção que mais se encaixa com seu momento atual",
+      tag: "Bloco 2",
+      title: "Qual perfil melhor descreve você hoje?",
+      subtitle: "Selecione a opção que mais se encaixa com sua atuação profissional",
       options: [
-        { id: "A", icon: "🏢", text: "Empresa / Marca", next: "q2_empresa", value: "Empresa / Marca" },
+        { id: "A", icon: "🏢", text: "Marca", next: "q2_marca", value: "Marca" },
         { id: "B", icon: "📣", text: "Agência de Publicidade/Marketing", next: "q2_agencia", value: "Agência de Publicidade/Marketing" },
         { id: "C", icon: "🎥", text: "Creator", next: "q2_creator", value: "Creator" },
         { id: "D", icon: "🎯", text: "Agência de Casting / Agenciador", next: "q2_casting", value: "Agência de Casting / Agenciador" }
       ]
     },
-    "q2_empresa": {
-      id: "q2_empresa",
+    // Fluxo A - Marca
+    "q2_marca": {
+      id: "q2_marca",
       type: "question",
-      tag: "Passo 2",
-      title: "Qual é a sua maior prioridade ao trabalhar com influenciadores?",
-      subtitle: "Selecione o que mais importa para sua estratégia hoje",
+      tag: "Fluxo Marca",
+      title: "Qual sua prioridade estratégica?",
+      subtitle: "T3 — Escolha o foco principal do seu momento",
       options: [
-        { icon: "🔍", text: "Encontrar criadores com fit real para minha marca", next: "q3_empresa", hint: "discovery" },
-        { icon: "📊", text: "Medir resultados e comprovar ROI das campanhas", next: "q3_empresa", hint: "roi" },
-        { icon: "🛡️", text: "Monitorar reputação e sentimento sobre minha marca", next: "q3_empresa", hint: "monitoring" },
-        { icon: "⚙️", text: "Automatizar e escalar minha operação de influência", next: "q3_empresa", hint: "roi" },
-        { icon: "🎯", text: "Entender nichos e comunidades antes de investir", next: "q3_empresa", hint: "discovery" }
+        { id: "A", text: "Encontrar novos nichos/comunidades", next: "q3_marca", hint: "cd" },
+        { id: "B", text: "Gerir campanhas de influência e encontrar creators", next: "q3_marca", hint: "ss" },
+        { id: "C", text: "Analisar reputação dos meus embaixadores", next: "q3_marca", hint: "cp" }
       ]
     },
-    "q3_empresa": {
-      id: "q3_empresa",
+    "q3_marca": {
+      id: "q3_marca",
       type: "question",
-      tag: "Passo 3",
-      title: "Como você mede o sucesso das suas ações com influenciadores?",
-      subtitle: "Selecione a métrica mais importante para o seu negócio",
+      tag: "Fluxo Marca",
+      title: "Qual seu maior desafio?",
+      subtitle: "T4 — O que mais trava sua operação hoje?",
       options: [
-        { icon: "🎯", text: "Alcance de novos nichos e comunidades relevantes", next: "analyzing", hint: "discovery" },
-        { icon: "📊", text: "ROI, conversões e impacto direto em vendas", next: "analyzing", hint: "roi" },
-        { icon: "💬", text: "Sentimento positivo e reputação da marca", next: "analyzing", hint: "monitoring" },
-        { icon: "⚡", text: "Eficiência operacional e redução de custo por ação", next: "analyzing", hint: "roi" },
-        { icon: "🌱", text: "Crescimento orgânico de comunidades", next: "analyzing", hint: "discovery" }
+        { id: "A", text: "Audiência genérica e sem dados culturais", next: "analyzing", hint: "cd" },
+        { id: "B", text: "Processos manuais e falta de dados em campanhas", next: "analyzing", hint: "ss" },
+        { id: "C", text: "Prever riscos de imagem e dados do embaixador", next: "analyzing", hint: "cp" }
       ]
     },
+    // Fluxo B - Agência
     "q2_agencia": {
       id: "q2_agencia",
       type: "question",
-      tag: "Passo 2",
-      title: "Qual é o maior gargalo na sua operação de influência hoje?",
-      subtitle: "Selecione o principal ponto de dor da sua agência",
+      tag: "Fluxo Agência",
+      title: "O que seu cliente mais espera da agência?",
+      subtitle: "T3 — O critério de sucesso mais cobrado",
       options: [
-        { icon: "🗂️", text: "Descobrir e curar creators certos para cada cliente", next: "q3_agencia", hint: "discovery" },
-        { icon: "📋", text: "Relatórios e comprovação de resultados para o cliente", next: "q3_agencia", hint: "roi" },
-        { icon: "👁️", text: "Monitorar menções e sentimento das marcas dos clientes", next: "q3_agencia", hint: "monitoring" },
-        { icon: "🚀", text: "Escalar operações gerenciando múltiplos clientes", next: "q3_agencia", hint: "roi" },
-        { icon: "🔎", text: "Curadoria cultural e fit entre creator e marca", next: "q3_agencia", hint: "discovery" }
+        { id: "A", text: "Inovação: públicos e territórios inexplorados", next: "q3_agencia", hint: "cd" },
+        { id: "B", text: "Resultados: gestão de influenciadores e ROI", next: "q3_agencia", hint: "ss" },
+        { id: "C", text: "Assertividade: acompanhar reputação dos creators", next: "q3_agencia", hint: "cp" }
       ]
     },
     "q3_agencia": {
       id: "q3_agencia",
       type: "question",
-      tag: "Passo 3",
-      title: "O que seus clientes mais cobram da sua agência em campanhas de influência?",
-      subtitle: "Selecione o principal critério de sucesso para seus clientes",
+      tag: "Fluxo Agência",
+      title: "Qual KPI é mais recorrente nas entregas?",
+      subtitle: "T4 — A métrica que não pode faltar nos relatórios",
       options: [
-        { icon: "🔍", text: "Qualidade e fit cultural dos creators selecionados", next: "analyzing", hint: "discovery" },
-        { icon: "📈", text: "Resultados mensuráveis e comprovação de ROI", next: "analyzing", hint: "roi" },
-        { icon: "🛡️", text: "Proteção de reputação e monitoramento de marca", next: "analyzing", hint: "monitoring" },
-        { icon: "🚀", text: "Agilidade na entrega e escala das campanhas", next: "analyzing", hint: "roi" },
-        { icon: "🎯", text: "Precisão na segmentação por nicho e audiência", next: "analyzing", hint: "discovery" }
+        { id: "A", text: "EMV, CPE, tempo de operação, ROI", next: "analyzing", hint: "ss" },
+        { id: "B", text: "CPL, engajamento por comunidade, SoV, Brand Affinity", next: "analyzing", hint: "cd" },
+        { id: "C", text: "Aumento de engajamento e parcerias de influenciadores", next: "analyzing", hint: "cp" }
       ]
     },
+    // Fluxo C - Creator
     "q2_creator": {
       id: "q2_creator",
       type: "question",
-      tag: "Passo 2",
-      title: "O que você mais quer conquistar como creator agora?",
-      subtitle: "Seja honesto — isso vai nos ajudar a indicar o melhor caminho",
+      tag: "Fluxo Creator",
+      title: "Como quer potencializar sua carreira?",
+      subtitle: "T3 — Seu objetivo de crescimento",
       options: [
-        { icon: "🎨", text: "Entender melhor minha audiência e nicho cultural", next: "q3_creator", hint: "cultural" },
-        { icon: "💰", text: "Provar meu valor e fechar contratos maiores com marcas", next: "q3_creator", hint: "professional" },
-        { icon: "📈", text: "Crescer minha audiência de forma estratégica", next: "q3_creator", hint: "cultural" },
-        { icon: "📊", text: "Ter relatórios profissionais de performance", next: "q3_creator", hint: "professional" },
-        { icon: "💼", text: "Profissionalizar minha cobrança e negociações", next: "q3_creator", hint: "professional" }
+        { id: "A", text: "Entender meu público e comunidades", next: "q3_creator", hint: "cp" },
+        { id: "B", text: "Provar meu valor para marcas", next: "q3_creator", hint: "cp" },
+        { id: "C", text: "Melhorar meu posicionamento", next: "q3_creator", hint: "cp" },
+        { id: "D", text: "Atrair mais parcerias", next: "q3_creator", hint: "cp" }
       ]
     },
     "q3_creator": {
       id: "q3_creator",
       type: "question",
-      tag: "Passo 3",
-      title: "Como você se apresenta para marcas hoje?",
-      subtitle: "Descreva como conquista parcerias atualmente",
+      tag: "Fluxo Creator",
+      title: "Você utiliza dados para negociar contratos?",
+      subtitle: "T4 — Como você embasa suas propostas comerciais",
       options: [
-        { icon: "🌍", text: "Mostro minha conexão cultural com minha audiência", next: "analyzing", hint: "cultural" },
-        { icon: "📊", text: "Apresento dados e métricas de performance", next: "analyzing", hint: "professional" },
-        { icon: "📄", text: "Tenho mídia kit mas quero torná-lo mais profissional", next: "analyzing", hint: "professional" },
-        { icon: "💬", text: "Ainda faço tudo informalmente por DM/WhatsApp", next: "analyzing", hint: "professional" },
-        { icon: "🎨", text: "Pelo meu estilo de conteúdo e identidade de nicho", next: "analyzing", hint: "cultural" }
+        { id: "A", text: "Não uso", next: "analyzing", hint: "cp" },
+        { id: "B", text: "Uso apenas o media kit básico", next: "analyzing", hint: "cp" },
+        { id: "C", text: "Quero usar dados de busca e sentimento", next: "analyzing", hint: "cp" }
       ]
     },
+    // Fluxo D - Casting
     "q2_casting": {
       id: "q2_casting",
       type: "question",
-      tag: "Passo 2",
-      title: "Qual é o maior obstáculo na sua operação de casting hoje?",
-      subtitle: "Selecione o principal desafio do seu trabalho diário",
+      tag: "Fluxo Casting",
+      title: "Qual a prioridade para o seu casting?",
+      subtitle: "T3 — O foco da sua agência de talentos",
       options: [
-        { icon: "🗺️", text: "Mapear e descobrir novos talentos com fit para marcas", next: "q3_casting", hint: "discovery" },
-        { icon: "📲", text: "Apresentar resultados e ROI dos talentos para marcas", next: "q3_casting", hint: "roi" },
-        { icon: "👁️", text: "Monitorar reputação e sentimento dos talentos online", next: "q3_casting", hint: "monitoring" },
-        { icon: "⚙️", text: "Gerenciar múltiplos talentos e contratos com eficiência", next: "q3_casting", hint: "roi" },
-        { icon: "🎯", text: "Identificar fit cultural entre talentos e marcas", next: "q3_casting", hint: "discovery" }
+        { id: "A", text: "Descobrir novos talentos por nicho", next: "q3_casting", hint: "ss" },
+        { id: "B", text: "Auditar reputação dos agenciados", next: "q3_casting", hint: "cp" },
+        { id: "C", text: "Organizar a operação comercial", next: "q3_casting", hint: "ss" },
+        { id: "D", text: "Atrair mais parcerias", next: "q3_casting", hint: "cp" }
       ]
     },
     "q3_casting": {
       id: "q3_casting",
       type: "question",
-      tag: "Passo 3",
-      title: "O que as marcas mais valorizam quando você apresenta talentos?",
-      subtitle: "Selecione o critério mais decisivo nas negociações",
+      tag: "Fluxo Casting",
+      title: "O que seus clientes mais pedem?",
+      subtitle: "T4 — A maior demanda que chega para você",
       options: [
-        { icon: "🎯", text: "Fit cultural e autenticidade do talent com a marca", next: "analyzing", hint: "discovery" },
-        { icon: "📊", text: "Dados de performance e ROI histórico dos talentos", next: "analyzing", hint: "roi" },
-        { icon: "🛡️", text: "Reputação online e histórico sem crises", next: "analyzing", hint: "monitoring" },
-        { icon: "⚡", text: "Agilidade e profissionalismo na condução do processo", next: "analyzing", hint: "roi" },
-        { icon: "🌐", text: "Alcance em nichos específicos e comunidades", next: "analyzing", hint: "discovery" }
+        { id: "A", text: "Fit cultural e nicho", next: "analyzing", hint: "cp" },
+        { id: "B", text: "Prevenção de riscos de imagem", next: "analyzing", hint: "cp" },
+        { id: "C", text: "Eficiência e relatórios", next: "analyzing", hint: "ss" },
+        { id: "D", text: "Descobrir novos influenciadores", next: "analyzing", hint: "ss" }
       ]
     },
     "analyzing": {
       id: "analyzing",
       type: "loading",
-      title: "Analisando seu perfil...",
-      subtitle: "Processando suas respostas para encontrar a solução ideal",
-      duration: 2400,
+      title: "Gerando diagnóstico personalizado...",
+      subtitle: "Cruzando suas prioridades com as soluções do ecossistema Spark Maxx.",
+      duration: 3000,
       next: "result"
     },
     "result": {
       id: "result",
       type: "result",
-      title: "Seu Perfil: Resultado Final",
-      badge: "🚀 Seu resultado",
-      description: "Você completou o diagnóstico base. Customize este resultado no Builder.",
-      solutions: [
-        { icon: '🌟', name: 'Solução 1', desc: 'Descrição da solução' }
-      ],
-      cta: "Conhecer Solução",
-      url: "https://inlead.digital"
+      title: "Seu Diagnóstico de Influência",
+      badge: "🔍 Resultado calculado",
+      description: "Baseado nas suas respostas, identificamos as ferramentas ideais para escalar sua operação.",
+      solutions: [],
+      cta: "Agendar conversa com especialista",
+      url: "https://sparkmaxx.com.br"
     }
   },
   results: {
-    'community_discovery': {
-      id: 'community_discovery',
-      title: 'Community Discovery',
-      badge: '🔍 Solução recomendada',
-      description: 'Você precisa de inteligência para mapear nichos, encontrar os criadores certos e entender profundamente as comunidades antes de investir.',
-      solutions: [
-        { icon: '🗺️', name: 'Mapeamento de Nichos', desc: 'Descubra comunidades e micro-influenciadores com fit cultural real.' },
-        { icon: '🎯', name: 'Inteligência Cultural', desc: 'Entenda o que cada nicho consome, valoriza e rejeita.' },
-        { icon: '🔬', name: 'Análise de Perfil', desc: 'Dados profundos sobre audiência, engajamento e autenticidade.' },
-      ],
-      cta: 'Quero conhecer o Community Discovery',
-      url: 'https://inlead.digital'
-    },
-    'sprout_social': {
-      id: 'sprout_social',
+    'ss': {
+      id: 'ss',
       title: 'Sprout Social Influencer Marketing',
-      badge: '📊 Solução recomendada',
-      description: 'Sua operação precisa de gestão ponta a ponta: do briefing à entrega, com comprovação real de ROI.',
+      badge: '📊 Gestão & Escala',
+      description: 'Plataforma completa de gestão de influência para agências e marcas que buscam eficiência operacional. Centraliza toda a jornada da campanha — do discovery de creators via IA até contratos e pagamentos — entregando comprovação real do ROI.',
       solutions: [
-        { icon: '⚙️', name: 'Gestão Ponta a Ponta', desc: 'Gerencie toda a jornada: briefing, aprovação, entrega e pagamento.' },
-        { icon: '📈', name: 'Comprovação de ROI', desc: 'Relatórios automáticos com CPE, CPM, alcance real e impacto.' },
-        { icon: '🔄', name: 'Fluxos Automatizados', desc: 'Reduza trabalho manual e escale operações rapidamente.' },
+        { name: 'Gestão Ponta a Ponta', desc: 'Centralize contratos, pagamentos e aprovações.' },
+        { name: 'Discovery via IA', desc: 'Encontre os creators certos em segundos.' },
+        { name: 'Mensuração de ROI', desc: 'Dados precisos de impacto financeiro e EMV.' }
       ],
-      cta: 'Quero conhecer o Sprout Social',
-      url: 'https://inlead.digital'
+      cta: 'Agendar conversa com especialista',
+      url: 'https://sparkmaxx.com.br'
     },
-    'monitoring_insights': {
-      id: 'monitoring_insights',
-      title: 'Monitoring & Insights',
-      badge: '👁️ Solução recomendada',
-      description: 'Você precisa de visibilidade total: monitorar o que falam da sua marca, entender o sentimento e proteger sua reputação.',
+    'cd': {
+      id: 'cd',
+      title: 'Community Discovery',
+      badge: '🗺️ Inteligência de Território',
+      description: 'Inteligência de territórios e microcomunidades para times de estratégia e redação. Identifica onde o público conversa e quais são seus códigos de linguagem, conectando marcas a novos mercados de forma autêntica.',
       solutions: [
-        { icon: '📡', name: 'Monitoramento', desc: 'Acompanhe menções, sentimento e tendências 24/7.' },
-        { icon: '🛡️', name: 'Gestão de Reputação', desc: 'Identifique crises antes que escalem e reaja com dados.' },
-        { icon: '💡', name: 'Insights de Mercado', desc: 'Entenda o que o mercado fala sobre você e concorrentes.' },
+        { name: 'Mapeamento de Nichos', desc: 'Descubra onde sua audiência realmente está.' },
+        { name: 'Análise Cultural', desc: 'Entenda os códigos de linguagem de cada comunidade.' },
+        { name: 'Territórios Inexplorados', desc: 'Inovação para marcas que querem sair do óbvio.' }
       ],
-      cta: 'Quero conhecer o Monitoring & Insights',
-      url: 'https://inlead.digital'
+      cta: 'Agendar conversa com especialista',
+      url: 'https://sparkmaxx.com.br'
     },
-    'cultural_influencer': {
-      id: 'cultural_influencer',
-      title: 'Seu Perfil: Cultural Influencer',
-      badge: '🎨 Seu resultado',
-      description: 'Você é um criador com forte conexão cultural. Sua audiência precisa ser compreendida para valorizar seu trabalho.',
+    'cp': {
+      id: 'cp',
+      title: 'Creator Pulse',
+      badge: '🛡️ Saúde & Reputação',
+      description: 'Raio-x da saúde digital focado no influenciador e no casting. Monitora tendências de busca, sentimentos e autoridade do creator, profissionalizando o posicionamento comercial com dados técnicos auditados.',
       solutions: [
-        { icon: '🌍', name: 'Dados de Audiência', desc: 'Relatórios demográficos e comportamentais da sua audiência.' },
-        { icon: '🎯', name: 'Fit Cultural', desc: 'Descubra quais marcas têm fit real com seu nicho.' },
-        { icon: '💎', name: 'Valorização do Conteúdo', desc: 'Use dados para mostrar o valor real do seu conteúdo.' },
+        { name: 'Auditoria de Reputação', desc: 'Segurança absoluta para marcas e embaixadores.' },
+        { name: 'Share of Search', desc: 'Mapeie o desejo de busca da sua audiência.' },
+        { name: 'Monitoramento 24/7', desc: 'Alertas de crises e tendências em tempo real.' }
       ],
-      cta: 'Quero valorizar meu perfil',
-      url: 'https://inlead.digital'
+      cta: 'Agendar conversa com especialista',
+      url: 'https://sparkmaxx.com.br'
     },
-    'professional_creator': {
-      id: 'professional_creator',
-      title: 'Seu Perfil: Professional Creator',
-      badge: '🚀 Seu resultado',
-      description: 'Com relatórios automáticos e ferramentas de gestão, você eleva suas negociações e fecha contratos maiores.',
+    'cd_ss': {
+      id: 'cd_ss',
+      title: 'Community Discovery + Sprout Social',
+      badge: '⚡ Inovação & Escala',
+      description: 'A combinação ideal para quem precisa descobrir novos territórios e gerenciar campanhas com alta performance. Você une a inteligência cultural à eficiência operacional.',
       solutions: [
-        { icon: '📊', name: 'Relatórios de Performance', desc: 'Apresente métricas profissionais de cada campanha.' },
-        { icon: '💼', name: 'Profissionalização', desc: 'Mídia kit digital, precificação estruturada e contratos.' },
-        { icon: '🤝', name: 'Conexão com Marcas', desc: 'Apareça para as marcas certas com um perfil verificado.' },
+        { name: 'Inteligência e Gestão', desc: 'O melhor do mapeamento com o melhor da operação.' }
       ],
-      cta: 'Quero me profissionalizar',
-      url: 'https://inlead.digital'
-    }
+      cta: 'Agendar conversa com especialista',
+      url: 'https://sparkmaxx.com.br'
+    },
+    'cd_cp': {
+      id: 'cd_cp',
+      title: 'Community Discovery + Creator Pulse',
+      badge: '🛡️ Estratégia Segura',
+      description: 'Foco total em encontrar comunidades e garantir a saúde digital da sua marca. Ideal para estratégias de branding e curadoria de embaixadores de longo prazo.',
+      solutions: [
+        { name: 'Cultura e Segurança', desc: 'Descubra nichos e monitore reputação simultaneamente.' }
+      ],
+      cta: 'Agendar conversa com especialista',
+      url: 'https://sparkmaxx.com.br'
+    },
+    'ss_cp': {
+      id: 'ss_cp',
+      title: 'Sprout Social + Creator Pulse',
+      badge: '📈 Performance & Auditoria',
+      description: 'Para operações que não podem errar. Combine a gestão robusta de campanhas com o monitoramento rigoroso de reputação e sentimentos.',
+      solutions: [
+        { name: 'Gestão e Reputação', desc: 'ROI comprovado com segurança de imagem.' }
+      ],
+      cta: 'Agendar conversa com especialista',
+      url: 'https://sparkmaxx.com.br'
   }
 };
