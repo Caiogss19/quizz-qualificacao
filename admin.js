@@ -202,7 +202,14 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById(`nav-${tab}`).classList.add('active');
   document.getElementById(`tab-${tab}`).classList.add('active');
-  const titles = { overview: 'Visão Geral', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados' };
+  const titles = { 
+    overview: 'Visão Geral', 
+    quizzes: 'Meus Quizzes',
+    responses: 'Respostas', 
+    analytics: 'Analytics', 
+    export: 'Exportar dados',
+    branding: 'Identidade Visual'
+  };
   document.getElementById('headerTitle').textContent = titles[tab] || '';
   if (tab === 'overview') renderOverview();
   if (tab === 'quizzes') renderQuizzes();
@@ -226,10 +233,17 @@ async function loadAdminPanel() {
   filteredData = [...allData];
   
   // Sincroniza Quizzes do Cloud
-  const cloudQuizzes = await getQuizzesFromSupabase();
-  if (cloudQuizzes && cloudQuizzes.length > 0) {
-    localStorage.setItem('sparkmaxx_quizzes', JSON.stringify(cloudQuizzes));
-  } else if (getQuizzes().length === 0) {
+  try {
+    const cloudQuizzes = await getQuizzesFromSupabase();
+    if (cloudQuizzes && Array.isArray(cloudQuizzes) && cloudQuizzes.length > 0) {
+      saveQuizzes(cloudQuizzes, true); 
+    }
+  } catch (e) {
+    console.error("Erro ao sincronizar quizzes com Cloud:", e);
+  }
+
+  // Garantia: Se não houver nenhum quiz, cria o padrão
+  if (getQuizzes().length === 0) {
     createQuiz("Diagnóstico Spark MAXX");
   }
 
@@ -288,8 +302,13 @@ function renderQuizzes() {
   const grid = document.getElementById('quizzesGrid');
   const quizzes = getQuizzes();
   
-  if (quizzes.length === 0) {
-    grid.innerHTML = '<p class="empty-state">Nenhum quiz encontrado.</p>';
+  if (!quizzes || quizzes.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-secondary); border-radius: 12px; border: 1px dashed var(--border-color);">
+        <p style="color: var(--text-muted); margin-bottom: 16px;">Nenhum quiz encontrado.</p>
+        <button class="btn-primary" onclick="document.getElementById('btnCreateQuiz').click()">Criar meu primeiro Quiz</button>
+      </div>
+    `;
     return;
   }
 

@@ -61,10 +61,10 @@ function getQuizzes() {
   catch { return []; }
 }
 
-function saveQuizzes(quizzes) {
+function saveQuizzes(quizzes, skipCloudSync = false) {
   localStorage.setItem(QUIZ_DB_KEY, JSON.stringify(quizzes));
   
-  if (typeof saveQuizToSupabase !== 'undefined') {
+  if (!skipCloudSync && typeof saveQuizToSupabase !== 'undefined') {
     quizzes.forEach(q => saveQuizToSupabase(q));
   }
 }
