@@ -405,6 +405,58 @@ function renderInspector() {
         <button class="btn-detail" onclick="addNodeOption()" style="width:100%; padding:10px;">+ Adicionar Opção</button>
       </div>
     `;
+  } else if (node.type === 'lead_form') {
+    specificFields = `
+      <div class="inspector-group">
+        <label class="inspector-label">CAMPOS DO FORMULÁRIO</label>
+        ${(node.fields || []).map((f, i) => `
+          <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <div style="font-family:var(--font-mono); font-size:9px; color:var(--fg-3); width:60px;">${f.id}</div>
+              <input type="text" class="inspector-input" value="${f.label}" oninput="updateLeadField(${i}, 'label', this.value)" placeholder="Etiqueta do campo">
+            </div>
+          </div>
+        `).join('')}
+        <div class="inspector-group" style="margin-top:12px;">
+          <label class="inspector-label">TEXTO DO BOTÃO</label>
+          <input type="text" class="inspector-input" value="${node.buttonText || ''}" oninput="updateNodeProp('buttonText', this.value)" placeholder="Começar diagnóstico">
+        </div>
+        <div class="inspector-group">
+          <label class="inspector-label">PRÓXIMO PASSO</label>
+          <select class="inspector-select" onchange="updateNodeProp('next', this.value)">
+            <option value="">-- Selecione o próximo passo --</option>
+            ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${node.next === nid ? 'selected' : ''}>${nid} (${activeEditorQuiz.nodes[nid].type})</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+  } else if (node.type === 'result') {
+    specificFields = `
+      <div class="inspector-group">
+        <label class="inspector-label">SOLUÇÕES / BENEFÍCIOS</label>
+        ${(node.solutions || []).map((s, i) => `
+          <div style="display:flex; gap:8px; margin-bottom:8px;">
+            <input type="text" class="inspector-input" value="${s.name}" oninput="updateResultSolution(${i}, 'name', this.value)">
+            <button class="btn-del-row" onclick="removeResultSolution(${i})">✕</button>
+          </div>
+        `).join('')}
+        <button class="btn-detail" onclick="addResultSolution()" style="width:100%;">+ Adicionar Solução</button>
+      </div>
+    `;
+  } else if (node.type === 'loading') {
+    specificFields = `
+      <div class="inspector-group">
+        <label class="inspector-label">DURAÇÃO (MS)</label>
+        <input type="number" class="inspector-input" value="${node.duration || 3000}" oninput="updateNodeProp('duration', parseInt(this.value))">
+      </div>
+      <div class="inspector-group">
+        <label class="inspector-label">PRÓXIMO PASSO (AUTO)</label>
+        <select class="inspector-select" onchange="updateNodeProp('next', this.value)">
+          <option value="">-- Selecione o próximo passo --</option>
+          ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${node.next === nid ? 'selected' : ''}>${nid} (${activeEditorQuiz.nodes[nid].type})</option>`).join('')}
+        </select>
+      </div>
+    `;
   }
 
   content.innerHTML = `
@@ -457,6 +509,29 @@ window.addNodeOption = () => {
 
 window.removeNodeOption = (idx) => {
   activeEditorQuiz.nodes[selectedNodeId].options.splice(idx, 1);
+  renderInspector();
+  updateEditorPreview();
+};
+
+window.updateLeadField = (idx, prop, val) => {
+  activeEditorQuiz.nodes[selectedNodeId].fields[idx][prop] = val;
+  updateEditorPreview();
+};
+
+window.updateResultSolution = (idx, prop, val) => {
+  activeEditorQuiz.nodes[selectedNodeId].solutions[idx][prop] = val;
+  updateEditorPreview();
+};
+
+window.addResultSolution = () => {
+  if (!activeEditorQuiz.nodes[selectedNodeId].solutions) activeEditorQuiz.nodes[selectedNodeId].solutions = [];
+  activeEditorQuiz.nodes[selectedNodeId].solutions.push({ name: 'Nova Solução' });
+  renderInspector();
+  updateEditorPreview();
+};
+
+window.removeResultSolution = (idx) => {
+  activeEditorQuiz.nodes[selectedNodeId].solutions.splice(idx, 1);
   renderInspector();
   updateEditorPreview();
 };
@@ -972,3 +1047,5 @@ window.configWebhook = configWebhook;
 window.testWebhook = testWebhook;
 window.actionDuplicateQuiz = actionDuplicateQuiz;
 window.actionDeleteQuiz = actionDeleteQuiz;
+window.selectEditorNode = selectEditorNode;
+window.initEditor = initEditor;
