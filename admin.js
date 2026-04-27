@@ -248,33 +248,6 @@ function switchTab(tab) {
 // LOAD
 // ===========================
 async function loadAdminPanel() {
-  console.log("%c Spark Maxx Engine v3.0 - Syncing Quizzes... ", "background: #121C2B; color: #10B981; font-weight: bold;");
-
-  // 1. Quizzes Sync - Force update the Spark Maxx Diagnostic to the new structure
-  // Movemos para o topo para garantir que ocorra antes de qualquer outra operação
-  let quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
-  const existingIdx = quizzes.findIndex(q => q.id === quizJSON.id);
-
-  if (existingIdx === -1) {
-    const newQuiz = {
-      id: quizJSON.id,
-      name: quizJSON.title,
-      webhookUrl: '',
-      nodes: JSON.parse(JSON.stringify(quizJSON.nodes)),
-      results: JSON.parse(JSON.stringify(quizJSON.results)),
-      createdAt: new Date().toISOString()
-    };
-    quizzes.push(newQuiz);
-    saveQuizzes(quizzes);
-    console.log("Quiz criado com sucesso:", quizJSON.id);
-  } else {
-    quizzes[existingIdx].nodes = JSON.parse(JSON.stringify(quizJSON.nodes));
-    quizzes[existingIdx].results = JSON.parse(JSON.stringify(quizJSON.results));
-    quizzes[existingIdx].name = quizJSON.title;
-    saveQuizzes(quizzes);
-    console.log("Quiz atualizado com sucesso:", quizJSON.id);
-  }
-
   // 2. Leads
   const localData = typeof getAllResponses === 'function' ? getAllResponses() : [];
   let cloudData = [];
@@ -842,6 +815,35 @@ function renderExport() {
 // INIT
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("%c Spark Maxx Engine v3.0 - Initializing... ", "background: #121C2B; color: #10B981; font-weight: bold;");
+
+  // Force sync the default quiz from config.js
+  try {
+    if (typeof quizJSON !== 'undefined' && typeof getQuizzes === 'function') {
+      let quizzes = getQuizzes();
+      let existing = quizzes.find(q => q.id === quizJSON.id);
+      
+      if (!existing) {
+        quizzes.push({
+          id: quizJSON.id,
+          name: quizJSON.title,
+          webhookUrl: '',
+          nodes: JSON.parse(JSON.stringify(quizJSON.nodes)),
+          results: JSON.parse(JSON.stringify(quizJSON.results)),
+          createdAt: new Date().toISOString()
+        });
+        saveQuizzes(quizzes);
+      } else {
+        existing.nodes = JSON.parse(JSON.stringify(quizJSON.nodes));
+        existing.results = JSON.parse(JSON.stringify(quizJSON.results));
+        existing.name = quizJSON.title;
+        saveQuizzes(quizzes);
+      }
+    }
+  } catch (e) {
+    console.error("Erro na sincronização inicial:", e);
+  }
+
   initLogin();
   initNavigation();
   initResponseFilters();
