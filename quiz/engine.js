@@ -70,20 +70,20 @@ const DEFAULT_QUIZ_CONFIG = {
       options: [
         { text: 'Identificar novos nichos e criadores alinhados',    hint: 'cd', next: 'q3_empresa' },
         { text: 'Gerir campanhas e medir ROI de forma centralizada', hint: 'ss', next: 'q3_empresa' },
-        { text: 'Proteger e monitorar a reputação da marca',         hint: 'cp', next: 'q3_empresa' },
+        { text: 'Proteger e monitorar a reputação de influenciadores',         hint: 'cp', next: 'q3_empresa' },
       ],
     },
 
     q3_empresa: {
       type: 'question',
       tag: 'Diagnóstico',
-      title: 'Qual é o seu maior desafio operacional hoje?',
+      title: 'Qual é sua maior dor no dia-a-dia?',
       subtitle: 'Escolha a opção mais próxima da sua realidade.',
       varName: 'q3',
       options: [
-        { text: 'Encontrar os criadores certos para cada campanha',        hint: 'cd', next: 'analyzing' },
-        { text: 'Controlar contratos, pagamentos e fluxo operacional',     hint: 'ss', next: 'analyzing' },
-        { text: 'Monitorar riscos e garantir a segurança da marca',        hint: 'cp', next: 'analyzing' },
+        { text: 'Nichos saturados e creators sem fit com a marca',        hint: 'cd', next: 'analyzing' },
+        { text: 'Falta de dados e gestão de multiplas campanhas',         hint: 'ss', next: 'analyzing' },
+        { text: 'Monitorar a reputação dos creators/embaixadores',       hint: 'cp', next: 'analyzing' },
       ],
     },
 
@@ -97,7 +97,7 @@ const DEFAULT_QUIZ_CONFIG = {
       varName: 'q2',
       options: [
         { text: 'Campanhas com ROI e resultados comprovados',              hint: 'ss', next: 'q3_agencia' },
-        { text: 'Planejamento estratégico e mapeamento de audiências',     hint: 'cd', next: 'q3_agencia' },
+        { text: 'Análise de público-alvo e mapeamento de nichos',          hint: 'cd', next: 'q3_agencia' },
         { text: 'Auditoria, compliance e segurança dos influencers',       hint: 'cp', next: 'q3_agencia' },
       ],
     },
@@ -110,8 +110,8 @@ const DEFAULT_QUIZ_CONFIG = {
       varName: 'q3',
       options: [
         { text: 'Contratação e gestão eficiente de influencers',           hint: 'ss', next: 'analyzing' },
-        { text: 'Insights de mercado e inteligência competitiva',          hint: 'cd', next: 'analyzing' },
-        { text: 'Monitoramento contínuo e relatórios de risco',            hint: 'cp', next: 'analyzing' },
+        { text: 'Monitoramento de crescimento orgãnico no mercado',        hint: 'cd', next: 'analyzing' },
+        { text: 'Monitoramento contínuo de perfis de creators',            hint: 'cp', next: 'analyzing' },
       ],
     },
 
@@ -124,8 +124,8 @@ const DEFAULT_QUIZ_CONFIG = {
       subtitle: 'Escolha a opção que mais define sua meta atual.',
       varName: 'q2',
       options: [
-        { text: 'Crescer meu alcance e métricas de engajamento',           hint: 'ss', next: 'q3_creator' },
-        { text: 'Dominar meu nicho e fortalecer posicionamento',           hint: 'cd', next: 'q3_creator' },
+        { text: 'Crescer meu alcance e métricas de engajamento',           hint: 'cp', next: 'q3_creator' },
+        { text: 'Dominar meu nicho e fortalecer posicionamento',           hint: 'cp', next: 'q3_creator' },
         { text: 'Proteger minha imagem e reputação digital',               hint: 'cp', next: 'q3_creator' },
       ],
     },
@@ -138,8 +138,8 @@ const DEFAULT_QUIZ_CONFIG = {
       varName: 'q3',
       options: [
         { text: 'Ainda não incluo dados nas minhas propostas',             hint: 'cp', next: 'analyzing' },
-        { text: 'Uso métricas básicas de alcance e visualizações',         hint: 'ss', next: 'analyzing' },
-        { text: 'Uso análises avançadas de audiência e nicho',             hint: 'cd', next: 'analyzing' },
+        { text: 'Uso métricas básicas de alcance e visualizações',         hint: 'cp', next: 'analyzing' },
+        { text: 'Uso análises avançadas de audiência e nicho',             hint: 'cp', next: 'analyzing' },
       ],
     },
 
@@ -152,9 +152,9 @@ const DEFAULT_QUIZ_CONFIG = {
       subtitle: 'Escolha o que mais define sua atuação diária.',
       varName: 'q2',
       options: [
-        { text: 'Descobrir e mapear novos talentos e criadores',           hint: 'cd', next: 'q3_casting' },
+        { text: 'Descobrir e mapear novos talentos e criadores',           hint: 'ss', next: 'q3_casting' },
         { text: 'Proteger a reputação e imagem dos agenciados',            hint: 'cp', next: 'q3_casting' },
-        { text: 'Escalar a operação de contratos e campanhas',             hint: 'ss', next: 'q3_casting' },
+        { text: 'Conquistar novas parcerias/publis',                       hint: 'cp', next: 'q3_casting' },
       ],
     },
 
@@ -165,7 +165,7 @@ const DEFAULT_QUIZ_CONFIG = {
       subtitle: 'Escolha o que aparece com mais frequência nas negociações.',
       varName: 'q3',
       options: [
-        { text: 'Fit cultural e alinhamento de valores com a marca',       hint: 'cd', next: 'analyzing' },
+        { text: 'Fit cultural e alinhamento de valores com a marca',       hint: 'cp', next: 'analyzing' },
         { text: 'Gestão de riscos e histórico de imagem limpo',            hint: 'cp', next: 'analyzing' },
         { text: 'Relatórios de desempenho e resultados anteriores',        hint: 'ss', next: 'analyzing' },
       ],
@@ -203,6 +203,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { name: 'Controle de contratos e pagamentos' },
         { name: 'Métricas e ROI em tempo real' },
         { name: 'Dashboard de performance' },
+        { name: 'Encontrar influenciadores por IA' },
       ],
       cta: 'Agendar conversa com especialista',
       url: '#',
@@ -214,10 +215,10 @@ const DEFAULT_QUIZ_CONFIG = {
       subtitle: 'Inteligência de Comunidades',
       description: 'Você precisa de inteligência para mapear nichos, territórios e microcomunidades e encontrar os criadores certos por afinidade real. A ferramenta indicada é o Community Discovery — motor de descoberta e mapeamento de audiências.',
       solutions: [
-        { name: 'Mapeamento de nichos e territórios' },
+        { name: 'Mapeamento de nichos e novos territórios' },
         { name: 'Descoberta de criadores por afinidade' },
-        { name: 'Inteligência de audiência' },
-        { name: 'Análise de microcomunidades' },
+        { name: 'Análise do público-alvo' },
+        { name: 'Monitoramento de crescimento orgãnico nos nichos' },
       ],
       cta: 'Agendar conversa com especialista',
       url: '#',
@@ -231,8 +232,8 @@ const DEFAULT_QUIZ_CONFIG = {
       solutions: [
         { name: 'Auditoria de imagem e histórico' },
         { name: 'Monitoramento de riscos em tempo real' },
-        { name: 'Compliance de influencers' },
-        { name: 'Proteção da marca' },
+        { name: 'Identificação de atributos e temas associados ao creator' },
+        { name: 'Relatórios que agregam valor para novos contratos' },
       ],
       cta: 'Agendar conversa com especialista',
       url: '#',
@@ -250,7 +251,7 @@ const DEFAULT_QUIZ_CONFIG = {
         { name: 'Descoberta de nichos + gestão de campanhas' },
         { name: 'ROI com inteligência de audiência' },
         { name: 'Planejamento estratégico e performance' },
-        { name: 'Operação escalável com dados' },
+        { name: 'Operação escalável com influenciadores com match real' },
       ],
       cta: 'Agendar conversa com especialista',
       url: '#',
@@ -263,9 +264,9 @@ const DEFAULT_QUIZ_CONFIG = {
       description: 'Você tem necessidades em dois eixos: inteligência de nichos e segurança e auditoria de imagem. As ferramentas indicadas são o Community Discovery (para descoberta e mapeamento) + Creator Pulse (para reputação e compliance).',
       solutions: [
         { name: 'Cultura e segurança simultaneamente' },
-        { name: 'Curadoria de criadores com proteção' },
+        { name: 'Curadoria de criadores alinhados com o seu público' },
         { name: 'Branding com compliance' },
-        { name: 'Nichos com auditoria de reputação' },
+        { name: 'Monitoramento dos nichos e creators' },
       ],
       cta: 'Agendar conversa com especialista',
       url: '#',
@@ -278,9 +279,9 @@ const DEFAULT_QUIZ_CONFIG = {
       description: 'Você tem necessidades em dois eixos: gestão de campanhas com ROI e segurança e auditoria de imagem. As ferramentas indicadas são o Sprout Social (para operação e performance) + Creator Pulse (para reputação e compliance).',
       solutions: [
         { name: 'ROI + compliance em uma estratégia' },
-        { name: 'Campanhas com monitoramento de riscos' },
+        { name: 'Gestão de campanhas e reputação' },
         { name: 'Performance auditada em tempo real' },
-        { name: 'Segurança sem abrir mão de resultados' },
+        { name: 'Monitoramento de campanhas e creators' },
       ],
       cta: 'Agendar conversa com especialista',
       url: '#',
