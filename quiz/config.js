@@ -1,6 +1,6 @@
 var quizJSON = {
-  id: "spark_maxx_diagnostico_v6_master",
-  title: "[FINAL] Diagnóstico Spark Maxx v4",
+  id: "spark_maxx_diagnostico_v7_final_texts",
+  title: "[FINAL] Diagnóstico Spark Maxx",
   nodes: {
     "start": {
       id: "start",
@@ -152,12 +152,13 @@ var quizJSON = {
     'ss': {
       id: 'ss',
       title: 'Sprout Social Influencer Marketing',
-      badge: '📊 Gestão & Escala',
-      description: 'Foco total em operação, gestão de campanhas e ROI. Ideal para quem precisa centralizar campanhas, contratos e performance em uma plataforma robusta.',
+      badge: '📊 Operação e Performance',
+      description: 'Você precisa de uma plataforma centralizada para gerir campanhas, contratos e medir ROI de influencer marketing. A ferramenta indicada é o Sprout Social — solução completa para operação, pagamentos e performance.',
       solutions: [
-        { name: 'Gestão Ponta a Ponta', desc: 'Centralize contratos, pagamentos e aprovações.' },
-        { name: 'Discovery via IA', desc: 'Encontre os creators certos em segundos.' },
-        { name: 'Mensuração de ROI', desc: 'Dados precisos de impacto financeiro e EMV.' }
+        { name: 'Gestão de Campanhas', desc: 'Centralize contratos, pagamentos e aprovações de forma escalável.' },
+        { name: 'Controle Financeiro', desc: 'Gestão completa de pagamentos e fluxos operacionais.' },
+        { name: 'Métricas e ROI', desc: 'Dados precisos de impacto financeiro e performance em tempo real.' },
+        { name: 'Dashboard de Performance', desc: 'Visão holística dos resultados de todos os seus influenciadores.' }
       ],
       cta: 'Agendar conversa com especialista',
       url: 'https://sparkmaxx.com.br'
@@ -165,12 +166,13 @@ var quizJSON = {
     'cd': {
       id: 'cd',
       title: 'Community Discovery',
-      badge: '🗺️ Inteligência de Território',
-      description: 'Foco total em inteligência de nichos, territórios e microcomunidades. Mapeia criadores por afinidade real com audiência e cultura digital.',
+      badge: '🗺️ Inteligência de Comunidades',
+      description: 'Você precisa de inteligência para mapear nichos, territórios e microcomunidades e encontrar os criadores certos por afinidade real. A ferramenta indicada é o Community Discovery — motor de descoberta e mapeamento de audiências.',
       solutions: [
-        { name: 'Mapeamento de Nichos', desc: 'Descubra onde sua audiência realmente está.' },
-        { name: 'Análise Cultural', desc: 'Entenda os códigos de linguagem de cada comunidade.' },
-        { name: 'Territórios Inexplorados', desc: 'Inovação para marcas que querem sair do óbvio.' }
+        { name: 'Mapeamento de Nichos', desc: 'Descubra onde sua audiência realmente conversa e interage.' },
+        { name: 'Descoberta por Afinidade', desc: 'Encontre criadores que realmente possuem fit cultural com a marca.' },
+        { name: 'Inteligência de Audiência', desc: 'Entenda os códigos de linguagem e comportamento de cada território.' },
+        { name: 'Análise de Microcomunidades', desc: 'Saia do óbvio e conecte-se com públicos altamente engajados.' }
       ],
       cta: 'Agendar conversa com especialista',
       url: 'https://sparkmaxx.com.br'
@@ -178,12 +180,13 @@ var quizJSON = {
     'cp': {
       id: 'cp',
       title: 'Creator Pulse',
-      badge: '🛡️ Saúde & Reputação',
-      description: 'Foco total em segurança, auditoria de imagem e gestão de riscos. Monitora a reputação, autoridade e histórico dos criadores agenciados.',
+      badge: '🛡️ Segurança e Reputação',
+      description: 'Você precisa de uma camada de segurança, auditoria de imagem e gestão de riscos sobre os criadores com quem trabalha. A ferramenta indicada é o Creator Pulse — monitoramento de reputação, histórico e compliance.',
       solutions: [
-        { name: 'Auditoria de Reputação', desc: 'Segurança absoluta para marcas e embaixadores.' },
-        { name: 'Share of Search', desc: 'Mapeie o desejo de busca da sua audiência.' },
-        { name: 'Monitoramento 24/7', desc: 'Alertas de crises e tendências em tempo real.' }
+        { name: 'Auditoria de Imagem', desc: 'Raio-x completo do histórico e comportamento digital do influencer.' },
+        { name: 'Monitoramento de Riscos', desc: 'Alertas em tempo real sobre possíveis crises de imagem.' },
+        { name: 'Compliance de Influencers', desc: 'Garanta que seus embaixadores estejam alinhados com seus valores.' },
+        { name: 'Proteção da Marca', desc: 'Segurança absoluta para investimentos de longo prazo em influência.' }
       ],
       cta: 'Agendar conversa com especialista',
       url: 'https://sparkmaxx.com.br'
@@ -191,21 +194,27 @@ var quizJSON = {
     'cd_ss': {
       id: 'cd_ss',
       title: 'Combo Inovação',
-      badge: '⚡ Inovação & Escala',
-      description: 'Você precisa de Discovery + Gestão simultaneamente. Unimos o Community Discovery para inteligência cultural à eficiência operacional do Sprout Social.',
+      badge: '⚡ Inteligência e Performance',
+      description: 'Você tem necessidades em dois eixos: inteligência de nichos e gestão de campanhas com ROI. As ferramentas indicadas são o Community Discovery (para descoberta e mapeamento) + Sprout Social (para operação e performance).',
       solutions: [
-        { name: 'Inteligência e Gestão', desc: 'O melhor do mapeamento com o melhor da operação.' }
+        { name: 'Descoberta + Gestão', desc: 'Inteligência de nichos combinada com eficiência operacional.' },
+        { name: 'ROI com Inteligência', desc: 'Mensure resultados com base em dados reais de audiência.' },
+        { name: 'Planejamento e Performance', desc: 'Estratégia cultural unida à execução impecável.' },
+        { name: 'Operação Escalável', desc: 'Cresça sua estratégia de influência com dados e automação.' }
       ],
-      cta: 'Agendar conversa com especialista',
+      cta: 'Agendar conversa with especialista',
       url: 'https://sparkmaxx.com.br'
     },
     'cd_cp': {
       id: 'cd_cp',
       title: 'Combo Estratégia Segura',
-      badge: '🛡️ Estratégia Segura',
-      description: 'Foco em encontrar comunidades e garantir a saúde digital simultaneamente. Ideal para estratégias de branding e curadoria de embaixadores.',
+      badge: '🛡️ Estratégia Cultural Segura',
+      description: 'Você tem necessidades em dois eixos: inteligência de nichos e segurança e auditoria de imagem. As ferramentas indicadas são o Community Discovery (para descoberta e mapeamento) + Creator Pulse (para reputação e compliance).',
       solutions: [
-        { name: 'Cultura e Segurança', desc: 'Descubra nichos e monitore reputação simultaneamente.' }
+        { name: 'Cultura e Segurança', desc: 'Descubra novos territórios com a garantia de compliance total.' },
+        { name: 'Curadoria com Proteção', desc: 'Encontre embaixadores e monitore sua saúde digital 24/7.' },
+        { name: 'Branding com Compliance', desc: 'Posicionamento autêntico com gestão rigorosa de riscos.' },
+        { name: 'Nichos com Auditoria', desc: 'Explore comunidades com a segurança de dados auditados.' }
       ],
       cta: 'Agendar conversa com especialista',
       url: 'https://sparkmaxx.com.br'
@@ -213,10 +222,13 @@ var quizJSON = {
     'ss_cp': {
       id: 'ss_cp',
       title: 'Combo Performance Auditada',
-      badge: '📈 Performance & Auditoria',
-      description: 'Para operações que precisam de Gestão + Auditoria simultaneamente. Combine a performance de campanhas com o monitoramento rigoroso de riscos.',
+      badge: '📈 Performance com Segurança',
+      description: 'Você tem necessidades em dois eixos: gestão de campanhas com ROI e segurança e auditoria de imagem. As ferramentas indicadas são o Sprout Social (para operação e performance) + Creator Pulse (para reputação e compliance).',
       solutions: [
-        { name: 'Gestão e Reputação', desc: 'ROI comprovado com segurança de imagem.' }
+        { name: 'ROI + Compliance', desc: 'Resultados comprovados com total segurança de imagem.' },
+        { name: 'Campanhas Monitoradas', desc: 'Gestão de embaixadores com monitoramento de riscos em tempo real.' },
+        { name: 'Performance Auditada', desc: 'Dados de performance cruzados com sentimentos e autoridade.' },
+        { name: 'Segurança e Resultados', desc: 'Eficiência operacional sem abrir mão da reputação da marca.' }
       ],
       cta: 'Agendar conversa com especialista',
       url: 'https://sparkmaxx.com.br'

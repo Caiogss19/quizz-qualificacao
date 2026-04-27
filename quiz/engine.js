@@ -140,20 +140,28 @@ function renderNode(nodeId) {
 }
 
 function updateProgress(nodeId) {
-  // Cálculo dinâmico de progresso para suportar qualquer quiz customizado
-  const nodes = Object.values(activeQuiz.nodes);
-  // Conta nós que representam passos reais
-  const stepNodes = nodes.filter(n => ['question', 'lead_form', 'loading'].includes(n.type));
-  const totalSteps = stepNodes.length + 1; // +1 para o resultado final
-  const currentStep = state.history.length + 1;
+  const stepData = STEP_MAP[nodeId] || { pct: 50, num: 3 };
+  const totalSteps = 4; // Fluxo Spark Maxx tem 4 etapas principais de interação
   
-  const pct = Math.min(100, Math.round((currentStep / totalSteps) * 100));
+  // Se estiver no nó de carregamento ou resultado, mostra 100% ou perto disso
+  if (nodeId === 'analyzing') {
+    if (DOM.progressBar) DOM.progressBar.style.width = '95%';
+    if (DOM.stepCount) DOM.stepCount.textContent = `4 / 4 · Processando...`;
+    return;
+  }
   
-  if (DOM.progressBar) DOM.progressBar.style.width = pct + '%';
+  if (nodeId === 'result') {
+    if (DOM.progressBar) DOM.progressBar.style.width = '100%';
+    if (DOM.stepCount) DOM.stepCount.textContent = `Concluído · Diagnóstico`;
+    return;
+  }
+
+  if (DOM.progressBar) DOM.progressBar.style.width = stepData.pct + '%';
   if (DOM.stepCount) {
     const node = activeQuiz.nodes[nodeId];
     const tag = node?.tag || 'Diagnóstico';
-    DOM.stepCount.textContent = `${currentStep} / ${totalSteps} · ${tag}`;
+    const num = stepData.num > totalSteps ? totalSteps : stepData.num;
+    DOM.stepCount.textContent = `${num} / ${totalSteps} · ${tag}`;
   }
 }
 
