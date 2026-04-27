@@ -274,9 +274,11 @@ async function loadAdminPanel() {
     console.error("Erro ao sincronizar quizzes com Cloud:", e);
   }
 
-  // Quizzes Sync
+  // Quizzes Sync - Force update the Spark Maxx Diagnostic to the new structure
   const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
-  if (quizzes.length === 0 || !quizzes.find(q => q.id === quizJSON.id)) {
+  const existingIdx = quizzes.findIndex(q => q.id === quizJSON.id);
+
+  if (existingIdx === -1) {
     const newQuiz = {
       id: quizJSON.id,
       name: quizJSON.title,
@@ -286,6 +288,12 @@ async function loadAdminPanel() {
       createdAt: new Date().toISOString()
     };
     quizzes.push(newQuiz);
+    saveQuizzes(quizzes);
+  } else {
+    // Se já existe, forçamos a atualização dos nós e resultados para garantir que a nova lógica de 50/50 e fluxos esteja presente
+    quizzes[existingIdx].nodes = JSON.parse(JSON.stringify(quizJSON.nodes));
+    quizzes[existingIdx].results = JSON.parse(JSON.stringify(quizJSON.results));
+    quizzes[existingIdx].name = quizJSON.title;
     saveQuizzes(quizzes);
   }
 
