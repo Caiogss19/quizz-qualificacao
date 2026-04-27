@@ -1,0 +1,312 @@
+/* Spark Maxx — Colors & Type
+ * Source: brand brief + sparkmaxx.com.br
+ * FONTS:
+ *   Display / headings   →  Flyhead           (LICENSED — files in fonts/)
+ *   Body / running text  →  Atyp Text         (LICENSED — files in fonts/)
+ *   Serif accent         →  Fraunces          (substitute for Nebulica)
+ *   Mono                 →  JetBrains Mono
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── FLYHEAD (brand display face) ────────────────────────────── */
+@font-face {
+  font-family: 'Flyhead';
+  src: url('../fonts/Flyhead-Light.otf') format('opentype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Flyhead';
+  src: url('../fonts/Flyhead.otf') format('opentype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Flyhead';
+  src: url('../fonts/Flyhead-Bold.otf') format('opentype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+/* ─── ATYP TEXT (brand body face) ─────────────────────────────── */
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Thin.ttf') format('truetype');
+  font-weight: 100; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-ThinItalic.ttf') format('truetype');
+  font-weight: 100; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Light.ttf') format('truetype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-LightItalic.ttf') format('truetype');
+  font-weight: 300; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Regular.ttf') format('truetype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Italic.ttf') format('truetype');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Medium.ttf') format('truetype');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-MediumItalic.ttf') format('truetype');
+  font-weight: 500; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Semibold.ttf') format('truetype');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-SemiboldItalic.ttf') format('truetype');
+  font-weight: 600; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-Bold.ttf') format('truetype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Atyp Text';
+  src: url('../fonts/AtypText-BoldItalic.ttf') format('truetype');
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+:root {
+  /* ─── BRAND COLORS ────────────────────────────────────────────── */
+  /* Primary — dark / tech */
+  --sm-bg-deep:        #121C2B;  /* main background, almost-black blue */
+  --sm-navy-900:       #1F2C41;  /* dark navy surface */
+  --sm-navy-800:       #273551;  /* mid navy surface */
+  --sm-navy-700:       #2F4063;  /* hover / raised surface */
+
+  /* Secondary — chromed / light */
+  --sm-steel:          #5F7D9E;  /* steel blue, accents, links */
+  --sm-mist:           #B3C5D8;  /* muted blue-grey, secondary text */
+  --sm-offwhite:       #DFE8F2;  /* off-white, primary fg on dark */
+
+  /* Pure */
+  --sm-white:          #FFFFFF;
+  --sm-black:          #07101D;  /* deeper than --sm-bg-deep, for shadows */
+
+  /* Functional accents (derived, restrained palette) */
+  --sm-success:        #6FB39A;
+  --sm-warn:           #D9B77E;
+  --sm-danger:         #D97A7A;
+  --sm-info:           #7FA3D1;
+
+  /* ─── SEMANTIC FOREGROUND / BACKGROUND ──────────────────────── */
+  --bg-1:              var(--sm-bg-deep);     /* page bg */
+  --bg-2:              var(--sm-navy-900);    /* card bg */
+  --bg-3:              var(--sm-navy-800);    /* raised / hover */
+  --bg-4:              var(--sm-navy-700);    /* active */
+
+  --fg-1:              var(--sm-offwhite);    /* primary text */
+  --fg-2:              var(--sm-mist);        /* secondary text */
+  --fg-3:              var(--sm-steel);       /* tertiary / metadata */
+
+  --border-1:          rgba(223, 232, 242, 0.08);  /* hairline on dark */
+  --border-2:          rgba(223, 232, 242, 0.14);  /* card border */
+  --border-strong:     rgba(223, 232, 242, 0.24);
+
+  /* Brand gradient: signature #121C2B → #273551 */
+  --grad-brand:        linear-gradient(180deg, #121C2B 0%, #273551 100%);
+  --grad-brand-radial: radial-gradient(ellipse at 50% 0%, #273551 0%, #121C2B 70%);
+  --grad-chrome:       linear-gradient(180deg, #DFE8F2 0%, #B3C5D8 45%, #5F7D9E 100%);
+  --grad-fade-bottom:  linear-gradient(180deg, transparent 0%, #121C2B 100%);
+
+  /* ─── TYPOGRAPHY ──────────────────────────────────────────── */
+  --font-display:      'Flyhead', 'Quanta Grotesk Pro', system-ui, sans-serif;
+  --font-serif:        'Fraunces', 'Nebulica', Georgia, serif;
+  --font-body:         'Atyp Text', system-ui, sans-serif;
+  --font-mono:         'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Type scale */
+  --fs-display:        clamp(48px, 7vw, 96px);
+  --fs-h1:             clamp(40px, 5.2vw, 64px);
+  --fs-h2:             clamp(32px, 3.6vw, 44px);
+  --fs-h3:             28px;
+  --fs-h4:             22px;
+  --fs-lead:           20px;
+  --fs-body:           16px;
+  --fs-small:          14px;
+  --fs-micro:          12px;
+
+  --lh-display:        0.96;
+  --lh-heading:        1.08;
+  --lh-body:           1.55;
+
+  --tracking-tight:    -0.02em;
+  --tracking-normal:   0;
+  --tracking-wide:     0.06em;     /* MAXX, eyebrow caps */
+  --tracking-mono:     0.02em;
+
+  /* ─── SPACING / RADII / SHADOW ────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  14px;     /* default card */
+  --radius-lg:  22px;     /* large card / image */
+  --radius-xl:  32px;
+  --radius-pill: 999px;   /* buttons */
+
+  --shadow-1:  0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 12px rgba(0,0,0,0.25);
+  --shadow-2:  0 1px 0 rgba(255,255,255,0.05) inset, 0 12px 32px rgba(0,0,0,0.35);
+  --shadow-3:  0 1px 0 rgba(255,255,255,0.06) inset, 0 24px 64px rgba(0,0,0,0.45);
+  --glow-steel: 0 0 0 1px rgba(95,125,158,0.30), 0 8px 24px rgba(95,125,158,0.20);
+
+  /* Motion */
+  --ease-standard:  cubic-bezier(.2,.8,.2,1);
+  --ease-emphasis:  cubic-bezier(.16,1,.3,1);
+  --dur-fast:       140ms;
+  --dur-base:       220ms;
+  --dur-slow:       420ms;
+}
+
+/* ─── BASE / RESET-ish ────────────────────────────────────────── */
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body {
+  background: var(--bg-1);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+}
+
+::selection { background: var(--sm-steel); color: var(--sm-offwhite); }
+
+/* ─── SEMANTIC TYPE CLASSES ───────────────────────────────────── */
+.display, h1.display {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 400;
+}
+h1, .h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 400;
+  color: var(--fg-1);
+}
+h2, .h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 400;
+}
+h3, .h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+h4, .h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 700;
+}
+.lead {
+  font-family: var(--font-body);
+  font-size: var(--fs-lead);
+  font-weight: 300;
+  color: var(--fg-2);
+  line-height: 1.45;
+}
+p, .p {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-2);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--sm-steel);
+}
+.serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+}
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  letter-spacing: var(--tracking-mono);
+}
+.stat-big {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 7vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  background: var(--grad-chrome);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ─── COMPONENT PRIMITIVES ────────────────────────────────────── */
+.btn-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 22px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--fg-1);
+  background: var(--bg-3);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-standard),
+              transform var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-base) var(--ease-standard);
+}
+.btn-pill:hover { background: var(--bg-4); border-color: var(--border-strong); }
+.btn-pill:active { transform: translateY(1px) scale(0.99); }
+.btn-pill.primary { background: var(--sm-offwhite); color: var(--sm-bg-deep); border-color: transparent; }
+.btn-pill.primary:hover { background: var(--sm-white); }
+
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+}
+
+.dot-grid {
+  background-image: radial-gradient(rgba(179,197,216,0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}

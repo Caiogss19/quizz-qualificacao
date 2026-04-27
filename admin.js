@@ -2,20 +2,24 @@
 // ADMIN PANEL JAVASCRIPT
 // ===========================
 
-const DB_KEY = 'quiz_diagnostico_responses';
 const ADMIN_PASS = 'admin@2026';
 const ROWS_PER_PAGE = 15;
 
 let allData = [];
 let filteredData = [];
 let currentPage = 1;
-let currentTab = 'overview';
+let currentTab = 'quizzes';
 
 // ===========================
 // UTILS
 // ===========================
-function getAllResponses() {
-  try { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); } catch { return []; }
+
+function getVal(r, key) {
+  if (!r) return '—';
+  if (r[key] !== undefined) return r[key];
+  if (r.lead && r.lead[key] !== undefined) return r.lead[key];
+  if (r.answers && r.answers[key] !== undefined) return r.answers[key];
+  return '—';
 }
 
 function formatDate(iso) {
@@ -102,18 +106,57 @@ function profileCounts(data) {
 // ===========================
 // LOGIN
 // ===========================
+async function hashPassword(pass) {
+  if (!crypto.subtle) return pass; // Fallback para ambientes não seguros (HTTP/Local)
+  const msgUint8 = new TextEncoder().encode(pass);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkPassword(input) {
+  // Se não houver crypto.subtle, compara direto
+  if (!crypto.subtle) return input === ADMIN_PASS;
+  
+  const expectedHash = await hashPassword(ADMIN_PASS);
+  const inputHash = await hashPassword(input);
+  return expectedHash === inputHash;
+}
+
+const LOCKOUT_KEY = 'admin_lockout';
+const ATTEMPTS_KEY = 'admin_attempts';
+
 function initLogin() {
-  document.getElementById('loginForm').addEventListener('submit', e => {
+  document.getElementById('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
     const pass = document.getElementById('adminPassword').value;
     const errEl = document.getElementById('loginError');
-    if (pass === ADMIN_PASS) {
+    
+    // Check lockout
+    const lockoutUntil = localStorage.getItem(LOCKOUT_KEY);
+    if (lockoutUntil && Date.now() < parseInt(lockoutUntil)) {
+      const remaining = Math.ceil((parseInt(lockoutUntil) - Date.now()) / 60000);
+      errEl.textContent = `Muitas tentativas. Bloqueado por ${remaining} min.`;
+      errEl.classList.add('visible');
+      return;
+    }
+
+    if (await checkPassword(pass)) {
+      localStorage.removeItem(ATTEMPTS_KEY);
+      localStorage.removeItem(LOCKOUT_KEY);
       sessionStorage.setItem('quiz_admin_auth', '1');
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       loadAdminPanel();
     } else {
-      errEl.textContent = 'Senha incorreta.';
+      let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0') + 1;
+      localStorage.setItem(ATTEMPTS_KEY, attempts.toString());
+      if (attempts >= 5) {
+        localStorage.setItem(LOCKOUT_KEY, (Date.now() + 15 * 60 * 1000).toString());
+        errEl.textContent = 'Muitas tentativas. Bloqueado por 15 min.';
+      } else {
+        errEl.textContent = `Senha incorreta. Tentativas restantes: ${5 - attempts}`;
+      }
       errEl.classList.add('visible');
       document.getElementById('adminPassword').value = '';
     }
@@ -130,7 +173,7 @@ function initLogin() {
 // NAVIGATION
 // ===========================
 function initNavigation() {
-  document.querySelectorAll('.nav-item').forEach(item => {
+  document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
     item.addEventListener('click', e => {
       e.preventDefault();
       switchTab(item.dataset.tab);
@@ -162,6 +205,7 @@ function switchTab(tab) {
   const titles = { overview: 'Visão Geral', quizzes: 'Meus Quizzes', responses: 'Respostas', analytics: 'Analytics', export: 'Exportar dados', editor: 'Construtor de Quiz', ia: 'Gerador com IA' };
   document.getElementById('headerTitle').textContent = titles[tab] || '';
   if (tab === 'overview') renderOverview();
+  if (tab === 'quizzes') renderQuizzes();
   if (tab === 'responses') renderResponses();
   if (tab === 'analytics') renderAnalytics();
   if (tab === 'export') renderExport();
@@ -351,10 +395,240 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===========================
 // LOAD
 // ===========================
-function loadAdminPanel() {
-  allData = getAllResponses().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+async function loadAdminPanel() {
+  const localData = getAllResponses();
+  const cloudData = await getLeadsFromSupabase();
+  
+  // Merge data based on ID to avoid duplicates
+  const mergedMap = new Map();
+  [...localData, ...cloudData].forEach(r => mergedMap.set(r.id, r));
+  allData = Array.from(mergedMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
   filteredData = [...allData];
-  switchTab(currentTab);
+  
+  // Sincroniza Quizzes do Cloud
+  const cloudQuizzes = await getQuizzesFromSupabase();
+  if (cloudQuizzes && cloudQuizzes.length > 0) {
+    localStorage.setItem('sparkmaxx_quizzes', JSON.stringify(cloudQuizzes));
+  } else if (getQuizzes().length === 0) {
+    createQuiz("Diagnóstico Spark MAXX");
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetTab = urlParams.get('tab') || currentTab;
+  switchTab(targetTab);
+  loadBranding();
+}
+
+// ===========================
+// BRANDING (White-label)
+// ===========================
+const BRANDING_KEY = 'sparkmaxx_branding';
+
+function loadBranding() {
+  const branding = JSON.parse(localStorage.getItem(BRANDING_KEY) || '{}');
+  document.getElementById('brandingLogo').value = branding.logo || '';
+  document.getElementById('brandingColorPicker').value = branding.primaryColor || '#10B981';
+  document.getElementById('brandingColorHex').value = branding.primaryColor || '#10B981';
+  document.getElementById('brandingFavicon').value = branding.favicon || '';
+}
+
+document.getElementById('brandingColorPicker').addEventListener('input', (e) => {
+  document.getElementById('brandingColorHex').value = e.target.value.toUpperCase();
+});
+
+document.getElementById('brandingColorHex').addEventListener('input', (e) => {
+  if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+    document.getElementById('brandingColorPicker').value = e.target.value;
+  }
+});
+
+document.getElementById('btnSaveBranding').addEventListener('click', () => {
+  const branding = {
+    logo: document.getElementById('brandingLogo').value,
+    primaryColor: document.getElementById('brandingColorHex').value,
+    favicon: document.getElementById('brandingFavicon').value
+  };
+  localStorage.setItem(BRANDING_KEY, JSON.stringify(branding));
+  showToast('🎨 Identidade visual salva!');
+});
+
+// ===========================
+// MEUS QUIZZES (NOVO)
+// ===========================
+document.getElementById('btnCreateQuiz').addEventListener('click', () => {
+  const name = prompt('Nome do novo quiz:', 'Novo Quiz');
+  if (name) {
+    createQuiz(name);
+    renderQuizzes();
+    showToast('✅ Quiz criado com sucesso!');
+  }
+});
+
+function renderQuizzes() {
+  const grid = document.getElementById('quizzesGrid');
+  const quizzes = getQuizzes();
+  
+  if (quizzes.length === 0) {
+    grid.innerHTML = '<p class="empty-state">Nenhum quiz encontrado.</p>';
+    return;
+  }
+
+  grid.innerHTML = quizzes.map(q => `
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <h3 style="font-size:16px;color:var(--text-main);margin:0;">${q.name}</h3>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">
+        <p style="margin:2px 0;">ID: <code>${q.id}</code></p>
+        <p style="margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${q.webhookUrl || 'Não configurado'}">Webhook: ${q.webhookUrl || 'Não configurado'}</p>
+      </div>
+      
+      <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="text-align:center;">
+          <div style="color:var(--text-muted);">👀 Views</div>
+          <div style="font-weight:600;font-size:14px;color:var(--primary-color);">${typeof getAnalytics === 'function' ? getAnalytics(q.id).views : 0}</div>
+        </div>
+        <div style="color:var(--border-color);">➔</div>
+        <div style="text-align:center;">
+          <div style="color:var(--text-muted);">📩 Leads</div>
+          <div style="font-weight:600;font-size:14px;color:var(--secondary-color);">${typeof getAnalytics === 'function' ? getAnalytics(q.id).leads : 0}</div>
+        </div>
+        <div style="color:var(--border-color);">➔</div>
+        <div style="text-align:center;">
+          <div style="color:var(--text-muted);">🎯 Finalizados</div>
+          <div style="font-weight:600;font-size:14px;color:#10B981;">${allData.filter(r => r.quiz_id === q.id).length}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:auto;flex-wrap:wrap;">
+        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="editQuiz('${q.id}')">Editar Fluxo</button>
+        <button class="btn-secondary" style="flex:1;padding:8px;font-size:12px;" onclick="copyQuizLink('${q.id}')">Copiar Link</button>
+        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="configWebhook('${q.id}')" title="Configurar Webhook">🔗</button>
+        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="testWebhook('${q.id}')" title="Testar Webhook">⚡ Testar</button>
+        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="actionDuplicateQuiz('${q.id}')" title="Duplicar">📑</button>
+        <button class="btn-danger" style="padding:8px;font-size:12px;" onclick="actionDeleteQuiz('${q.id}')" title="Excluir">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editQuiz(id) {
+  window.location.href = `builder.html?id=${id}`;
+}
+
+function copyQuizLink(id) {
+  let basePath = window.location.origin + window.location.pathname;
+  if (basePath.endsWith('index.html')) {
+    basePath = basePath.replace('index.html', 'quiz.html');
+  } else if (basePath.endsWith('/')) {
+    basePath += 'quiz.html';
+  } else {
+    basePath += '/quiz.html';
+  }
+  const url = basePath + `?id=${id}`;
+  navigator.clipboard.writeText(url);
+  showToast('✅ Link copiado!');
+}
+
+function configWebhook(id) {
+  const quiz = getQuizById(id);
+  const url = prompt('URL do Webhook (para envio de leads):', quiz.webhookUrl || '');
+  if (url !== null) {
+    const quizzes = getQuizzes();
+    const target = quizzes.find(q => q.id === id);
+    if (target) {
+      target.webhookUrl = url.trim();
+      saveQuizzes(quizzes);
+      renderQuizzes();
+      showToast('✅ Webhook configurado!');
+    }
+  }
+}
+
+function actionDuplicateQuiz(id) {
+  if (confirm('Deseja duplicar este quiz?')) {
+    duplicateQuiz(id);
+    renderQuizzes();
+    showToast('✅ Quiz duplicado!');
+  }
+}
+
+async function testWebhook(id) {
+  const quiz = getQuizById(id);
+  if (!quiz) return;
+  
+  if (!quiz.webhookUrl) {
+    alert('Nenhum webhook configurado para este quiz. Por favor, clique no botão de 🔗 (Link) para adicionar a URL primeiro.');
+    return;
+  }
+  
+  const testData = {
+    event: "teste_integracao",
+    quiz_id: quiz.id,
+    quiz_name: quiz.name,
+    completed_at: new Date().toISOString(),
+    lead: {
+      nome: "Lead Teste da Silva",
+      email: "teste@inlead.digital",
+      celular: "(11) 99999-9999",
+      empresa: "Empresa Fictícia"
+    },
+    answers: {
+      "perfil": "Empresa / Marca",
+      "q2": "Medir resultados e comprovar ROI das campanhas"
+    },
+    result_id: "result",
+    result_title: "Resultado de Teste",
+    utms: {
+      source: "painel_admin",
+      medium: "teste_webhook",
+      campaign: "",
+      content: "",
+      term: ""
+    },
+    user_agent: navigator.userAgent,
+    url_origem: window.location.href
+  };
+  
+  try {
+    const btn = event.currentTarget;
+    const oldText = btn.innerHTML;
+    btn.innerHTML = 'Enviando...';
+    btn.disabled = true;
+
+    // Usando text/plain para evitar bloqueio de CORS de preflight no Make/n8n/Zapier caso não suportem OPTIONS bem. 
+    // Grande parte dos webhooks entende JSON vindo de text/plain. Se precisar de application/json, tentamos 1o.
+    let response = await fetch(quiz.webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testData)
+    }).catch(async (e) => {
+      console.warn("Falha no preflight CORS, enviando com mode: 'no-cors'...");
+      return fetch(quiz.webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(testData)
+      });
+    });
+
+    btn.innerHTML = oldText;
+    btn.disabled = false;
+
+    if (response && (response.ok || response.type === 'opaque')) {
+      showToast('✅ Webhook disparado! Vá na sua automação (n8n/Make) e veja se os dados chegaram.');
+    } else {
+      alert(`⚠️ Atenção: Status da resposta foi ${response ? response.status : 'Desconhecido'}. O webhook pode ter chegado ou não.`);
+    }
+  } catch (err) {
+    alert(`Erro crítico ao disparar webhook: ${err.message}. Tente verificar se a URL é válida e se está em HTTPS.`);
+  }
+}
+
+function actionDeleteQuiz(id) {
+  if (confirm('Tem certeza que deseja excluir este quiz? Isso não apaga as respostas já coletadas.')) {
+    deleteQuiz(id);
+    renderQuizzes();
+    showToast('🗑️ Quiz excluído.');
+  }
 }
 
 // ===========================
@@ -454,15 +728,12 @@ function renderResponses() {
   tbody.innerHTML = pageData.map((r, i) => `
     <tr>
       <td>${start + i + 1}</td>
-      <td class="cell-name">${truncate(r.nome, 20)}</td>
-      <td>${truncate(r.email, 24)}</td>
-      <td>${r.celular || '—'}</td>
-      <td>${truncate(r.empresa, 18)}</td>
-      <td><span class="profile-pill">${shortProfile(r.perfil)}</span></td>
-      <td title="${r.q2_resposta || ''}">${truncate(r.q2_resposta, 28)}</td>
-      <td title="${r.q3_resposta || ''}">${truncate(r.q3_resposta, 28)}</td>
-      <td><span class="profile-pill">${shortResult(r.resultado_id)}</span></td>
-      <td>${formatDuration(r.duration_seconds)}</td>
+      <td class="cell-name">${truncate(getVal(r, 'nome'), 20)}</td>
+      <td>${truncate(getVal(r, 'email'), 24)}</td>
+      <td>${truncate(getVal(r, 'empresa'), 18)}</td>
+      <td><span style="font-size:11px;color:var(--text-muted);">${truncate(r.quiz_name || 'Legacy', 15)}</span></td>
+      <td><span class="profile-pill">${shortResult(r.result_id || r.resultado_id)}</span></td>
+      <td><span style="color:#10B981;font-weight:600;">${r.total_score || 0}</span></td>
       <td>${formatDate(r.timestamp)}</td>
       <td>
         <button class="btn-detail" onclick="openDetail('${r.id}')">Ver</button>
@@ -495,22 +766,33 @@ function openDetail(id) {
   const fields = [
     { label: 'ID', value: r.id },
     { label: 'Data/hora', value: formatDate(r.timestamp) },
-    { label: 'Nome', value: r.nome },
-    { label: 'E-mail', value: r.email },
-    { label: 'Celular', value: r.celular },
-    { label: 'Empresa', value: r.empresa },
-    { label: 'Perfil', value: r.perfil },
-    { label: 'Resposta Q2', value: r.q2_resposta },
-    { label: 'Foco Q2', value: r.q2_hint },
-    { label: 'Resposta Q3', value: r.q3_resposta },
-    { label: 'Foco Q3', value: r.q3_hint },
-    { label: 'Resultado', value: r.resultado_nome || shortResult(r.resultado_id) },
+    { label: 'Quiz', value: r.quiz_name },
+    { label: 'Score Total', value: r.total_score || 0 },
+    { label: 'Resultado', value: r.result_title || shortResult(r.result_id || r.resultado_id) },
     { label: 'Duração', value: formatDuration(r.duration_seconds) },
-    { label: 'Origem', value: r.referrer },
+    { label: 'Origem', value: r.url_origem || r.referrer },
   ];
 
+  // Dados do Lead
+  if (r.lead) {
+    Object.entries(r.lead).forEach(([k, v]) => {
+      fields.push({ label: `Lead: ${k}`, value: v });
+    });
+  } else {
+    ['nome', 'email', 'celular', 'empresa'].forEach(k => {
+      if (r[k]) fields.push({ label: k.charAt(0).toUpperCase() + k.slice(1), value: r[k] });
+    });
+  }
+
+  // Respostas
+  if (r.answers) {
+    Object.entries(r.answers).forEach(([k, v]) => {
+      fields.push({ label: `Resp: ${k}`, value: v });
+    });
+  }
+
   document.getElementById('modalBody').innerHTML = fields
-    .filter(f => f.value && f.value !== '—')
+    .filter(f => f.value !== undefined && f.value !== null && f.value !== '—')
     .map(f => `
       <div class="modal-row">
         <span class="modal-row-label">${f.label}</span>
@@ -731,7 +1013,7 @@ function seedDemoData() {
 // INIT
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
-  seedDemoData();
+  // seedDemoData(); // Desativado para usar dados reais do Cloud/Local
   initLogin();
   initNavigation();
   initResponseFilters();
