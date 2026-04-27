@@ -282,8 +282,165 @@
   border: 1px solid var(--border-2); color: var(--fg-2); white-space: nowrap; flex-shrink: 0;
 }
 
-/* ── QUIZZES GRID ──────────────────────────────── */
-#quizzesGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+/* ── QUIZZES REDESIGN ──────────────────────────── */
+.quizzes-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+  gap: 24px; 
+  padding: 24px 0; 
+}
+
+.quiz-card { 
+  background: #151E2D; 
+  border: 1px solid rgba(255, 255, 255, 0.05); 
+  border-radius: 20px; 
+  padding: 28px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 24px; 
+  transition: all 0.3s ease;
+  position: relative;
+}
+.quiz-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+}
+
+.quiz-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quiz-card-icon-box {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-3);
+}
+
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.status-badge.active {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+.status-badge.draft {
+  background: rgba(245, 158, 11, 0.08);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.quiz-card-title-area h3 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--fg-1);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.quiz-card-title-area h3:hover { color: var(--sm-mist); }
+
+.quiz-card-updated {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  opacity: 0.7;
+}
+
+.quiz-card-stats {
+  background: rgba(14, 22, 35, 0.4);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.stat-item { display: flex; flex-direction: column; gap: 6px; }
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--fg-1);
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg-3);
+  font-weight: 600;
+}
+
+.quiz-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.btn-card-main {
+  background: none;
+  border: none;
+  color: var(--fg-2);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 8px 0;
+}
+.btn-card-main:hover { color: var(--fg-1); }
+.btn-card-main svg { width: 18px; height: 18px; opacity: 0.8; }
+
+.btn-card-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-3);
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-card-circle:hover { border-color: var(--fg-1); color: var(--fg-1); }
+
+/* Header Elements for Redesign */
+.btn-refresh-simple { 
+  display: flex; align-items: center; gap: 10px; background: none; border: none; 
+  color: #94A3B8; font-size: 14px; font-weight: 500; cursor: pointer; transition: color 0.2s;
+}
+.btn-refresh-simple:hover { color: #F8FAFC; }
+
+.btn-new-quiz { 
+  background: #F8FAFC; color: #0F172A; border: none; padding: 12px 28px; 
+  border-radius: 100px; font-weight: 600; font-size: 15px; display: flex; 
+  align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s;
+}
+.btn-new-quiz:hover { transform: scale(1.02); background: #FFFFFF; }
 
 /* ── BUTTONS ───────────────────────────────────── */
 .btn-primary {

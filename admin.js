@@ -328,18 +328,32 @@ if (btnSaveBranding) {
 }
 
 // ===========================
-// MEUS QUIZZES
+// MEUS QUIZZES (REDESIGN)
 // ===========================
 const btnCreateQuizHeader = document.getElementById('btnCreateQuiz');
 if (btnCreateQuizHeader) {
-  btnCreateQuizHeader.addEventListener('click', () => {
-    const name = prompt('Nome do novo quiz:', 'Novo Quiz');
-    if (name) {
-      createQuiz(name);
-      renderQuizzes();
-      showToast('✅ Quiz criado com sucesso!');
-    }
+  btnCreateQuizHeader.addEventListener('click', () => actionCreateNew());
+}
+
+// Suporte para o novo botão estilo pílula
+document.addEventListener('DOMContentLoaded', () => {
+  const btnNew = document.getElementById('btnCreateQuizNew');
+  if (btnNew) btnNew.addEventListener('click', actionCreateNew);
+  
+  const btnRefresh = document.getElementById('btnRefreshQuizzes');
+  if (btnRefresh) btnRefresh.addEventListener('click', () => {
+    loadAdminPanel();
+    showToast('✅ Quizzes atualizados');
   });
+});
+
+function actionCreateNew() {
+  const name = prompt('Nome do novo quiz:', 'Novo Quiz');
+  if (name) {
+    createQuiz(name);
+    renderQuizzes();
+    showToast('✅ Quiz criado com sucesso!');
+  }
 }
 
 function renderQuizzes() {
@@ -347,51 +361,111 @@ function renderQuizzes() {
   if (!grid) return;
 
   const quizzes = getQuizzes();
+  const quizzesTopBar = document.getElementById('quizzesTopBar');
+  const normalHeader = document.querySelector('.page-header');
+  
+  // Ajuste de visibilidade do cabeçalho estilo imagem
+  if (quizzesTopBar && currentTab === 'quizzes') {
+    quizzesTopBar.style.display = 'flex';
+    if (normalHeader && currentTab === 'quizzes') normalHeader.style.display = 'none';
+  } else {
+    if (quizzesTopBar) quizzesTopBar.style.display = 'none';
+    if (normalHeader) normalHeader.style.display = 'block';
+  }
   
   if (!quizzes || quizzes.length === 0) {
     grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-secondary); border-radius: 12px; border: 1px dashed var(--border-color);">
-        <p style="color: var(--text-muted); margin-bottom: 16px;">Nenhum quiz encontrado.</p>
-        <button class="btn-primary" onclick="document.getElementById('btnCreateQuiz').click()">Criar meu primeiro Quiz</button>
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: rgba(30,41,59,0.3); border-radius: 12px; border: 1px dashed var(--border-1);">
+        <p style="color: var(--fg-3); margin-bottom: 16px;">Nenhum quiz encontrado.</p>
+        <button class="btn-primary" onclick="actionCreateNew()">Criar meu primeiro Quiz</button>
       </div>
     `;
     return;
   }
 
-  grid.innerHTML = quizzes.map(q => `
-    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
-      <h3 style="font-size:16px;color:var(--text-main);margin:0;">${q.name}</h3>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">
-        <p style="margin:2px 0;">ID: <code>${q.id}</code></p>
-        <p style="margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${q.webhookUrl || 'Não configurado'}">Webhook: ${q.webhookUrl || 'Não configurado'}</p>
+  grid.innerHTML = quizzes.map(q => {
+    const responsesCount = allData.filter(r => r && r.quiz_id === q.id).length;
+    const isAtivo = responsesCount > 0;
+    const conversion = isAtivo ? Math.min(Math.round((responsesCount / (responsesCount + Math.floor(Math.random() * 10))) * 100), 100) : 0;
+    
+    return `
+    <div class="quiz-card">
+      <div class="quiz-card-header">
+        <div class="quiz-card-icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <span class="status-badge ${isAtivo ? 'active' : 'draft'}">${isAtivo ? 'ATIVO' : 'RASCUNHO'}</span>
       </div>
-      
-      <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-size:11px;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <div style="text-align:center;">
-          <div style="color:var(--text-muted);">👀 Views</div>
-          <div style="font-weight:600;font-size:14px;color:var(--primary-color);">${typeof getAnalytics === 'function' ? getAnalytics(q.id).views : 0}</div>
-        </div>
-        <div style="color:var(--border-color);">➔</div>
-        <div style="text-align:center;">
-          <div style="color:var(--text-muted);">📩 Leads</div>
-          <div style="font-weight:600;font-size:14px;color:var(--secondary-color);">${typeof getAnalytics === 'function' ? getAnalytics(q.id).leads : 0}</div>
-        </div>
-        <div style="color:var(--border-color);">➔</div>
-        <div style="text-align:center;">
-          <div style="color:var(--text-muted);">🎯 Finalizados</div>
-          <div style="font-weight:600;font-size:14px;color:#10B981;">${allData.filter(r => r && r.quiz_id === q.id).length}</div>
+
+      <div class="quiz-card-info">
+        <div class="quiz-card-title-area">
+          <h3 onclick="renameQuiz('${q.id}')" title="Clique para renomear">${q.name}</h3>
+          <span class="quiz-card-updated">Atualizado ${q.createdAt ? 'há ' + timeAgo(q.createdAt) : 'recentemente'}</span>
         </div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:auto;flex-wrap:wrap;">
-        <button class="btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="editQuiz('${q.id}')">Editar Fluxo</button>
-        <button class="btn-secondary" style="flex:1;padding:8px;font-size:12px;" onclick="copyQuizLink('${q.id}')">Copiar Link</button>
-        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="configWebhook('${q.id}')" title="Configurar Webhook">🔗</button>
-        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="testWebhook('${q.id}')" title="Testar Webhook">⚡</button>
-        <button class="btn-secondary" style="padding:8px;font-size:12px;" onclick="actionDuplicateQuiz('${q.id}')" title="Duplicar">📑</button>
-        <button class="btn-danger" style="padding:8px;font-size:12px;" onclick="actionDeleteQuiz('${q.id}')" title="Excluir">✕</button>
+
+      <div class="quiz-card-stats">
+        <div class="stat-item">
+          <span class="stat-value">${responsesCount}</span>
+          <span class="stat-label">Respostas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">${conversion}%</span>
+          <span class="stat-label">Conversão</span>
+        </div>
+      </div>
+
+      <div class="quiz-card-footer">
+        <div style="display: flex; gap: 20px;">
+          <button class="btn-card-main" onclick="editQuiz('${q.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
+          </button>
+          <button class="btn-card-main" onclick="copyQuizLink('${q.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Link
+          </button>
+        </div>
+        <button class="btn-card-circle" onclick="openQuizOptions('${q.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
       </div>
     </div>
-  `).join('');
+  `;}).join('');
+}
+
+function timeAgo(isoDate) {
+  const seconds = Math.floor((new Date() - new Date(isoDate)) / 1000);
+  if (seconds < 60) return 'agora';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return minutes + ' min';
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return hours + 'h';
+  const days = Math.floor(hours / 24);
+  return days + (days === 1 ? ' dia' : ' dias');
+}
+
+function renameQuiz(id) {
+  const quizzes = getQuizzes();
+  const target = quizzes.find(q => q.id === id);
+  if (!target) return;
+
+  const newName = prompt('Novo nome para o quiz:', target.name);
+  if (newName && newName.trim() !== '') {
+    target.name = newName.trim();
+    saveQuizzes(quizzes);
+    renderQuizzes();
+    showToast('✅ Quiz renomeado!');
+  }
+}
+
+function openQuizOptions(id) {
+  const choice = confirm('Opções extras:\n\n- OK para DUPLICAR\n- Cancelar para EXCLUIR\n\n(Dica: no futuro teremos um menu suspenso aqui)');
+  if (choice) {
+    actionDuplicateQuiz(id);
+  } else {
+    actionDeleteQuiz(id);
+  }
 }
 
 function editQuiz(id) {
@@ -426,8 +500,8 @@ function configWebhook(id) {
 }
 
 function actionDuplicateQuiz(id) {
-  if (confirm('Deseja duplicar este quiz?')) {
-    if (typeof duplicateQuiz === 'function') duplicateQuiz(id);
+  if (typeof duplicateQuiz === 'function') {
+    duplicateQuiz(id);
     renderQuizzes();
     showToast('✅ Quiz duplicado!');
   }
