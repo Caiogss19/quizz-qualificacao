@@ -13,8 +13,8 @@ function initBuilder() {
   const urlParams = new URLSearchParams(window.location.search);
   currentQuizId = urlParams.get('id');
   
-  let quizzes = [];
-  try { quizzes = JSON.parse(localStorage.getItem('sparkmaxx_quizzes') || '[]'); } catch(e) {}
+  // Usa getQuizzes() do storage.js para ter a lógica de migração/correção de dados
+  const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
   
   let targetQuiz = quizzes.find(q => q.id === currentQuizId);
   
@@ -31,24 +31,27 @@ function initBuilder() {
   document.title = `Editando: ${targetQuiz.name} - Builder`;
 
   // Deep clone to avoid mutating the original until saved
-  builderState.nodes = targetQuiz.nodes || JSON.parse(JSON.stringify(quizJSON.nodes));
+  builderState.nodes = targetQuiz.nodes || (typeof quizJSON !== 'undefined' ? JSON.parse(JSON.stringify(quizJSON.nodes)) : {});
 
   // Assign default positions if missing (auto-layout)
-  const layout = autoLayout(builderState.nodes);
-  Object.keys(builderState.nodes).forEach(key => {
-    if (!builderState.nodes[key].editor) {
-      builderState.nodes[key].editor = layout[key] || { x: 100, y: 100 };
-    }
-  });
+  if (typeof autoLayout === 'function') {
+    const layout = autoLayout(builderState.nodes);
+    Object.keys(builderState.nodes).forEach(key => {
+      if (!builderState.nodes[key].editor) {
+        builderState.nodes[key].editor = layout[key] || { x: 100, y: 100 };
+      }
+    });
+  }
 
   // Extract connections from node data
-  extractConnections();
+  if (typeof extractConnections === 'function') extractConnections();
 
-  initCanvasWithToolbar();
-  initInspector();
-  initPalette();
-  renderAllNodes();
-  renderConnections();
+  if (typeof initCanvasWithToolbar === 'function') initCanvasWithToolbar();
+  if (typeof initInspector === 'function') initInspector();
+  if (typeof initPalette === 'function') initPalette();
+  
+  if (typeof renderAllNodes === 'function') renderAllNodes();
+  if (typeof renderConnections === 'function') renderConnections();
 
   // Toolbar buttons (Legacy dropdown - keeping for compatibility)
   const btnAddNodeSelect = document.getElementById('btnAddNode');
