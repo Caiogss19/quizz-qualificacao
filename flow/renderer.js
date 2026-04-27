@@ -82,6 +82,25 @@ function renderConnectionActions(x, y, conn) {
     <button class="conn-btn conn-btn-del" title="Remover conexão">🗑️</button>
   `;
 
+  // Hover logic: show when hovering path or actions
+  const show = () => actionsEl.classList.add('visible');
+  const hide = () => actionsEl.classList.remove('visible');
+
+  // We need to link the path to this actionsEl
+  const path = container.previousElementSibling.lastElementChild; // O path recém-criado
+  if (path && path.tagName === 'path') {
+    path.addEventListener('mouseenter', show);
+    path.addEventListener('mouseleave', (e) => {
+      // Pequeno atraso para permitir mover o mouse para os botões
+      setTimeout(() => {
+        if (!actionsEl.matches(':hover')) hide();
+      }, 50);
+    });
+  }
+
+  actionsEl.addEventListener('mouseenter', show);
+  actionsEl.addEventListener('mouseleave', hide);
+
   actionsEl.querySelector('.conn-btn-add').addEventListener('click', (e) => {
     e.stopPropagation();
     insertNodeOnConnection(conn);
