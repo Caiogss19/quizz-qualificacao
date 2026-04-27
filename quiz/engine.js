@@ -165,7 +165,7 @@ const DEFAULT_QUIZ_CONFIG = {
       subtitle: 'Escolha o que aparece com mais frequência nas negociações.',
       varName: 'q3',
       options: [
-        { text: 'Fit cultural e alinhamento de valores com a marca',       hint: 'cp', next: 'analyzing' },
+        { text: 'Fit cultural e alinhamento de values com a marca',       hint: 'cp', next: 'analyzing' },
         { text: 'Gestão de riscos e histórico de imagem limpo',            hint: 'cp', next: 'analyzing' },
         { text: 'Relatórios de desempenho e resultados anteriores',        hint: 'ss', next: 'analyzing' },
       ],
@@ -325,21 +325,12 @@ function initQuiz() {
   const quizId = urlParams.get('id');
 
   const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
-
-  // PRIORIDADE: Se houver ID na URL, tenta carregar do DB. Caso contrário, usa o quizJSON (config.js) oficial.
-  if (quizId) {
-    activeQuiz = quizzes.find(q => q.id === quizId);
-  }
+  activeQuiz = quizzes.find(q => q.id === quizId);
 
   if (!activeQuiz) {
-    // Fallback: Usa quizJSON (config.js) se disponível, senão usa DEFAULT_QUIZ_CONFIG
+    // Tenta quizJSON (config.js), senão usa DEFAULT_QUIZ_CONFIG do markdown
     if (typeof quizJSON !== 'undefined') {
-      activeQuiz = { 
-        id: quizJSON.id, 
-        name: quizJSON.title, 
-        nodes: quizJSON.nodes, 
-        results: quizJSON.results 
-      };
+      activeQuiz = { id: quizJSON.id, name: quizJSON.title, nodes: quizJSON.nodes, results: quizJSON.results };
     } else {
       activeQuiz = DEFAULT_QUIZ_CONFIG;
     }
@@ -347,7 +338,7 @@ function initQuiz() {
 
   document.title = activeQuiz.name;
   resetState();
-  state.startTime = Date.now(); // Inicia o contador de tempo
+  state.startTime = Date.now(); // Rastreador de tempo
 
   state.utms = {
     source:   urlParams.get('utm_source') || '',
@@ -510,20 +501,20 @@ function renderLeadForm(node) {
   }
 
   container.innerHTML = `
-    <div class="lead-hero"><img src="assets/cube-hero.webp" alt="" /></div>
-    <div class="step-header">
-      <div class="sm-tag">Diagnóstico · 2 min</div>
-      <h1 class="quiz-title">Descubra a solução <em>ideal</em><br/>para a sua operação.</h1>
-      <p class="quiz-subtitle">Um diagnóstico técnico da sua estratégia de influência — baseado em <em>dados reais</em>, não em achismo.</p>
-    </div>
-    <form class="lead-form" id="leadForm" novalidate>
+<div class="lead-hero"><img src="assets/cube-hero.webp" alt="" /></div>
+<div class="step-header">
+<div class="sm-tag">Diagnóstico · 2 min</div>
+<h1 class="quiz-title">Descubra a solução <em>ideal</em><br/>para a sua operação.</h1>
+<p class="quiz-subtitle">Um diagnóstico técnico da sua estratégia de influência — baseado em <em>dados reais</em>, não em achismo.</p>
+</div>
+<form class="lead-form" id="leadForm" novalidate>
       ${fieldsHtml}
-      <button type="submit" class="btn-primary" id="btnStart" style="margin-top:8px;">
+<button type="submit" class="btn-primary" id="btnStart" style="margin-top:8px;">
         ${node.buttonText || 'Começar diagnóstico'}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
-      <p style="text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-3);margin:8px 0 0;">Leva menos de 2 minutos · sem spam</p>
-    </form>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+</button>
+<p style="text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-3);margin:8px 0 0;">Leva menos de 2 minutos · sem spam</p>
+</form>
   `;
 
   setTimeout(() => {
@@ -584,11 +575,11 @@ function renderLeadForm(node) {
 
 function fieldHtml(f) {
   return `
-    <div class="form-group">
-      <label for="${f.id}">${f.label}</label>
-      <input type="${f.type}" id="${f.id}" name="${f.id}" placeholder="${f.placeholder}" ${f.required ? 'required' : ''} autocomplete="${f.type === 'email' ? 'email' : 'off'}" />
-      <span class="field-error" id="${f.id}-error"></span>
-    </div>
+<div class="form-group">
+<label for="${f.id}">${f.label}</label>
+<input type="${f.type}" id="${f.id}" name="${f.id}" placeholder="${f.placeholder}" ${f.required ? 'required' : ''} autocomplete="${f.type === 'email' ? 'email' : 'off'}" />
+<span class="field-error" id="${f.id}-error"></span>
+</div>
   `;
 }
 
@@ -596,27 +587,27 @@ function renderQuestion(node) {
   const container = document.createElement('div');
 
   container.innerHTML = `
-    <div class="step-tag">${node.tag || 'Pergunta'}</div>
-    <h2 class="step-title">${node.title}</h2>
-    <p class="step-subtitle">${node.subtitle}</p>
-    <div class="options-grid" id="options-${node.id}">
+<div class="step-tag">${node.tag || 'Pergunta'}</div>
+<h2 class="step-title">${node.title}</h2>
+<p class="step-subtitle">${node.subtitle}</p>
+<div class="options-grid" id="options-${node.id}">
       ${node.options.map((opt, i) => `
-        <button class="option-card" data-idx="${i}" type="button">
-          <span class="option-letter">${'ABCDE'[i] || String(i+1)}</span>
-          <span class="option-text">${opt.text}</span>
-        </button>
+<button class="option-card" data-idx="${i}" type="button">
+<span class="option-letter">${'ABCDE'[i] || String(i+1)}</span>
+<span class="option-text">${opt.text}</span>
+</button>
       `).join('')}
-    </div>
-    <div class="step-nav">
-      <button class="btn-secondary" id="back-${node.id}" type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+</div>
+<div class="step-nav">
+<button class="btn-secondary" id="back-${node.id}" type="button">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         Voltar
-      </button>
-      <button class="btn-primary" id="next-${node.id}" disabled type="button">
+</button>
+<button class="btn-primary" id="next-${node.id}" disabled type="button">
         Continuar
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
-    </div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+</button>
+</div>
   `;
 
   setTimeout(() => {
@@ -650,14 +641,14 @@ function renderLoading(node) {
   const container = document.createElement('div');
   container.className = 'loading-screen';
   container.innerHTML = `
-    <div class="spinner-circle"></div>
-    <h1 class="loading-title">${node.title || 'Analisando suas respostas'}</h1>
-    <p class="loading-sub">${node.subtitle || 'Cruzando seu perfil com nossa base de soluções martech curadas.'}</p>
-    <div class="loading-steps">
-      <div class="loading-step active" id="lStep1">Perfil identificado</div>
-      <div class="loading-step" id="lStep2">Prioridades mapeadas</div>
-      <div class="loading-step" id="lStep3">Calculando recomendação</div>
-    </div>
+<div class="spinner-circle"></div>
+<h1 class="loading-title">${node.title || 'Analisando suas respostas'}</h1>
+<p class="loading-sub">${node.subtitle || 'Cruzando seu perfil com nossa base de soluções martech curadas.'}</p>
+<div class="loading-steps">
+<div class="loading-step active" id="lStep1">Perfil identificado</div>
+<div class="loading-step" id="lStep2">Prioridades mapeadas</div>
+<div class="loading-step" id="lStep3">Calculando recomendação</div>
+</div>
   `;
 
   const duration = node.duration || 3000;
@@ -674,52 +665,52 @@ function renderResult(node) {
   const metricData = RESULT_METRICS[resultData._metricId] || null;
 
   const solutionsHtml = (resultData.solutions || []).map(s => `
-    <div class="solution-card">
-      <span class="solution-check">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-      </span>
-      <span class="solution-name">${s.name || ''}</span>
-    </div>
+<div class="solution-card">
+<span class="solution-check">
+<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+</span>
+<span class="solution-name">${s.name || ''}</span>
+</div>
   `).join('');
 
   const metricHtml = metricData ? `
-    <div class="result-metric">
-      <div class="result-metric-value">${metricData.metric}</div>
-      <div class="result-metric-info">
-        <div class="result-metric-tag">${metricData.tag}</div>
-        <div class="result-metric-label">${metricData.metricLabel}</div>
-        <div class="result-metric-sub">${metricData.short}</div>
-      </div>
-    </div>
+<div class="result-metric">
+<div class="result-metric-value">${metricData.metric}</div>
+<div class="result-metric-info">
+<div class="result-metric-tag">${metricData.tag}</div>
+<div class="result-metric-label">${metricData.metricLabel}</div>
+<div class="result-metric-sub">${metricData.short}</div>
+</div>
+</div>
   ` : '';
 
   const firstName = (state.lead?.nome) ? state.lead.nome.split(' ')[0] : 'você';
 
   container.innerHTML = `
-    <div class="result-container">
-      <div class="result-hero"><img src="assets/sphere-orb.png" alt="" /></div>
-      <div class="result-badge">${resultData.badge || 'Seu diagnóstico'} · ${firstName}</div>
-      <div class="result-head">
-        <div class="result-label">Solução recomendada</div>
-        <h2 class="result-title">${resultData.title || 'Resultado'}</h2>
-        <p class="result-subtitle">${resultData.subtitle || ''}</p>
-        <p class="result-description">${resultData.description || ''}</p>
-      </div>
+<div class="result-container">
+<div class="result-hero"><img src="assets/sphere-orb.png" alt="" /></div>
+<div class="result-badge">${resultData.badge || 'Seu diagnóstico'} · ${firstName}</div>
+<div class="result-head">
+<div class="result-label">Solução recomendada</div>
+<h2 class="result-title">${resultData.title || 'Resultado'}</h2>
+<p class="result-subtitle">${resultData.subtitle || ''}</p>
+<p class="result-description">${resultData.description || ''}</p>
+</div>
       ${metricHtml}
       ${solutionsHtml ? `<div class="result-solutions">${solutionsHtml}</div>` : ''}
-      <div class="result-cta">
-        <a href="${resultData.url || '#'}" class="btn-cta" target="_blank" rel="noopener">
+<div class="result-cta">
+<a href="${resultData.url || '#'}" class="btn-cta" target="_blank" rel="noopener">
           ${resultData.cta || 'Agendar conversa com especialista'}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Fiz o diagnóstico Spark Maxx. Resultado: ' + (resultData.title || ''))}"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+</a>
+<a href="https://api.whatsapp.com/send?text=${encodeURIComponent('Olá! Fiz o diagnóstico Spark Maxx. Resultado: ' + (resultData.title || ''))}"
            class="btn-secondary-cta" target="_blank" rel="noopener">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Receber resumo no WhatsApp
-        </a>
-        <button class="btn-restart" id="btnRestart" type="button" style="margin-top:8px;">Refazer diagnóstico</button>
-      </div>
-    </div>
+</a>
+<button class="btn-restart" id="btnRestart" type="button" style="margin-top:8px;">Refazer diagnóstico</button>
+</div>
+</div>
   `;
 
   setTimeout(() => {
