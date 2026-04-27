@@ -61,49 +61,6 @@ function removeConnection(fromNodeId, fromOption = null) {
  * Add a new empty node to the builder canvas.
  * @param {string} type - Node type (question|lead_form|loading|result)
  */
-function addNewNode(type = 'question') {
-  const id = `node_${Date.now()}`;
-  const newNode = {
-    id,
-    type,
-    title: 'Novo Nó',
-    subtitle: 'Clique para editar',
-    tag: 'Novo',
-    editor: {
-      x: Math.random() * 400 + 200,
-      y: Math.random() * 300 + 100
-    }
-  };
-
-  if (type === 'question') {
-    newNode.options = [
-      { text: 'Opção A', hint: '', icon: '🌟', next: null },
-      { text: 'Opção B', hint: '', icon: '🚀', next: null }
-    ];
-  } else if (type === 'result') {
-    newNode.title = 'Seu Perfil: Resultado Final';
-    newNode.badge = '🚀 Resultado';
-    newNode.description = 'Você chegou ao fim do diagnóstico.';
-    newNode.solutions = [
-      { icon: '🌟', name: 'Solução 1', desc: 'Descrição da solução' }
-    ];
-    newNode.cta = 'Conhecer Mais';
-    newNode.url = 'https://...';
-  } else if (type === 'loading') {
-    newNode.title = 'Analisando suas respostas...';
-    newNode.subtitle = 'Isso pode levar alguns segundos.';
-    newNode.duration = 2400;
-  } else if (type === 'webhook') {
-    newNode.title = 'Disparar Webhook';
-    newNode.subtitle = 'Envia os dados do lead para uma URL externa';
-    newNode.webhookUrl = '';
-    newNode.method = 'POST';
-  }
-
-  builderState.nodes[id] = newNode;
-  renderAllNodes();
-  renderConnections();
-
   // Select the new node
   builderState.selectedNodeId = id;
   return id;

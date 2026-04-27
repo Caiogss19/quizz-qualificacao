@@ -52,15 +52,49 @@ function renderConnections() {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('class', 'connection-path');
         
-        // n8n-style curvature: more horizontal stretch
         const distance = Math.abs(x2 - x1);
         const horizontalStretch = Math.max(distance * 0.4, 40);
-        const d = `M ${x1} ${y1} C ${x1 + horizontalStretch} ${y1}, ${x2 - horizontalStretch} ${y2}, ${x2} ${y2}`;
+        const dx = horizontalStretch;
+        const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
         path.setAttribute('d', d);
-        
         svg.appendChild(path);
+
+        // Add Action Buttons at Midpoint (Cubic Bezier at t=0.5)
+        const mx = 0.125 * x1 + 0.375 * (x1 + dx) + 0.375 * (x2 - dx) + 0.125 * x2;
+        const my = 0.125 * y1 + 0.375 * y1 + 0.375 * y2 + 0.125 * y2;
+        
+        renderConnectionActions(mx, my, conn);
       }
     });
     renderRequested = false;
   });
+}
+
+function renderConnectionActions(x, y, conn) {
+  const container = document.getElementById('canvasNodes');
+  const actionsEl = document.createElement('div');
+  actionsEl.className = 'connection-actions';
+  actionsEl.style.left = `${x}px`;
+  actionsEl.style.top = `${y}px`;
+
+  actionsEl.innerHTML = `
+    <button class="conn-btn conn-btn-add" title="Adicionar nó na linha">+</button>
+    <button class="conn-btn conn-btn-del" title="Remover conexão">🗑️</button>
+  `;
+
+  actionsEl.querySelector('.conn-btn-add').addEventListener('click', (e) => {
+    e.stopPropagation();
+    insertNodeOnConnection(conn);
+  });
+
+  actionsEl.querySelector('.conn-btn-del').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (confirm('Remover esta conexão?')) {
+      removeConnection(conn.from, conn.fromOption);
+      renderAllNodes();
+      renderConnections();
+    }
+  });
+
+  container.appendChild(actionsEl);
 }

@@ -192,9 +192,74 @@ function updateTempLine(x2, y2) {
   const x1 = (fromRect.left + fromRect.width / 2 - containerRect.left) / scale;
   const y1 = (fromRect.top + fromRect.height / 2 - containerRect.top) / scale;
 
-  const dx = Math.abs(x2 - x1) * 0.5;
+  const distance = Math.abs(x2 - x1);
+  const dx = Math.max(distance * 0.4, 40);
   const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
   tempLine.setAttribute('d', d);
+}
+
+// --- Insert Node on Connection ---
+function insertNodeOnConnection(conn) {
+  const type = prompt('Tipo de nó para inserir (question, lead_form, loading, webhook):', 'question');
+  if (!type) return;
+
+  const newNodeId = addNewNode(type);
+  const newNode = builderState.nodes[newNodeId];
+
+  // Calculate position between from and to nodes
+  const fromNode = builderState.nodes[conn.from];
+  const toNode = builderState.nodes[conn.to];
+  
+  if (fromNode && toNode) {
+    newNode.editor.x = (fromNode.editor.x + toNode.editor.x) / 2;
+    newNode.editor.y = (fromNode.editor.y + toNode.editor.y) / 2;
+  }
+
+  // Update connections: A -> New, New -> B
+  addConnection(conn.from, newNodeId, conn.fromOption);
+  addConnection(newNodeId, conn.to, null);
+
+  renderAllNodes();
+  renderConnections();
+}
+
+function addNewNode(type = 'question') {
+  const id = `node_${Date.now()}`;
+  const newNode = {
+    id,
+    type,
+    title: 'Novo Nó',
+    subtitle: 'Clique para editar',
+    tag: 'Novo',
+    editor: {
+      x: Math.random() * 100 + 300,
+      y: Math.random() * 100 + 200
+    }
+  };
+
+  if (type === 'question') {
+    newNode.options = [
+      { text: 'Opção A', hint: '', icon: '🌟', next: null },
+      { text: 'Opção B', hint: '', icon: '🚀', next: null }
+    ];
+  } else if (type === 'result') {
+    newNode.title = 'Resultado Final';
+    newNode.description = 'Fim do fluxo.';
+    newNode.solutions = [{ icon: '🌟', name: 'Solução 1', desc: '...' }];
+  } else if (type === 'loading') {
+    newNode.title = 'Analisando...';
+    newNode.duration = 2400;
+  } else if (type === 'webhook') {
+    newNode.title = 'Disparar Webhook';
+    newNode.webhookUrl = '';
+    newNode.method = 'POST';
+  }
+
+  builderState.nodes[id] = newNode;
+  builderState.selectedNodeId = id;
+  renderAllNodes();
+  renderConnections();
+  return id;
 }
 
 function removeTempLine() {
