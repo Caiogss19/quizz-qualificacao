@@ -373,20 +373,36 @@ function renderInspector() {
   if (node.type === 'question') {
     specificFields = `
       <div class="inspector-group">
-        <label class="inspector-label">OPÇÕES DE RESPOSTA</label>
+        <label class="inspector-label">OPÇÕES E LÓGICA</label>
         ${(node.options || []).map((opt, i) => `
-          <div style="display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; margin-bottom:12px;">
-            <input type="text" class="inspector-input" value="${opt.text}" oninput="updateNodeOption(${i}, 'text', this.value)" placeholder="Texto da opção">
-            <div style="display:flex; gap:6px;">
-              <select class="inspector-select" onchange="updateNodeOption(${i}, 'next', this.value)">
-                <option value="">Ir para...</option>
-                ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${opt.next === nid ? 'selected' : ''}>${nid}</option>`).join('')}
-              </select>
-              <button class="btn-del-row" onclick="removeNodeOption(${i})">✕</button>
+          <div style="background:rgba(255,255,255,0.02); padding:14px; border-radius:12px; margin-bottom:16px; border:1px solid rgba(255,255,255,0.05);">
+            <div class="inspector-group" style="margin-bottom:10px;">
+              <label class="inspector-label" style="font-size:8px;">TEXTO DA OPÇÃO</label>
+              <input type="text" class="inspector-input" value="${opt.text}" oninput="updateNodeOption(${i}, 'text', this.value)">
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div class="inspector-group">
+                <label class="inspector-label" style="font-size:8px;">PONTO (SCORE)</label>
+                <input type="number" class="inspector-input" value="${opt.score || 0}" oninput="updateNodeOption(${i}, 'score', parseInt(this.value))">
+              </div>
+              <div class="inspector-group">
+                <label class="inspector-label" style="font-size:8px;">DICA (HINT)</label>
+                <input type="text" class="inspector-input" value="${opt.hint || ''}" oninput="updateNodeOption(${i}, 'hint', this.value)" placeholder="ex: discovery">
+              </div>
+            </div>
+            <div class="inspector-group">
+              <label class="inspector-label" style="font-size:8px;">DESTINO (NEXT STEP)</label>
+              <div style="display:flex; gap:8px;">
+                <select class="inspector-select" onchange="updateNodeOption(${i}, 'next', this.value)">
+                  <option value="">-- Selecione o próximo passo --</option>
+                  ${Object.keys(activeEditorQuiz.nodes).map(nid => `<option value="${nid}" ${opt.next === nid ? 'selected' : ''}>${nid} (${activeEditorQuiz.nodes[nid].type})</option>`).join('')}
+                </select>
+                <button class="btn-del-row" onclick="removeNodeOption(${i})">✕</button>
+              </div>
             </div>
           </div>
         `).join('')}
-        <button class="btn-detail" onclick="addNodeOption()">+ Adicionar Opção</button>
+        <button class="btn-detail" onclick="addNodeOption()" style="width:100%; padding:10px;">+ Adicionar Opção</button>
       </div>
     `;
   }
@@ -568,7 +584,7 @@ function renderQuizzes() {
       </div>
 
       <div class="quiz-card-footer">
-        <div style="display: flex; gap: 20px;">
+        <div style="display: flex; gap: 16px;">
           <button class="btn-card-main" onclick="editQuiz('${q.id}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             Editar
@@ -576,6 +592,10 @@ function renderQuizzes() {
           <button class="btn-card-main" onclick="copyQuizLink('${q.id}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             Link
+          </button>
+          <button class="btn-card-main" onclick="configWebhook('${q.id}')" title="Configurar Webhook">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><polyline points="16 11 20 11 20 15"/><line x1="14" y1="17" x2="20" y2="11"/></svg>
+            Webhook
           </button>
         </div>
         <button class="btn-card-circle" onclick="openQuizOptions('${q.id}')">
@@ -611,12 +631,72 @@ function renameQuiz(id) {
   }
 }
 
+function configWebhook(id) {
+  const quizzes = getQuizzes();
+  const target = quizzes.find(q => q.id === id);
+  if (!target) return;
+  
+  const url = prompt('URL do Webhook (para envio de leads):', target.webhookUrl || '');
+  if (url !== null) {
+    target.webhookUrl = url.trim();
+    saveQuizzes(quizzes);
+    renderQuizzes();
+    showToast('✅ Webhook configurado!');
+  }
+}
+
+async function testWebhook(id) {
+  const quizzes = getQuizzes();
+  const quiz = quizzes.find(q => q.id === id);
+  if (!quiz || !quiz.webhookUrl) {
+    alert('Configure o webhook antes de testar.');
+    return;
+  }
+  
+  const testData = { event: "teste_integracao", quiz_id: quiz.id, quiz_name: quiz.name, lead: { nome: "Teste Spark", email: "teste@sparkmaxx.com" } };
+  
+  try {
+    showToast('⚡ Enviando teste...');
+    const res = await fetch(quiz.webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(testData) });
+    if (res.ok) showToast('✅ Webhook enviado com sucesso!');
+    else showToast('⚠️ Webhook retornou erro: ' + res.status);
+  } catch (err) {
+    showToast('❌ Erro ao enviar webhook: ' + err.message);
+  }
+}
+
 function openQuizOptions(id) {
   const choice = confirm('Opções extras:\n\n- OK para DUPLICAR\n- Cancelar para EXCLUIR\n\n(Dica: no futuro teremos um menu suspenso aqui)');
   if (choice) {
     actionDuplicateQuiz(id);
   } else {
     actionDeleteQuiz(id);
+  }
+}
+
+function actionDuplicateQuiz(id) {
+  const quizzes = getQuizzes();
+  const source = quizzes.find(q => q.id === id);
+  if (!source) return;
+
+  const newQuiz = JSON.parse(JSON.stringify(source));
+  newQuiz.id = 'quiz_' + Date.now();
+  newQuiz.name = source.name + ' (Cópia)';
+  newQuiz.createdAt = new Date().toISOString();
+  
+  quizzes.push(newQuiz);
+  saveQuizzes(quizzes);
+  renderQuizzes();
+  showToast('✅ Quiz duplicado!');
+}
+
+function actionDeleteQuiz(id) {
+  if (confirm('Tem certeza que deseja excluir este quiz permanentemente?')) {
+    let quizzes = getQuizzes();
+    quizzes = quizzes.filter(q => q.id !== id);
+    saveQuizzes(quizzes);
+    renderQuizzes();
+    showToast('🗑️ Quiz excluído.');
   }
 }
 
