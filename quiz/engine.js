@@ -5,16 +5,33 @@ const DOM = {
   progressBar: document.getElementById('progressBar')
 };
 
+// Escape HTML para prevenir XSS em conteúdo dinâmico (quizzes editáveis e branding)
+function escapeHtml(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function applyBranding() {
   const branding = JSON.parse(localStorage.getItem('sparkmaxx_branding') || '{}');
-  
+
   if (branding.primaryColor) {
     document.documentElement.style.setProperty('--primary-color', branding.primaryColor);
   }
 
   const headerLogo = document.querySelector('.quiz-header .logo');
   if (headerLogo && branding.logo) {
-    headerLogo.innerHTML = `<img src="${branding.logo}" alt="Logo" style="max-height: 40px; width: auto;" />`;
+    headerLogo.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = branding.logo;
+    img.alt = 'Logo';
+    img.style.maxHeight = '40px';
+    img.style.width = 'auto';
+    headerLogo.appendChild(img);
   }
 
   if (branding.favicon) {
@@ -132,16 +149,26 @@ function renderNode(nodeId) {
 }
 
 function updateProgress(nodeId) {
-  // Simple heuristic: lead_form=0%, result=100%, question=~based on position
-  // But a dynamic flow makes it hard. Let's just step it up roughly.
+  // Cálculo dinâmico baseado no tipo do nó atual e profundidade do histórico.
+  // Funciona para qualquer fluxo customizado, não só o quiz default.
+  const node = activeQuiz && activeQuiz.nodes ? activeQuiz.nodes[nodeId] : null;
   let pct = 0;
-  if (state.currentNodeId === 'start') pct = 0;
-  else if (state.currentNodeId === 'perfil') pct = 20;
-  else if (state.currentNodeId.startsWith('q2')) pct = 50;
-  else if (state.currentNodeId.startsWith('q3')) pct = 80;
-  else if (state.currentNodeId === 'analyzing') pct = 95;
-  else if (state.currentNodeId === 'result') pct = 100;
-  
+
+  if (node) {
+    if (node.type === 'lead_form') {
+      pct = 5;
+    } else if (node.type === 'result') {
+      pct = 100;
+    } else if (node.type === 'loading') {
+      pct = 95;
+    } else {
+      // Para questions, estima posição com base no histórico vs total de nós.
+      const totalNodes = Object.keys(activeQuiz.nodes).length || 1;
+      const stepsTaken = (state.history ? state.history.length : 0) + 1;
+      pct = Math.min(90, Math.round((stepsTaken / totalNodes) * 100));
+    }
+  }
+
   if (DOM.progressBar) DOM.progressBar.style.width = pct + '%';
 }
 
@@ -168,20 +195,21 @@ function goBack() {
 
 function renderLeadForm(node) {
   const container = document.createElement('div');
+  const fields = Array.isArray(node.fields) ? node.fields : [];
   container.innerHTML = `
     <div class="step-tag">Identificação</div>
-    <h1 class="step-title">${node.title}</h1>
-    <p class="step-subtitle">${node.subtitle}</p>
+    <h1 class="step-title">${escapeHtml(node.title)}</h1>
+    <p class="step-subtitle">${escapeHtml(node.subtitle)}</p>
     <form class="lead-form" id="leadForm" novalidate>
-      ${node.fields.map(f => `
+      ${fields.map(f => `
         <div class="form-group">
-          <label for="${f.id}">${f.label}</label>
-          <input type="${f.type}" id="${f.id}" name="${f.id}" placeholder="${f.placeholder}" ${f.required ? 'required' : ''} />
-          <span class="field-error" id="${f.id}-error"></span>
+          <label for="${escapeHtml(f.id)}">${escapeHtml(f.label)}</label>
+          <input type="${escapeHtml(f.type || 'text')}" id="${escapeHtml(f.id)}" name="${escapeHtml(f.id)}" placeholder="${escapeHtml(f.placeholder || '')}" ${f.required ? 'required' : ''} />
+          <span class="field-error" id="${escapeHtml(f.id)}-error"></span>
         </div>
       `).join('')}
       <button type="submit" class="btn-primary" id="btnStart">
-        ${node.buttonText}
+        ${escapeHtml(node.buttonText || 'Continuar')}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
     </form>
@@ -194,9 +222,10 @@ function renderLeadForm(node) {
     
     if (celularInput) {
       celularInput.addEventListener('input', function() {
-        let v = this.value.replace(/\D/g, '').substr(0, 11);
-        if (v.length > 6) v = `(${v.substr(0,2)}) ${v.substr(2,5)}-${v.substr(7)}`;
-        else if (v.length > 2) v = `(${v.substr(0,2)}) ${v.substr(2)}`;
+        let v = this.value.replace(/\D/g, '').substring(0, 11);
+        if (v.length > 10) v = `(${v.substring(0,2)}) ${v.substring(2,7)}-${v.substring(7)}`;
+        else if (v.length > 6) v = `(${v.substring(0,2)}) ${v.substring(2,6)}-${v.substring(6)}`;
+        else if (v.length > 2) v = `(${v.substring(0,2)}) ${v.substring(2)}`;
         else if (v.length > 0) v = `(${v}`;
         this.value = v;
       });
@@ -220,8 +249,8 @@ function renderLeadForm(node) {
             btn.textContent = 'E-mail já cadastrado. Ver resultado anterior';
             btn.type = 'button';
             btn.onclick = () => {
-              state.resultadoId = found.resultado_id;
-              goToNode('result');
+              state.resultadoId = found.result_id || found.resultado_id;
+              goToNode(state.resultadoId || 'result');
             };
             form.appendChild(btn);
           }
@@ -254,55 +283,62 @@ function renderLeadForm(node) {
 
 function renderQuestion(node) {
   const container = document.createElement('div');
+  const options = Array.isArray(node.options) ? node.options : [];
   let selectedValue = null;
   let selectedNext = null;
   let selectedHint = null;
-  
+  let selectedScore = 0;
+
   container.innerHTML = `
-    <div class="step-tag">${node.tag || 'Pergunta'}</div>
-    <h2 class="step-title">${node.title}</h2>
-    <p class="step-subtitle">${node.subtitle}</p>
-    <div class="options-grid" id="options-${node.id}">
-      ${node.options.map((opt, i) => `
+    <div class="step-tag">${escapeHtml(node.tag || 'Pergunta')}</div>
+    <h2 class="step-title">${escapeHtml(node.title)}</h2>
+    <p class="step-subtitle">${escapeHtml(node.subtitle)}</p>
+    <div class="options-grid" id="options-${escapeHtml(node.id)}">
+      ${options.map((opt, i) => `
         <button class="option-card" data-idx="${i}">
-          ${opt.icon ? `<span class="option-letter">${'ABCDE'[i] || ''}</span><span class="option-icon">${opt.icon}</span>` : ''}
-          <span class="option-text">${opt.text}</span>
+          ${opt.icon ? `<span class="option-letter">${'ABCDE'[i] || ''}</span><span class="option-icon">${escapeHtml(opt.icon)}</span>` : ''}
+          <span class="option-text">${escapeHtml(opt.text)}</span>
         </button>
       `).join('')}
     </div>
     <div class="step-nav">
-      <button class="btn-secondary" id="back-${node.id}">← Voltar</button>
-      <button class="btn-primary" id="next-${node.id}" disabled>Continuar →</button>
+      <button class="btn-secondary" id="back-${escapeHtml(node.id)}">← Voltar</button>
+      <button class="btn-primary" id="next-${escapeHtml(node.id)}" disabled>Continuar →</button>
     </div>
   `;
 
   setTimeout(() => {
-    const options = container.querySelectorAll('.option-card');
+    const optionEls = container.querySelectorAll('.option-card');
     const nextBtn = document.getElementById(`next-${node.id}`);
     const backBtn = document.getElementById(`back-${node.id}`);
 
-    options.forEach((opt, idx) => {
+    optionEls.forEach((opt, idx) => {
       opt.addEventListener('click', () => {
-        options.forEach(o => o.classList.remove('selected'));
+        optionEls.forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
-        const dataOpt = node.options[idx];
+        const dataOpt = options[idx];
+        if (!dataOpt) return;
         selectedValue = dataOpt.value || dataOpt.text;
         selectedNext = dataOpt.next;
         selectedHint = dataOpt.hint;
-        nextBtn.disabled = false;
+        selectedScore = parseInt(dataOpt.score) || 0;
+        if (nextBtn) nextBtn.disabled = false;
       });
     });
 
-    nextBtn.addEventListener('click', () => {
-      if (!selectedValue) return;
-      const dataOpt = node.options.find(o => (o.value || o.text) === selectedValue);
-      saveAnswer(node.varName || node.id, selectedValue, selectedHint, dataOpt ? dataOpt.score : 0);
-      goToNode(selectedNext);
-    });
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (!selectedValue) return;
+        saveAnswer(node.varName || node.id, selectedValue, selectedHint, selectedScore);
+        goToNode(selectedNext);
+      });
+    }
 
-    backBtn.addEventListener('click', () => {
-      goBack();
-    });
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        goBack();
+      });
+    }
   }, 0);
 
   return container;
@@ -317,8 +353,8 @@ function renderLoading(node) {
         <div class="spinner-ring"></div>
         <div class="spinner-ring"></div>
       </div>
-      <h2 class="analyzing-title">${node.title}</h2>
-      <p class="analyzing-text">${node.subtitle}</p>
+      <h2 class="analyzing-title">${escapeHtml(node.title)}</h2>
+      <p class="analyzing-text">${escapeHtml(node.subtitle)}</p>
       <div class="analyzing-dots">
         <span></span><span></span><span></span>
       </div>
@@ -330,25 +366,33 @@ function renderLoading(node) {
 function renderResult(node) {
   const container = document.createElement('div');
   const resultData = node;
-  
+
   if (!resultData) return container;
+
+  // Sanitiza URL do CTA: aceita apenas http(s) ou anchors para evitar javascript:
+  let ctaUrl = resultData.url || '#';
+  if (ctaUrl !== '#' && !/^https?:\/\//i.test(ctaUrl) && !ctaUrl.startsWith('/')) {
+    ctaUrl = '#';
+  }
+
+  const solutions = Array.isArray(resultData.solutions) ? resultData.solutions : [];
 
   container.innerHTML = `
     <div class="result-container">
-      <div class="result-badge">${resultData.badge || '🎉 Seu resultado'}</div>
-      <h2 class="result-title">${resultData.title || 'Resultado'}</h2>
-      <p class="result-description">${resultData.description || 'Baseado nas suas respostas, este é o seu perfil.'}</p>
+      <div class="result-badge">${escapeHtml(resultData.badge || '🎉 Seu resultado')}</div>
+      <h2 class="result-title">${escapeHtml(resultData.title || 'Resultado')}</h2>
+      <p class="result-description">${escapeHtml(resultData.description || 'Baseado nas suas respostas, este é o seu perfil.')}</p>
       <div class="result-solutions">
-        ${(resultData.solutions || []).map(s => `
+        ${solutions.map(s => `
           <div class="solution-card">
-            <div class="solution-icon">${s.icon || '✅'}</div>
-            <div class="solution-info"><h3>${s.name || ''}</h3><p>${s.desc || ''}</p></div>
+            <div class="solution-icon">${escapeHtml(s.icon || '✅')}</div>
+            <div class="solution-info"><h3>${escapeHtml(s.name || '')}</h3><p>${escapeHtml(s.desc || '')}</p></div>
           </div>
         `).join('')}
       </div>
       <div class="result-cta">
-        <a href="${resultData.url || '#'}" class="btn-cta" target="_blank" rel="noopener">
-          ${resultData.cta || 'Conhecer Solução'}
+        <a href="${escapeHtml(ctaUrl)}" class="btn-cta" target="_blank" rel="noopener noreferrer">
+          ${escapeHtml(resultData.cta || 'Conhecer Solução')}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <button class="btn-restart" id="btnRestart">Refazer diagnóstico</button>
