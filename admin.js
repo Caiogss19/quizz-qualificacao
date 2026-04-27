@@ -78,30 +78,33 @@ function isThisMonth(iso) {
 }
 
 function shortProfile(profile) {
+  if (!profile) return '—';
   const map = {
     'Empresa / Marca': 'Empresa',
     'Agência de Publicidade/Marketing': 'Agência',
     'Creator': 'Creator',
     'Agência de Casting / Agenciador': 'Casting'
   };
-  return map[profile] || profile || '—';
+  return map[profile] || profile;
 }
 
 function shortResult(id) {
+  if (!id) return '—';
   const map = {
-    'community_discovery': 'Community Discovery',
-    'sprout_social': 'Sprout Social',
+    'community_discovery': 'Discovery',
+    'sprout_social': 'Sprout',
     'monitoring_insights': 'Monitoring',
-    'cultural_influencer': 'Cultural Influencer',
-    'professional_creator': 'Professional Creator'
+    'cultural_influencer': 'Cultural',
+    'professional_creator': 'Professional'
   };
-  return map[id] || id || '—';
+  return map[id] || id;
 }
 
 function profileCounts(data) {
   const counts = {};
   data.forEach(r => {
-    const p = r.perfil || '?';
+    // Tenta pegar o perfil (variável), ou o título do resultado
+    const p = r.perfil || r.result_title || shortResult(r.result_id) || 'Não identificado';
     counts[p] = (counts[p] || 0) + 1;
   });
   return counts;
@@ -256,6 +259,8 @@ async function loadAdminPanel() {
   [...localData, ...cloudData].forEach(r => { if (r && r.id) mergedMap.set(r.id, r); });
   allData = Array.from(mergedMap.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   filteredData = [...allData];
+  
+  if (typeof updateFilterDropdowns === 'function') updateFilterDropdowns();
   
   // Quizzes Sync
   try {
@@ -536,18 +541,6 @@ function actionDeleteQuiz(id) {
   }
 }
 
-function editQuiz(id) {
-  const quizzes = getQuizzes();
-  activeEditorQuiz = quizzes.find(q => q.id === id);
-  if (!activeEditorQuiz) return;
-
-  // Mostra o item de menu do construtor e ativa a aba
-  const navEditor = document.getElementById('nav-editor');
-  if (navEditor) navEditor.style.display = 'flex';
-  
-  switchTab('editor');
-}
-
 function copyQuizLink(id) {
   let basePath = window.location.origin + window.location.pathname;
   if (basePath.endsWith('index.html')) basePath = basePath.replace('index.html', 'quiz.html');
@@ -575,14 +568,6 @@ function configWebhook(id) {
   }
 }
 
-function actionDuplicateQuiz(id) {
-  if (typeof duplicateQuiz === 'function') {
-    duplicateQuiz(id);
-    renderQuizzes();
-    showToast('✅ Quiz duplicado!');
-  }
-}
-
 async function testWebhook(id) {
   const quiz = typeof getQuizById === 'function' ? getQuizById(id) : null;
   if (!quiz || !quiz.webhookUrl) {
@@ -599,6 +584,14 @@ async function testWebhook(id) {
     else showToast('⚠️ Webhook retornou erro.');
   } catch (err) {
     showToast('❌ Erro ao enviar webhook.');
+  }
+}
+
+function actionDuplicateQuiz(id) {
+  if (typeof duplicateQuiz === 'function') {
+    duplicateQuiz(id);
+    renderQuizzes();
+    showToast('✅ Quiz duplicado!');
   }
 }
 
@@ -635,7 +628,9 @@ function renderOverview() {
   const chartEl = document.getElementById('profileChart');
   if (chartEl) {
     const total = data.length || 1;
-    const profilesList = ['Empresa / Marca', 'Agência de Publicidade/Marketing', 'Creator', 'Agência de Casting / Agenciador'];
+    // Pega os perfis mais frequentes de forma dinâmica
+    const profilesList = Object.keys(counts).sort((a,b) => counts[b] - counts[a]).slice(0, 4);
+    
     chartEl.innerHTML = profilesList.map(p => {
       const c = counts[p] || 0;
       const pct = Math.round((c / total) * 100);
@@ -674,7 +669,10 @@ function applyFilters() {
       (r.nome && r.nome.toLowerCase().includes(search)) ||
       (r.email && r.email.toLowerCase().includes(search)) ||
       (r.empresa && r.empresa.toLowerCase().includes(search));
-    const matchProfile = !profile || r.perfil === profile;
+    
+    // Filtro de perfil dinâmico: checa r.perfil ou r.result_id
+    const matchProfile = !profile || (r.perfil === profile || r.result_id === profile || r.result_title === profile);
+    
     let matchDate = true;
     if (dateFilter === 'today') matchDate = isToday(r.timestamp);
     else if (dateFilter === 'week') matchDate = isThisWeek(r.timestamp);
@@ -684,6 +682,25 @@ function applyFilters() {
 
   currentPage = 1;
   renderResponses();
+}
+
+function updateFilterDropdowns() {
+  const fProfile = document.getElementById('filterProfile');
+  if (!fProfile) return;
+
+  const currentVal = fProfile.value;
+  // Pega todos os perfis/resultados únicos
+  const profiles = new Set();
+  allData.forEach(r => {
+    if (r.perfil) profiles.add(r.perfil);
+    if (r.result_title) profiles.add(r.result_title);
+  });
+
+  let html = '<option value="">Todos os Perfis</option>';
+  Array.from(profiles).sort().forEach(p => {
+    html += `<option value="${p}" ${p === currentVal ? 'selected' : ''}>${shortProfile(p)}</option>`;
+  });
+  fProfile.innerHTML = html;
 }
 
 function renderResponses() {

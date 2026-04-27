@@ -22,7 +22,7 @@ function saveResponse(data) {
   const entry = {
     id: generateId(),
     timestamp: new Date().toISOString(),
-    duration_seconds: state.completedAt ? Math.round((state.completedAt - state.startTime) / 1000) : 0,
+    duration_seconds: data.duration_seconds || 0,
     ...data
   };
   existing.push(entry);
@@ -34,9 +34,6 @@ function saveResponse(data) {
     }
   } catch(e) { 
     console.error('Storage error:', e); 
-    if (e.name === 'QuotaExceededError') {
-      alert("O limite de armazenamento do seu navegador foi atingido.");
-    }
   }
   return entry;
 }
@@ -75,7 +72,11 @@ function saveQuizzes(quizzes, skipCloudSync = false) {
   localStorage.setItem(QUIZ_DB_KEY, JSON.stringify(quizzes));
   
   if (!skipCloudSync && typeof saveQuizToSupabase !== 'undefined') {
-    quizzes.forEach(q => saveQuizToSupabase(q));
+    if (Array.isArray(quizzes)) {
+      quizzes.forEach(q => saveQuizToSupabase(q));
+    } else if (typeof quizzes === 'object') {
+      saveQuizToSupabase(quizzes);
+    }
   }
 }
 

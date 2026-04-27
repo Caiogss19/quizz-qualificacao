@@ -106,11 +106,26 @@ function createNodeElement(node) {
     delBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const nid = delBtn.dataset.nodeid;
+      
+      // Remove o nó
       delete builderState.nodes[nid];
+      
+      // Limpa a lista visual de conexões
       builderState.connections = builderState.connections.filter(c => c.from !== nid && c.to !== nid);
+      
+      // NOVO: Limpa as referências internas (next) em todos os outros nós
+      Object.values(builderState.nodes).forEach(node => {
+        if (node.next === nid) node.next = null;
+        if (node.options) {
+          node.options.forEach(opt => {
+            if (opt.next === nid) opt.next = null;
+          });
+        }
+      });
+
       if (builderState.selectedNodeId === nid) {
         builderState.selectedNodeId = null;
-        updateInspector();
+        if (typeof updateInspector === 'function') updateInspector();
       }
       renderAllNodes();
       renderConnections();

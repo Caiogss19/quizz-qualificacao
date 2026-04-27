@@ -50,8 +50,8 @@ function initQuiz() {
   const urlParams = new URLSearchParams(window.location.search);
   const quizId = urlParams.get('id');
 
-  let quizzes = [];
-  try { quizzes = JSON.parse(localStorage.getItem('sparkmaxx_quizzes') || '[]'); } catch(e) {}
+  // Usa getQuizzes() do storage.js para ter a lógica de migração/correção de dados
+  const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
 
   activeQuiz = quizzes.find(q => q.id === quizId);
   if (!activeQuiz) {
@@ -133,9 +133,21 @@ function renderNode(nodeId) {
 }
 
 function updateProgress(nodeId) {
-  const s = STEP_MAP[nodeId] || { pct: 0, num: 1 };
-  if (DOM.progressBar) DOM.progressBar.style.width = s.pct + '%';
-  if (DOM.stepCount)   DOM.stepCount.textContent = s.num + ' / 6 · Diagnóstico';
+  // Cálculo dinâmico de progresso para suportar qualquer quiz customizado
+  const nodes = Object.values(activeQuiz.nodes);
+  // Conta nós que representam passos reais
+  const stepNodes = nodes.filter(n => ['question', 'lead_form', 'loading'].includes(n.type));
+  const totalSteps = stepNodes.length + 1; // +1 para o resultado final
+  const currentStep = state.history.length + 1;
+  
+  const pct = Math.min(100, Math.round((currentStep / totalSteps) * 100));
+  
+  if (DOM.progressBar) DOM.progressBar.style.width = pct + '%';
+  if (DOM.stepCount) {
+    const node = activeQuiz.nodes[nodeId];
+    const tag = node?.tag || 'Diagnóstico';
+    DOM.stepCount.textContent = `${currentStep} / ${totalSteps} · ${tag}`;
+  }
 }
 
 function goToNode(nodeId) {
