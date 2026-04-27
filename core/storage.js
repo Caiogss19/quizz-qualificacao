@@ -57,7 +57,17 @@ function generateId() {
 const QUIZ_DB_KEY = 'sparkmaxx_quizzes';
 
 function getQuizzes() {
-  try { return JSON.parse(localStorage.getItem(QUIZ_DB_KEY) || '[]'); } 
+  try { 
+    const data = JSON.parse(localStorage.getItem(QUIZ_DB_KEY) || '[]');
+    // Migração: se for um objeto (formato antigo de outra versão), converte para array
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      return Object.keys(data).map(id => ({
+        id: id,
+        ...data[id]
+      }));
+    }
+    return Array.isArray(data) ? data : [];
+  } 
   catch { return []; }
 }
 

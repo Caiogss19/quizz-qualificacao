@@ -92,8 +92,31 @@
   display: flex; flex-direction: column; padding: 22px 14px;
   flex-shrink: 0; transition: transform var(--dur-slow) var(--ease); z-index: 200;
 }
-.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 4px 8px; margin-bottom: 24px; }
+.sidebar-logo { display: flex; flex-direction: column; gap: 4px; padding: 4px 8px; margin-bottom: 24px; }
 .sidebar-logo img { height: 22px; }
+
+/* Text-based wordmarks (login + sidebar) */
+.sidebar-wordmark, .login-wordmark {
+  display: inline-flex; align-items: center; gap: 0;
+  font-family: var(--font-display); line-height: 1;
+  color: var(--fg-1); letter-spacing: -0.01em;
+}
+.sidebar-wordmark { font-size: 16px; }
+.login-wordmark   { font-size: 20px; }
+.sidebar-wordmark svg, .login-wordmark svg {
+  margin-right: 0.35em; vertical-align: -0.14em; display: inline-block;
+}
+.sidebar-wordmark .spark, .login-wordmark .spark {
+  font-weight: 300; color: var(--fg-2); text-transform: lowercase; letter-spacing: 0.02em;
+}
+.sidebar-wordmark .maxx, .login-wordmark .maxx {
+  font-weight: 700; color: var(--fg-1); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-left: 0.25em;
+}
+.sidebar-sub {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-3);
+}
 .sidebar-section-label {
   font-family: var(--font-mono); font-size: 9px;
   letter-spacing: var(--tracking-wide); text-transform: uppercase;
@@ -206,6 +229,12 @@
   display: block; font-family: var(--font-display);
   font-size: 40px; font-weight: 500; line-height: 1;
   letter-spacing: -0.02em; color: var(--fg-1); margin-bottom: 8px;
+}
+/* First KPI card gets chrome gradient on the value */
+.kpi-card:first-child .kpi-value {
+  background: var(--grad-chrome);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
 }
 .kpi-label {
   font-family: var(--font-mono); font-size: 10px;

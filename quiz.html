@@ -3,56 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnóstico Spark MAXX | inlead.digital</title>
+  <title>Diagnóstico Spark MAXX</title>
   <meta name="description" content="Faça o diagnóstico e descubra a solução ideal para sua estratégia de influência digital." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@1,300;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,ital,wght@9..144,0,300;9..144,1,300;9..144,1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="design-system.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="app">
-    <!-- Progress Bar -->
+
+    <!-- Fixed progress line -->
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <!-- Logo -->
+    <!-- Dot grid background -->
+    <div class="app-dot-grid" aria-hidden="true"></div>
+    <!-- Atmospheric radial glow -->
+    <div class="app-glow" aria-hidden="true"></div>
+
+    <!-- Sticky header -->
     <header class="quiz-header">
-      <div class="logo">
-        <img src="assets/logo-horizontal.svg" alt="spark MAXX" />
-      </div>
-      <div class="quiz-meta">
-        <span class="meta-eyebrow">v.2026.04 · diagnóstico</span>
-      </div>
+      <span class="quiz-wordmark">
+        <svg class="sm-mark" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="3.3" y1="7" x2="20.7" y2="17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="3.3" y1="17" x2="20.7" y2="7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+        </svg>
+        <span class="spark">spark</span><span class="maxx">MAXX</span>
+      </span>
+      <div class="quiz-step-count" id="stepCount">1 / 6 · Diagnóstico</div>
+      <a href="https://sparkmaxx.com.br" class="quiz-domain" target="_blank" rel="noopener">sparkmaxx.com.br</a>
     </header>
 
-    <!-- Quiz Container -->
+    <!-- Quiz content -->
     <main class="quiz-main">
-      <!-- Hero lateral cromada (decorativa, esconde no mobile) -->
-      <aside class="quiz-stage" aria-hidden="true">
-        <div class="stage-grid"></div>
-        <img class="stage-object stage-object-cube" src="assets/cube-hero.webp" alt="" />
-        <img class="stage-object stage-object-sphere" src="assets/sphere-orb.png" alt="" />
-        <div class="stage-status">
-          <span class="status-dot"></span>
-          <span class="status-text">analyzing · spark maxx engine</span>
-        </div>
-      </aside>
-
-      <div class="quiz-card" id="quizCard">
-        <!-- O motor do quiz em quiz/engine.js irá injetar os passos dinamicamente aqui -->
+      <div class="quiz-content" id="quizCard">
+        <!-- Engine injects steps here -->
       </div>
     </main>
 
     <!-- Footer -->
     <footer class="quiz-footer">
-      <p>© 2026 Spark MAXX — <a href="index.html" target="_blank">Admin</a></p>
+      <span>© 2026 Spark MAXX</span>
+      <span>Inteligência para a era da influência</span>
     </footer>
+
   </div>
-  
-  <!-- App Scripts (Sem módulos para rodar offline direto) -->
+
   <script src="quiz/config.js"></script>
   <script src="core/supabase.js"></script>
   <script src="core/state.js"></script>
