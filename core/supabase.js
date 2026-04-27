@@ -73,15 +73,56 @@ async function deleteQuizFromSupabase(id) {
 async function saveLeadToSupabase(responseData) {
   if (!SUPABASE_KEY) return null;
   try {
+    const lead = responseData.lead || {};
+    const utms = responseData.utms || {};
+    const answers = responseData.answers || {};
+
+    const payload = {
+      id:               responseData.id,
+      timestamp:        responseData.timestamp,
+      duration_seconds: responseData.duration_seconds || 0,
+      event:            responseData.event || 'quiz_completed',
+      quiz_id:          responseData.quiz_id || '',
+      quiz_name:        responseData.quiz_name || '',
+      completed_at:     responseData.completed_at || responseData.timestamp,
+
+      // Lead fields flattened
+      nome:    lead.nome    || responseData.nome    || '',
+      email:   lead.email   || responseData.email   || '',
+      celular: lead.celular || responseData.celular || '',
+      empresa: lead.empresa || responseData.empresa || '',
+
+      // Respostas como JSON string
+      answers:     JSON.stringify(answers),
+      total_score: responseData.total_score || 0,
+
+      // Resultado
+      result_id:    responseData.result_id    || responseData.resultado_id    || '',
+      result_title: responseData.result_title || responseData.resultado_nome  || '',
+
+      // UTMs flattened
+      utm_source:   utms.source   || '',
+      utm_medium:   utms.medium   || '',
+      utm_campaign: utms.campaign || '',
+      utm_content:  utms.content  || '',
+      utm_term:     utms.term     || '',
+
+      user_agent:  responseData.user_agent  || '',
+      url_origem:  responseData.url_origem  || ''
+    };
+
     const res = await fetch(`${SUPABASE_URL}/rest/v1/Table_leads`, {
       method: "POST",
       headers: {
         ...SUPABASE_HEADERS,
-        "Prefer": "return=representation"
+        "Prefer": "resolution=ignore-duplicates,return=representation"
       },
-      body: JSON.stringify([responseData])
+      body: JSON.stringify([payload])
     });
-    if (!res.ok) throw new Error("Falha ao salvar lead no Supabase");
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`Falha ao salvar lead no Supabase: ${errBody}`);
+    }
     return await res.json();
   } catch (err) {
     console.error("Supabase Error:", err);
