@@ -682,12 +682,9 @@ function renderResult(node) {
 </div>
   ` : '';
  
-  const firstName = (state.lead?.nome) ? state.lead.nome.split(' ')[0] : 'você';
- 
   container.innerHTML = `
 <div class="result-container">
 <div class="result-hero"><img src="assets/sphere-orb.png" alt="" /></div>
-<div class="result-badge">${resultData.badge || 'Seu diagnóstico'} · ${firstName}</div>
 <div class="result-head">
 <div class="result-label">Solução recomendada</div>
 <h2 class="result-title">${resultData.title || 'Resultado'}</h2>
