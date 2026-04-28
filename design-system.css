@@ -7,84 +7,87 @@
  *   Mono                 →  JetBrains Mono
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ─── FLYHEAD (brand display face) ────────────────────────────── */
 @font-face {
   font-family: 'Flyhead';
-  src: url('../fonts/Flyhead-Light.otf') format('opentype');
+  src: url('fonts/Flyhead-Light.otf') format('opentype');
   font-weight: 300; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007F, U+2000-206F, U+20AC, U+2122, U+FEFF;
 }
 @font-face {
   font-family: 'Flyhead';
-  src: url('../fonts/Flyhead.otf') format('opentype');
+  src: url('fonts/Flyhead.otf') format('opentype');
   font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007F, U+2000-206F, U+20AC, U+2122, U+FEFF;
 }
 @font-face {
   font-family: 'Flyhead';
-  src: url('../fonts/Flyhead-Bold.otf') format('opentype');
+  src: url('fonts/Flyhead-Bold.otf') format('opentype');
   font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007F, U+2000-206F, U+20AC, U+2122, U+FEFF;
 }
 
 /* ─── ATYP TEXT (brand body face) ─────────────────────────────── */
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Thin.ttf') format('truetype');
+  src: url('fonts/AtypText-Thin.ttf') format('truetype');
   font-weight: 100; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-ThinItalic.ttf') format('truetype');
+  src: url('fonts/AtypText-ThinItalic.ttf') format('truetype');
   font-weight: 100; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Light.ttf') format('truetype');
+  src: url('fonts/AtypText-Light.ttf') format('truetype');
   font-weight: 300; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-LightItalic.ttf') format('truetype');
+  src: url('fonts/AtypText-LightItalic.ttf') format('truetype');
   font-weight: 300; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Regular.ttf') format('truetype');
+  src: url('fonts/AtypText-Regular.ttf') format('truetype');
   font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Italic.ttf') format('truetype');
+  src: url('fonts/AtypText-Italic.ttf') format('truetype');
   font-weight: 400; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Medium.ttf') format('truetype');
+  src: url('fonts/AtypText-Medium.ttf') format('truetype');
   font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-MediumItalic.ttf') format('truetype');
+  src: url('fonts/AtypText-MediumItalic.ttf') format('truetype');
   font-weight: 500; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Semibold.ttf') format('truetype');
+  src: url('fonts/AtypText-Semibold.ttf') format('truetype');
   font-weight: 600; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-SemiboldItalic.ttf') format('truetype');
+  src: url('fonts/AtypText-SemiboldItalic.ttf') format('truetype');
   font-weight: 600; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-Bold.ttf') format('truetype');
+  src: url('fonts/AtypText-Bold.ttf') format('truetype');
   font-weight: 700; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Atyp Text';
-  src: url('../fonts/AtypText-BoldItalic.ttf') format('truetype');
+  src: url('fonts/AtypText-BoldItalic.ttf') format('truetype');
   font-weight: 700; font-style: italic; font-display: swap;
 }
 
@@ -132,7 +135,7 @@
   --grad-fade-bottom:  linear-gradient(180deg, transparent 0%, #121C2B 100%);
 
   /* ─── TYPOGRAPHY ──────────────────────────────────────────── */
-  --font-display:      'Flyhead', 'Quanta Grotesk Pro', system-ui, sans-serif;
+  --font-display:      'Flyhead', 'Outfit', system-ui, sans-serif;
   --font-serif:        'Fraunces', 'Nebulica', Georgia, serif;
   --font-body:         'Atyp Text', system-ui, sans-serif;
   --font-mono:         'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
