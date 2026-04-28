@@ -162,7 +162,7 @@ var quizJSON = {
         { name: 'Encontrar influenciadores por IA' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: '#'
+      url: 'https://calendly.com/deborah-avila-spark/bate-papo-human-data-deborah-avila?month=2026-03'
     },
     'cd': {
       badge: 'Resultado puro (2–0)',
@@ -176,7 +176,7 @@ var quizJSON = {
         { name: 'Monitoramento de crescimento orgãnico nos nichos' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: '#'
+      url: 'https://calendly.com/deborah-avila-spark/bate-papo-human-data-deborah-avila?month=2026-03'
     },
     'cp': {
       badge: 'Resultado puro (2–0)',
@@ -190,7 +190,7 @@ var quizJSON = {
         { name: 'Relatórios que agregam valor para novos contratos' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: '#'
+      url: 'https://calendly.com/deborah-avila-spark/bate-papo-human-data-deborah-avila?month=2026-03'
     },
     'cd_ss': {
       badge: 'Resultado misto (1–1)',
@@ -204,7 +204,7 @@ var quizJSON = {
         { name: 'Operação escalável com influenciadores com match real' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: '#'
+      url: 'https://calendly.com/deborah-avila-spark/bate-papo-human-data-deborah-avila?month=2026-03'
     },
     'cd_cp': {
       badge: 'Resultado misto (1–1)',
@@ -218,7 +218,7 @@ var quizJSON = {
         { name: 'Monitoramento dos nichos e creators' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: '#'
+      url: 'https://calendly.com/deborah-avila-spark/bate-papo-human-data-deborah-avila?month=2026-03'
     },
     'ss_cp': {
       badge: 'Resultado misto (1–1)',
@@ -232,7 +232,7 @@ var quizJSON = {
         { name: 'Monitoramento de campanhas e creators' }
       ],
       cta: 'Agendar conversa com especialista',
-      url: '#'
+      url: 'https://calendly.com/deborah-avila-spark/bate-papo-human-data-deborah-avila?month=2026-03'
     }
   }
 };
