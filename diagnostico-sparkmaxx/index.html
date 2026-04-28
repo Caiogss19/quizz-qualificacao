@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="../" />
+  <title>Diagnóstico Spark MAXX</title>
+  <meta name="description" content="Faça o diagnóstico e descubra a solução ideal para sua estratégia de influência digital." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,ital,wght@9..144,0,300;9..144,1,300;9..144,1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="design-system.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Fixed progress line -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Dot grid background -->
+    <div class="app-dot-grid" aria-hidden="true"></div>
+    <!-- Atmospheric radial glow -->
+    <div class="app-glow" aria-hidden="true"></div>
+
+    <!-- Sticky header -->
+    <header class="quiz-header">
+      <span class="quiz-wordmark">
+        <svg class="sm-mark" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="3.3" y1="7" x2="20.7" y2="17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="3.3" y1="17" x2="20.7" y2="7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+        </svg>
+        <span class="spark">spark</span><span class="maxx">MAXX</span>
+      </span>
+      <div class="quiz-step-count" id="stepCount">1 / 6 · Diagnóstico</div>
+      <a href="https://sparkmaxx.com.br" class="quiz-domain" target="_blank" rel="noopener">sparkmaxx.com.br</a>
+    </header>
+
+    <!-- Quiz content -->
+    <main class="quiz-main">
+      <div class="quiz-content" id="quizCard">
+        <!-- Engine injects steps here -->
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="quiz-footer">
+      <span>© 2026 Spark MAXX</span>
+      <span>Inteligência para a era da influência</span>
+    </footer>
+
+  </div>
+
+  <script src="quiz/config.js?v=12"></script>
+  <script src="core/supabase.js?v=12"></script>
+  <script src="core/state.js?v=12"></script>
+  <script src="core/storage.js?v=12"></script>
+  <script src="quiz/validation.js?v=12"></script>
+  <script src="admin/webhook.js?v=12"></script>
+  <script src="quiz/engine.js?v=12"></script>
+</body>
+</html>
