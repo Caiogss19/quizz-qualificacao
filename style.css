@@ -408,6 +408,7 @@
   font-size: clamp(32px, 5vw, 46px); line-height: 1;
   letter-spacing: -0.035em; font-weight: 400;
   margin: 0 0 18px;
+  text-transform: uppercase;
   background: var(--grad-chrome);
   -webkit-background-clip: text; background-clip: text;
   color: transparent;
