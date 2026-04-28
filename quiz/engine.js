@@ -323,17 +323,13 @@ function initQuiz() {
   applyBranding();
   const urlParams = new URLSearchParams(window.location.search);
   const quizId = urlParams.get('id');
- 
-  const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
-  activeQuiz = quizzes.find(q => q.id === quizId);
- 
-  if (!activeQuiz) {
-    // Tenta quizJSON (config.js), senão usa DEFAULT_QUIZ_CONFIG do markdown
-    if (typeof quizJSON !== 'undefined') {
-      activeQuiz = { id: quizJSON.id, name: quizJSON.title, nodes: quizJSON.nodes, results: quizJSON.results };
-    } else {
-      activeQuiz = DEFAULT_QUIZ_CONFIG;
-    }
+
+  // config.js é sempre fonte autoritativa quando presente
+  if (typeof quizJSON !== 'undefined') {
+    activeQuiz = { id: quizJSON.id, name: quizJSON.title, nodes: quizJSON.nodes, results: quizJSON.results };
+  } else {
+    const quizzes = typeof getQuizzes === 'function' ? getQuizzes() : [];
+    activeQuiz = quizzes.find(q => q.id === quizId) || DEFAULT_QUIZ_CONFIG;
   }
  
   document.title = activeQuiz.name;
