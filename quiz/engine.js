@@ -33,7 +33,7 @@ const DEFAULT_QUIZ_CONFIG = {
     // ── 1. FORMULÁRIO DE CAPTURA ──────────────────────────────────
     start: {
       type: 'lead_form',
-      tag: 'Captura',
+      tag: 'Dados',
       next: 'perfil',
       buttonText: 'Começar diagnóstico',
       fields: [
@@ -52,10 +52,10 @@ const DEFAULT_QUIZ_CONFIG = {
       subtitle: 'Escolha o perfil que melhor representa sua atuação.',
       varName: 'perfil',
       options: [
-        { text: 'Marca — gestão de embaixadores e campanhas',       value: 'marca',   hint: null, next: 'q2_empresa' },
-        { text: 'Agência — atendimento e entrega de resultados',    value: 'agencia', hint: null, next: 'q2_agencia' },
-        { text: 'Creator — profissionalização e parcerias',         value: 'creator', hint: null, next: 'q2_creator' },
-        { text: 'Casting / Agenciador — curadoria de talentos',     value: 'casting', hint: null, next: 'q2_casting' },
+        { text: 'Marca',                value: 'marca',   hint: null, next: 'q2_empresa' },
+        { text: 'Agência',              value: 'agencia', hint: null, next: 'q2_agencia' },
+        { text: 'Creator',              value: 'creator', hint: null, next: 'q2_creator' },
+        { text: 'Casting / Agenciador', value: 'casting', hint: null, next: 'q2_casting' },
       ],
     },
  
@@ -511,7 +511,7 @@ function renderLeadForm(node) {
         ${node.buttonText || 'Começar diagnóstico'}
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
 </button>
-<p style="text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-3);margin:8px 0 0;">Leva menos de 2 minutos · sem spam</p>
+<p style="text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--fg-3);margin:8px 0 0;">Leva menos de 2 minutos</p>
 </form>
   `;
  

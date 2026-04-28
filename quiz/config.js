@@ -5,7 +5,7 @@ var quizJSON = {
     "start": {
       id: "start",
       type: "lead_form",
-      tag: "Captura",
+      tag: "Dados",
       title: "Quiz Spark Maxx",
       subtitle: "Descubra a solução ideal para a sua operação.",
       fields: [
@@ -25,10 +25,10 @@ var quizJSON = {
       subtitle: "Escolha o perfil que melhor representa sua atuação.",
       varName: "perfil",
       options: [
-        { text: 'Marca — gestão de embaixadores e campanhas',       value: 'marca',   hint: null, next: 'q2_empresa' },
-        { text: 'Agência — atendimento e entrega de resultados',    value: 'agencia', hint: null, next: 'q2_agencia' },
-        { text: 'Creator — profissionalização e parcerias',         value: 'creator', hint: null, next: 'q2_creator' },
-        { text: 'Casting / Agenciador — curadoria de talentos',     value: 'casting', hint: null, next: 'q2_casting' },
+        { text: 'Marca',                value: 'marca',   hint: null, next: 'q2_empresa' },
+        { text: 'Agência',              value: 'agencia', hint: null, next: 'q2_agencia' },
+        { text: 'Creator',              value: 'creator', hint: null, next: 'q2_creator' },
+        { text: 'Casting / Agenciador', value: 'casting', hint: null, next: 'q2_casting' },
       ]
     },
     "q2_empresa": {
