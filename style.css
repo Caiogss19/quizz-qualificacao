@@ -154,10 +154,12 @@
   font-size: 42px; line-height: 1.05;
   letter-spacing: -0.03em; font-weight: 400;
   margin: 0 0 16px; color: var(--fg-1); /* Aumentado de 12px */
+  text-transform: uppercase;
 }
 .quiz-title em {
   font-family: var(--font-serif);
   font-style: italic; font-weight: 300;
+  text-transform: none;
 }
 
 .step-title {
@@ -165,10 +167,12 @@
   font-size: 34px; line-height: 1.2;
   letter-spacing: -0.025em; font-weight: 400;
   margin: 0 0 16px; color: var(--fg-1); /* Aumentado de 10px */
+  text-transform: uppercase;
 }
 .step-title em {
   font-family: var(--font-serif);
   font-style: italic; font-weight: 300;
+  text-transform: none;
 }
 
 .quiz-subtitle, .step-subtitle {
